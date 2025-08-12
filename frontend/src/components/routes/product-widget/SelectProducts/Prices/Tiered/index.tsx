@@ -61,7 +61,7 @@ export const TieredPricing = ({product, event, form, productIndex}: TieredPricin
                                     <>
                                         <NumberSelector
                                             className={'hi-product-quantity-selector'}
-                                            min={product.min_per_order ?? 0}
+                                            min={product.min_per_order ?? 1}
                                             max={(Math.min(price.quantity_remaining ?? 50, product.max_per_order ?? 50))}
                                             fieldName={`products.${productIndex}.quantities.${index}.quantity`}
                                             formInstance={form}
