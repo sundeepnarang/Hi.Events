@@ -13,7 +13,7 @@
 @if($order->isOrderAwaitingOfflinePayment() === false)
 
 <p>
-{{ __('Congratulations! Your order for :eventTitle was successful. Please find your order details below.', ['eventTitle' => $event->getTitle(), 'eventDate' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'eventTime' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
+{{ __('Congratulations! Your order for :eventTitle was successful. Please find your order details below.', ['eventTitle' => $event->getTitle()]) }}
 </p>
 
 @else
