@@ -431,13 +431,13 @@ export const CollectInformation = () => {
                             {Array.from(Array(orderItem?.quantity)).map((_, index) => {
                                 const productInputs = (
                                     <>
-                                        <Card key={`${orderItem.id} ${index}`}>
+                                        <Card key={`${orderItem.id} ${index}`} style={{"display":"none"}}>
                                             <h4 style={{marginTop: 0}}>
                                                 {product.product_type === 'TICKET' ? t`Attendee` : t`Item`} {index + 1} {t`Details`}
                                             </h4>
 
                                             {productRequiresDetails && (
-                                                <div style={{"display":"none"}}>
+                                                <div>
                                                     <InputGroup>
                                                         <TextInput
                                                             withAsterisk
