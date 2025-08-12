@@ -22,7 +22,11 @@ export const organizerHomepageUrl = (organizer: Organizer) => {
 }
 
 export const eventHomepageUrl = (event: Event) => {
-    return getConfig('VITE_FRONTEND_URL') + eventHomepagePath(event);
+	let homeUrl = getConfig('VITE_FRONTEND_URL') + eventHomepagePath(event); 
+	if(event.settings && event.settings.seo_keywords && event.settings.seo_keywords.startsWith("https://")) {
+		homeUrl = event.settings.seo_keywords;
+	}
+    return homeUrl;
 }
 
 export const eventCoverImageUrl = (event: Event) => {

@@ -4,16 +4,17 @@ services:
       context: ./../../
       dockerfile: Dockerfile.all-in-one
     container_name: all-in-one
+    restart: always
     ports:
-      - "8123:80"
-    networks:
-      - hi-events-network
+      - 9090:80
+    volumes:
+      - ./storage:/app/backend/storage
     environment:
+      - APP_NAME=${APP_NAME}
       - VITE_FRONTEND_URL=${VITE_FRONTEND_URL}
       - VITE_API_URL_CLIENT=${VITE_API_URL_CLIENT}
       - VITE_API_URL_SERVER=${VITE_API_URL_SERVER}
       - VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
-      - VITE_APP_NAME=${VITE_APP_NAME}
       - LOG_CHANNEL=${LOG_CHANNEL}
       - QUEUE_CONNECTION=${QUEUE_CONNECTION}
       - APP_KEY=${APP_KEY}
@@ -37,59 +38,32 @@ services:
       - MAIL_FROM_NAME=${MAIL_FROM_NAME}
       - FILESYSTEM_PUBLIC_DISK=${FILESYSTEM_PUBLIC_DISK}
       - FILESYSTEM_PRIVATE_DISK=${FILESYSTEM_PRIVATE_DISK}
-      - DATABASE_URL=postgresql://postgres:secret@postgres:5432/hi-events
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=
-      - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/sos-events-db
       - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
-      - WEBHOOK_QUEUE_NAME=webhook-queue
 
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  redis:
-    image: redis:latest
-    container_name: redis
-    networks:
-      - hi-events-network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "6379:6379"
-    volumes:
-      - redisdata:/data
 
   postgres:
     image: postgres:latest
     container_name: postgres
-    networks:
-      - hi-events-network
+    restart: always
+    ports:
+      - 5432:5432
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
     environment:
-      POSTGRES_DB: hi-events
+      POSTGRES_DB: sos-events-db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-networks:
-  hi-events-network:
-    driver: bridge
-
 volumes:
   pgdata:
-    driver: local
-  redisdata:
-    driver: local
