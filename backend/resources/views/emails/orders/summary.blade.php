@@ -13,7 +13,7 @@
 @if($order->isOrderAwaitingOfflinePayment() === false)
 
 <p>
-{{ __('Congratulations! Your order for :eventTitle on :eventDate at :eventTime was successful. Please find your order details below.', ['eventTitle' => $event->getTitle(), 'eventDate' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'eventTime' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
+{{ __('Congratulations! Your order for :eventTitle was successful. Please find your order details below.', ['eventTitle' => $event->getTitle(), 'eventDate' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y'), 'eventTime' => (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A')]) }}
 </p>
 
 @else
@@ -37,7 +37,6 @@
 # {{ __('Event Details') }}
 **{{ __('Event Name:') }}** {{ $event->getTitle() }}
     <br>
-**{{ __('Date & Time:') }}** {{ (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('F j, Y') }} at {{ (new Carbon(DateHelper::convertFromUTC($event->getStartDate(), $event->getTimezone())))->format('g:i A') }}
 
 </p>
 
@@ -59,8 +58,8 @@
     {{ __('View Order Summary & Tickets') }}
 </x-mail::button>
 
-{{ __('If you have any questions or need assistance, please contact') }} <a href="mailto:{{ $organizer->getEmail() }}">{{ $organizer->getEmail() }}</a>.
+{{ __('If you have any questions or need assistance, feel free to reach out to our friendly support team at') }} <a href="mailto:{{ $organizer->getEmail() }}">{{ $organizer->getEmail() }}</a>.
 
 {{ __('Best regards,') }}<br>
-{{ $organizer->getName() ?: config('app.name') }}
+{{ config('app.name') }}
 </x-mail::message>
