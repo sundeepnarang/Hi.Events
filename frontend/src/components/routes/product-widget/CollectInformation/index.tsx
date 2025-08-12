@@ -345,6 +345,7 @@ export const CollectInformation = () => {
 
                     {orderRequiresAttendeeDetails && (
                         <Checkbox
+                            style={{"display":"none"}}
                             checked={copyToAttendees}
                             onChange={(event) => {
                                 setCopyToAttendees(event.currentTarget.checked);
@@ -436,7 +437,7 @@ export const CollectInformation = () => {
                                             </h4>
 
                                             {productRequiresDetails && (
-                                                <>
+                                                <div style={{"display":"none"}}>
                                                     <InputGroup>
                                                         <TextInput
                                                             withAsterisk
@@ -458,7 +459,7 @@ export const CollectInformation = () => {
                                                         placeholder={t`Email Address`}
                                                         {...form.getInputProps(`products.${productIndex}.email`)}
                                                     />
-                                                </>
+                                                </div>
                                             )}
 
                                             {productQuestions &&
