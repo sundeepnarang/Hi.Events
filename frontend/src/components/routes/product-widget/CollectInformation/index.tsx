@@ -1,7 +1,7 @@
 import {useMutation} from "@tanstack/react-query";
 import {FinaliseOrderPayload, orderClientPublic} from "../../../../api/order.client.ts";
 import {useNavigate, useParams} from "react-router";
-import {Button, Group, NativeSelect, Skeleton, TextInput} from "@mantine/core";
+import {Checkbox, Group, NativeSelect, Skeleton, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
@@ -9,7 +9,7 @@ import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {useGetEventQuestionsPublic} from "../../../../queries/useGetEventQuestionsPublic.ts";
 import {CheckoutOrderQuestions, CheckoutProductQuestions} from "../../../common/CheckoutQuestion";
 import {Event, IdParam, Order, Question} from "../../../../types.ts";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {t} from "@lingui/macro";
 import {InputGroup} from "../../../common/InputGroup";
 import {Card} from "../../../common/Card";
@@ -33,6 +33,7 @@ const LoadingSkeleton = () =>
 
 export const CollectInformation = () => {
     const {eventId, orderShortId} = useParams();
+    const [copyToAttendees, setCopyToAttendees] = useState(true);
     const navigate = useNavigate();
     const {
         isFetched: isOrderFetched,
@@ -78,6 +79,32 @@ export const CollectInformation = () => {
             }],
         },
     });
+
+    const copyFieldToAllAttendees = ({fieldName, updatedValue}) => {
+        if (!products) {
+            return;
+        }
+
+        const attendeeProductIds = new Set<IdParam>(
+            products
+                .filter(product => product && product.product_type === 'TICKET')
+                .map(product => product.id)
+        );
+
+        const updatedProducts = form.values.products.map(product => {
+            if (attendeeProductIds.has(product.product_id)) {
+                return {
+                    ...product,
+                    [fieldName]: updatedValue,
+                };
+            }
+            return product;
+        });
+
+        form.setValues({
+            products: updatedProducts,
+        });
+    };
 
     const copyDetailsToAllAttendees = () => {
         if (!products) {
@@ -184,6 +211,22 @@ export const CollectInformation = () => {
 
         return formOrderQuestions;
     }
+
+    form.watch("order.first_name",({value})=>{
+        if(copyToAttendees) {
+            copyFieldToAllAttendees({fieldName: "first_name", updatedValue: value})
+        }
+    })
+    form.watch("order.last_name",({value})=>{
+        if(copyToAttendees) {
+            copyFieldToAllAttendees({fieldName: "last_name", updatedValue: value})
+        }
+    })
+    form.watch("order.email",({value})=>{
+        if(copyToAttendees) {
+            copyFieldToAllAttendees({fieldName: "email", updatedValue: value})
+        }
+    })
 
     const handleSubmit = (values: any) => {
         mutation.mutate(values);
@@ -301,10 +344,16 @@ export const CollectInformation = () => {
                     />
 
                     {orderRequiresAttendeeDetails && (
-                        <Button p={0} ml={0} size={'sm'} variant={'transparent'} leftSection={<IconCopy size={14}/>}
-                                onClick={copyDetailsToAllAttendees}>
-                            {t`Copy details to all attendees`}
-                        </Button>
+                        <Checkbox
+                            checked={copyToAttendees}
+                            onChange={(event) => {
+                                setCopyToAttendees(event.currentTarget.checked);
+                                if(event.currentTarget.checked) {
+                                    copyDetailsToAllAttendees()
+                                }
+                            }}
+                            label={t`Copy to Attendees`}
+                        />
                     )}
 
                     {requireBillingAddress && (
