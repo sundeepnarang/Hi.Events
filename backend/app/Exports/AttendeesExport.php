@@ -46,7 +46,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
 
     public function headings(): array
     {
-        $questionTitles = $this->productQuestions->map(fn($question) => $question->getTitle())->toArray();
+        $productQuestionTitles = $this->productQuestions->map(fn($question) => $question->getTitle())->toArray();
         $orderQuestionsTitles = $this->orderQuestions->map(fn($orderQuestion) => $orderQuestion->getTitle())->toArray();
 
         return array_merge([
@@ -65,7 +65,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             __('Created Date'),
             __('Last Updated Date'),
             __('Notes'),
-        ], $questionTitles, $orderQuestionsTitles);
+        ], $productQuestionTitles, $orderQuestionsTitles);
     }
 
     /**
@@ -76,7 +76,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
     {
 
         $productAnswers = $this->productQuestions->map(function (QuestionDomainObject $question) use ($attendee) {
-           $answer = $attendee->getQuestionAndAnswerViews()
+            $answer = $attendee->getQuestionAndAnswerViews()
                 ->first(fn($qav) => $qav->getQuestionId() === $question->getId())?->getAnswer() ?? '';
 
             return $this->questionAnswerFormatter->getAnswerAsText(

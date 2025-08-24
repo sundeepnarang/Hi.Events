@@ -60,7 +60,7 @@ class ExportAttendeesAction extends BaseAction
             ))
             ->findByEventIdForExport($eventId);
 
-        $questions = $this->questionRepository->findWhere([
+        $productQuestions = $this->questionRepository->findWhere([
             'event_id' => $eventId,
             'belongs_to' => QuestionBelongsTo::PRODUCT->name,
         ]);
@@ -71,7 +71,7 @@ class ExportAttendeesAction extends BaseAction
         ]);
 
         return Excel::download(
-            $this->export->withData($attendees, $questions, $orderQuestions),
+            $this->export->withData($attendees, $productQuestions, $orderQuestions),
             'attendees.xlsx'
         );
     }
