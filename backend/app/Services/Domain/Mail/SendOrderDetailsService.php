@@ -44,7 +44,7 @@ class SendOrderDetailsService
 
         if ($order->isOrderCompleted() || $order->isOrderAwaitingOfflinePayment()) {
             $this->sendOrderSummaryEmails($order, $event);
-//            $this->sendAttendeeTicketEmails($order, $event);
+            $this->sendAttendeeTicketEmails($order, $event);
         }
 
         if ($order->isOrderFailed()) {
