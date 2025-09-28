@@ -7,6 +7,7 @@ namespace HiEvents\Repository\Eloquent;
 use HiEvents\DomainObjects\AccountDomainObject;
 use HiEvents\Models\Account;
 use HiEvents\Repository\Interfaces\AccountRepositoryInterface;
+use \Illuminate\Support\Collection;
 
 class AccountRepository extends BaseRepository implements AccountRepositoryInterface
 {
@@ -29,5 +30,12 @@ class AccountRepository extends BaseRepository implements AccountRepositoryInter
             ->first();
 
         return $this->handleSingleResult($account, AccountDomainObject::class);
+    }
+
+    public function findAllAccounts(): Collection
+    {
+        return $this->all()->map(function (Account $account) {
+            return $this->handleSingleResult($account, AccountDomainObject::class);
+        });
     }
 }

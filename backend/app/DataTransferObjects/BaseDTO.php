@@ -84,7 +84,7 @@ abstract class BaseDTO
 
                 if (is_array($data[$propertyName])) {
                     $data[$propertyName] = collect($data[$propertyName])
-                        ->map(fn($item) => $classType::fromArray((array)$item));
+                        ->  map(fn($item) => $classType::fromArray((array)$item));
                 }
             }
         }
