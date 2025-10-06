@@ -15,7 +15,8 @@ enum Locale: string
     case NL = 'nl';
     case HU = 'hu';
     case ES = 'es';
-    case PT = 'pt';
+    case ES = 'es';
+    case JA = 'ja';
     case PT_BR = 'pt-br';
     case ZH_CN = 'zh-cn';
 

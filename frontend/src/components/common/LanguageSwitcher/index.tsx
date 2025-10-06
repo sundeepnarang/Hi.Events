@@ -22,6 +22,8 @@ export const LanguageSwitcher = () => {
                 return t`French`;
             case "it":
                 return t`Italian`;
+            case "ja":
+                return t`Japanese`;
             case "nl":
                 return t`Dutch`;
             case "pt":
