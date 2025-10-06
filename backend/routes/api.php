@@ -1,9 +1,7 @@
 <?php
 
 use HiEvents\Http\Actions\Accounts\CreateAccountAction;
-use HiEvents\Http\Actions\Accounts\CreateEmptyAccountAction;
 use HiEvents\Http\Actions\Accounts\GetAccountAction;
-use HiEvents\Http\Actions\Accounts\GetAccountsAction;
 use HiEvents\Http\Actions\Accounts\Stripe\CreateStripeConnectAccountAction;
 use HiEvents\Http\Actions\Accounts\UpdateAccountAction;
 use HiEvents\Http\Actions\Affiliates\CreateAffiliateAction;
@@ -130,7 +128,6 @@ use HiEvents\Http\Actions\Users\ConfirmEmailAddressAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailChangeAction;
 use HiEvents\Http\Actions\Users\ConfirmEmailWithCodeAction;
 use HiEvents\Http\Actions\Users\CreateUserAction;
-use HiEvents\Http\Actions\Users\CreateUserInAccountAction;
 use HiEvents\Http\Actions\Users\DeleteInvitationAction;
 use HiEvents\Http\Actions\Users\GetMeAction;
 use HiEvents\Http\Actions\Users\GetUserAction;
@@ -145,7 +142,6 @@ use HiEvents\Http\Actions\Webhooks\EditWebhookAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhookAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhookLogsAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhooksAction;
-use HiEvents\Http\Middleware\EnsureTokenIsValid;
 use Illuminate\Routing\Router;
 
 /** @var Router|Router $router */
@@ -166,19 +162,6 @@ $router->prefix('/auth')->group(
         // Reset Passwords
         $router->get('/reset-password/{reset_token}', ValidateResetPasswordTokenAction::class)->name('auth.validate-reset-password-token');
         $router->post('/reset-password/{reset_token}', ResetPasswordAction::class)->name('auth.reset-password');
-    }
-);
-
-
-/**
- * Admin routes
- */
-$router->middleware(EnsureTokenIsValid::class)->prefix('/admin')->group(
-    function (Router $router): void {
-        $router->post('/register', CreateAccountAction::class);
-        $router->get('/accounts', GetAccountsAction::class);
-        $router->post('/ ', CreateEmptyAccountAction::class);
-        $router->post('/users', CreateUserInAccountAction::class);
     }
 );
 
