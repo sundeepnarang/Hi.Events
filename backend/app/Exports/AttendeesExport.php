@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
+use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
 use HiEvents\DomainObjects\QuestionDomainObject;
-use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\Resources\Attendee\AttendeeResource;
 use HiEvents\Services\Domain\Question\QuestionAnswerFormatter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -55,8 +55,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             __('Last Name'),
             __('Email'),
             __('Status'),
-            __('Is Checked In'),
-            __('Checked In At'),
+            __('Check Ins'),
             __('Product ID'),
             __('Product Name'),
             __('Event ID'),
@@ -74,7 +73,6 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
      */
     public function map($attendee): array
     {
-
         $productAnswers = $this->productQuestions->map(function (QuestionDomainObject $question) use ($attendee) {
             $answer = $attendee->getQuestionAndAnswerViews()
                 ->first(fn($qav) => $qav->getQuestionId() === $question->getId())?->getAnswer() ?? '';
@@ -85,10 +83,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             );
         });
 
-
-
         $orderAnswers = $this->orderQuestions->map(function (QuestionDomainObject $question) use ($attendee) {
-
             /** @var OrderDomainObject $order */
             $order = $attendee->getOrder();
             $answer = $order->getQuestionAndAnswerViews()
@@ -110,16 +105,23 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
                     ->getLabel();
         }
 
+        $checkIns = $attendee->getCheckIns()
+            ? $attendee->getCheckIns()
+                ->map(fn($checkIn) => sprintf(
+                    '%s (%s)',
+                    $checkIn->getCheckInList()?->getName() ?? __('Unknown'),
+                    Carbon::parse($checkIn->getCreatedAt())->format('Y-m-d H:i:s')
+                ))
+                ->join(', ')
+            : '';
+
         return array_merge([
             $attendee->getId(),
             $attendee->getFirstName(),
             $attendee->getLastName(),
             $attendee->getEmail(),
             $attendee->getStatus(),
-            $attendee->getCheckIn() ? 'Yes' : 'No',
-            $attendee->getCheckIn()
-                ? Carbon::parse($attendee->getCheckIn()->getCreatedAt())->format('Y-m-d H:i:s')
-                : '',
+            $checkIns,
             $attendee->getProductId(),
             $ticketName,
             $attendee->getEventId(),
