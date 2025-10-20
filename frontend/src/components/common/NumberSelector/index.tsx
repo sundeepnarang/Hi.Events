@@ -38,7 +38,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
 
     const increment = () => {
         // Adjust from 1 to minValue on the first increment, if minValue is greater than 1
-        if (value === 1 && minValue > 1) {
+        if (value === 0 && minValue > 1) {
             // If incrementing from 1, we have a few scenarios:
             // 1. If there is sufficient quantity, increment to the minValue
             // 2. If there is insufficient quantity to reach minValue, increment to the remaining quantity
@@ -60,7 +60,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
             setValue(prevValue => prevValue + sharedVals.changeValue(-1));
         } else {
             sharedVals.changeValue(-value)
-            setValue(1);
+            setValue(0);
         }
     };
 
