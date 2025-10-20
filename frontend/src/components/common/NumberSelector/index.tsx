@@ -16,8 +16,8 @@ interface NumberSelectorProps extends TextInputProps {
 
 export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}: NumberSelectorProps) => {
     const handlers = useRef<NumberInputHandlers>(null);
-    // Start with 0, ensuring it's treated as number for consistency
-    const [value, setValue] = useState<number>(0);
+    // Start with 1, ensuring it's treated as number for consistency
+    const [value, setValue] = useState<number>(1);
 
     const minValue = min || 0;
     const maxValue = max || 100;
@@ -37,9 +37,9 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
     }, [formInstance.values]);
 
     const increment = () => {
-        // Adjust from 0 to minValue on the first increment, if minValue is greater than 0
-        if (value === 0 && minValue > 1) {
-            // If incrementing from 0, we have a few scenarios:
+        // Adjust from 1 to minValue on the first increment, if minValue is greater than 1
+        if (value === 1 && minValue > 1) {
+            // If incrementing from 1, we have a few scenarios:
             // 1. If there is sufficient quantity, increment to the minValue
             // 2. If there is insufficient quantity to reach minValue, increment to the remaining quantity
             // 3. If another NumberSelector is sharing this NumberSelector's SharedValues, and the amount
@@ -60,7 +60,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
             setValue(prevValue => prevValue + sharedVals.changeValue(-1));
         } else {
             sharedVals.changeValue(-value)
-            setValue(0);
+            setValue(1);
         }
     };
 
