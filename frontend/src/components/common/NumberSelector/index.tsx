@@ -37,9 +37,9 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
     }, [formInstance.values]);
 
     const increment = () => {
-        // Adjust from 1 to minValue on the first increment, if minValue is greater than 1
+        // Adjust from 0 to minValue on the first increment, if minValue is greater than 0
         if (value === 0 && minValue > 1) {
-            // If incrementing from 1, we have a few scenarios:
+            // If incrementing from 0, we have a few scenarios:
             // 1. If there is sufficient quantity, increment to the minValue
             // 2. If there is insufficient quantity to reach minValue, increment to the remaining quantity
             // 3. If another NumberSelector is sharing this NumberSelector's SharedValues, and the amount
@@ -55,8 +55,8 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
     };
 
     const decrement = () => {
-        // Ensure decrement does not bring the current shared value between 0 and minValue
-        if (sharedVals.currentValue > minValue) {
+        // Ensure decrement does not bring the current shared value between 0 and minValue, except when minValue is 1
+        if (sharedVals.currentValue > minValue || (sharedVals === minValue && minValue === 1)) {
             setValue(prevValue => prevValue + sharedVals.changeValue(-1));
         } else {
             sharedVals.changeValue(-value)
