@@ -1464,7 +1464,7 @@ msgstr "アフィリエイトを作成"
 
 #: src/components/routes/auth/Register/index.tsx:70
 msgid "Create an account or <0>{0}</0> to get started"
-msgstr "アカウントを作成するか、<0>{0></0> して始めましょう"
+msgstr "アカウントを作成するか、<0>{0}</0> して始めましょう"
 
 #: src/components/modals/CreateEventModal/index.tsx:167
 msgid "create an organizer"
@@ -4759,7 +4759,7 @@ msgstr "送信"
 
 #: src/components/modals/SendMessageModal/index.tsx:260
 msgid "Send a copy to <0>{0}</0>"
-msgstr "コピーを <0>{0></0> に送信"
+msgstr "コピーを <0>{0}</0> に送信"
 
 #: src/components/modals/SendMessageModal/index.tsx:140
 msgid "Send a message"
@@ -6286,7 +6286,7 @@ msgstr "このチケットはすでにスキャンされています"
 
 #: src/components/routes/profile/ConfirmEmailChange/index.tsx:53
 msgid "You are changing your email to <0>{0}</0>."
-msgstr "メールアドレスを <0>{0></0> に変更します。"
+msgstr "メールアドレスを <0>{0}</0> に変更します。"
 
 #: src/components/layouts/CheckIn/index.tsx:88
 #: src/components/layouts/CheckIn/index.tsx:110
@@ -6433,7 +6433,7 @@ msgstr "あなたのメールアドレス"
 
 #: src/components/routes/profile/ManageProfile/index.tsx:118
 msgid "Your email request change to <0>{0}</0> is pending. Please check your email to confirm"
-msgstr "<0>{0></0> へのメール変更リクエストは保留中です。確認のためメールをご確認ください。"
+msgstr "<0>{0}</0> へのメール変更リクエストは保留中です。確認のためメールをご確認ください。"
 
 #: src/components/routes/event/EventDashboard/index.tsx:150
 msgid "Your event must be live before you can sell tickets to attendees."
