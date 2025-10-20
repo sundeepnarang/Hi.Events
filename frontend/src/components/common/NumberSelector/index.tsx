@@ -55,8 +55,8 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
     };
 
     const decrement = () => {
-        // Ensure decrement does not bring the current shared value between 0 and minValue, except when minValue is 1
-        if (sharedVals.currentValue > minValue || (sharedVals === minValue && minValue === 1)) {
+        // Ensure decrement does not bring the current shared value between 0 and minValue
+        if (sharedVals.currentValue > minValue) {
             setValue(prevValue => prevValue + sharedVals.changeValue(-1));
         } else {
             sharedVals.changeValue(-value)
@@ -153,7 +153,7 @@ export class SharedValues {
 
     constructor(sharedMax: number) {
         this.sharedMax = sharedMax;
-        this.currentValue = 0;
+        this.currentValue = 1;
     }
 
     get quantityRemaining() {
