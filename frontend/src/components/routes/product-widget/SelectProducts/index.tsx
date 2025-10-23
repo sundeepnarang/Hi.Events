@@ -341,7 +341,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                 fontWeight: '600',
                                 color: props.colors?.primaryText || 'inherit'
                             }}>
-                                {t`You are now registered`}
+                                {t`You are now registered! You will receive registration confirmation via email!`}
                             </h3>
 
 

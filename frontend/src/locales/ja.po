@@ -4586,8 +4586,8 @@ msgid "Please continue in the new tab"
 msgstr "新しいタブで続行してください"
 
 #: src/components/routes/product-widget/SelectProducts/index.tsx:344
-msgid "You are now registered"
-msgstr "登録が完了しました"
+msgid "You are now registered! You will receive registration confirmation via email!"
+msgstr "登録が完了しました。登録確認メールが届きます。"
 
 #: src/components/modals/CreateCapacityAssignmentModal/index.tsx:47
 msgid "Please create a product"
