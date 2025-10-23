@@ -341,23 +341,12 @@ const SelectProducts = (props: SelectProductsProps) => {
                                 fontWeight: '600',
                                 color: props.colors?.primaryText || 'inherit'
                             }}>
-                                {t`Please continue in the new tab`}
+                                {t`You are now registered`}
                             </h3>
 
-                            <p style={{
-                                margin: '0 0 20px 0',
-                                fontSize: '15px',
-                                lineHeight: '1.5',
-                                color: props.colors?.primaryText || 'inherit'
-                            }}>
-                                {t`If a new tab did not open automatically, please click the button below to continue to checkout.`}
-                            </p>
 
                             <Button
-                                component="a"
-                                href={'/checkout/' + eventId + '/' + productMutation.data?.data.short_id + '/details' + '?session_identifier=' + productMutation.data?.data.session_identifier}
-                                target={'_blank'}
-                                rel={'noopener noreferrer'}
+                                onClick={() => setOrderInProcessOverlayVisible(false)}
                                 fullWidth
                                 size="md"
                                 styles={{
@@ -372,13 +361,25 @@ const SelectProducts = (props: SelectProductsProps) => {
                                     }
                                 }}
                             >
-                                {t`Continue to Checkout`}
+                                {t`Close`}
                             </Button>
 
+                            <p style={{
+                                margin: '0 0 20px 0',
+                                fontSize: '15px',
+                                lineHeight: '1.5',
+                                color: props.colors?.primaryText || 'inherit'
+                            }}>
+                                {t`If a new tab did not open automatically, please click the button below to continue to checkout.`}
+                                <a></a>
+                            </p>
+
+
                             <Button
-                                onClick={() => setOrderInProcessOverlayVisible(false)}
+                                component="a"
+
                                 variant={'subtle'}
-                                size={'sm'}
+                                size={'xs'}
                                 styles={{
                                     root: {
                                         color: props.colors?.primaryText || '#228be6',
@@ -389,7 +390,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                     }
                                 }}
                             >
-                                {t`Dismiss this message`}
+                                {t`Continue to Checkout`}
                             </Button>
                         </div>
                     </div>
