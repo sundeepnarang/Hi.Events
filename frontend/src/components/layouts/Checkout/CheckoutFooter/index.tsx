@@ -1,4 +1,4 @@
-import {ActionIcon, Button} from "@mantine/core";
+import {ActionIcon, Button, Checkbox} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {IconShoppingCartDown, IconShoppingCartUp} from "@tabler/icons-react";
 import classes from "./CheckoutFooter.module.scss";
@@ -18,14 +18,22 @@ interface ContinueButtonProps {
 
 export const CheckoutFooter = ({isLoading, buttonContent, event, order, onClick, isOrderComplete = false}: ContinueButtonProps) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const [checked, setChecked] = useState(true);
     return (
         <>
             {isSidebarOpen && <div className={classes.overlay} onClick={() => setIsSidebarOpen(false)}/>}
 
             <div className={classNames(classes.footer, isOrderComplete ? classes.orderComplete : '')}>
                 {isSidebarOpen && <CheckoutSidebar event={event} order={order} className={classes.sidebar}/>}
-
+                {!isOrderComplete && (
+                    <div className={classes.buttons}>
+                        <Checkbox
+                            checked={checked}
+                            onChange={(event) => setChecked(event.currentTarget.checked)}
+                            label={t`I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with Science of Spirituality’s Privacy Policy and Terms of Use. I agree to receive updates and communications related to this event and understand that I may opt out anytime.`}
+                        />
+                    </div>
+                )}
                 <div className={classes.buttons}>
                     {!isOrderComplete && (
                         <Button
@@ -34,6 +42,7 @@ export const CheckoutFooter = ({isLoading, buttonContent, event, order, onClick,
                             size="md"
                             type="submit"
                             onClick={onClick}
+                            disabled={!checked}
                         >
                             {buttonContent || t`Continue`}
                         </Button>

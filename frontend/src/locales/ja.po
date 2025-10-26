@@ -1284,6 +1284,13 @@ msgid "Comma seperated keywords that describe the event. These will be used by s
 msgstr "イベントを説明するキーワードをカンマで区切って入力します。検索エンジンがイベントを分類し、インデックスを作成する際に使用されます。"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:503
+msgid "I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with Science of Spirituality’s Privacy Policy and Terms of Use. I agree to receive updates and communications related to this event and understand that I may opt out anytime."
+msgstr "私は18歳であり、Science of Spiritualityのプライバシーポリシーおよび利用規約に従い、この登録のために私の情報が収集および使用されることに同意します。
+        このイベントに関する最新情報や連絡を受け取ることに同意し、いつでもオプトアウトできることを理解しています。
+        私は18歳であり、Science of Spiritualityのプライバシーポリシーおよび利用規約に従い、この登録のために私の情報が収集および使用されることに同意します。
+        このイベントに関する最新情報や連絡を受け取ることに同意し、いつでもオプトアウトできることを理解しています。"
+
+#: src/components/routes/product-widget/CollectInformation/index.tsx:503
 msgid "Complete Order"
 msgstr "注文を完了する"
 
