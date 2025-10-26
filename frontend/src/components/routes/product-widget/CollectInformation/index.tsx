@@ -8,7 +8,7 @@ import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
 import {useGetEventPublic} from "../../../../queries/useGetEventPublic.ts";
 import {useGetEventQuestionsPublic} from "../../../../queries/useGetEventQuestionsPublic.ts";
 import {CheckoutOrderQuestions, CheckoutProductQuestions} from "../../../common/CheckoutQuestion";
-import {Event, IdParam, Order, Question} from "../../../../types.ts";
+import {Event, IdParam, Order, Question, QuestionAnswer} from "../../../../types.ts";
 import {useEffect, useState} from "react";
 import {t} from "@lingui/macro";
 import {InputGroup} from "../../../common/InputGroup";
@@ -503,6 +503,7 @@ export const CollectInformation = () => {
                 ) : t`Complete Order`}
                 event={event as Event}
                 order={order as Order}
+                orderQuestions = {orderQuestions as Question[]}
             />
         </form>
     );

@@ -2,21 +2,28 @@ import {ActionIcon, Button, Checkbox} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {IconShoppingCartDown, IconShoppingCartUp} from "@tabler/icons-react";
 import classes from "./CheckoutFooter.module.scss";
-import {Event, Order} from "../../../../types.ts";
+import {Event, Order, Question} from "../../../../types.ts";
 import {CheckoutSidebar} from "../CheckoutSidebar";
 import {ReactNode, useState} from "react";
 import classNames from "classnames";
+
+const REQUIRED_CONSENT_QUESTION_TITLE = `Required Consent`;
 
 interface ContinueButtonProps {
     isLoading: boolean;
     buttonContent?: ReactNode;
     order: Order;
     event: Event;
+    orderQuestions: Question[];
     isOrderComplete?: boolean;
     onClick?: () => void;
 }
 
-export const CheckoutFooter = ({isLoading, buttonContent, event, order, onClick, isOrderComplete = false}: ContinueButtonProps) => {
+export const CheckoutFooter = ({isLoading, buttonContent, event, order, orderQuestions, onClick, isOrderComplete = false}: ContinueButtonProps) => {
+    console.log("event: ", event);
+    console.log("order: ",order);
+    console.log("orderQuestions: ",orderQuestions);
+    const hasRequiredConsent = orderQuestions.some(d=>d.title==REQUIRED_CONSENT_QUESTION_TITLE);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [checked, setChecked] = useState(true);
     return (
@@ -25,7 +32,7 @@ export const CheckoutFooter = ({isLoading, buttonContent, event, order, onClick,
 
             <div className={classNames(classes.footer, isOrderComplete ? classes.orderComplete : '')}>
                 {isSidebarOpen && <CheckoutSidebar event={event} order={order} className={classes.sidebar}/>}
-                {!isOrderComplete && (
+                {!isOrderComplete && !hasRequiredConsent && (
                     <div className={classes.buttons}>
                         <Checkbox
                             checked={checked}
