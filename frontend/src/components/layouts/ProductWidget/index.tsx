@@ -44,7 +44,7 @@ const ProductWidget = () => {
     return (
         <div className={'full-height'} style={{backgroundColor: settings.colors.bodyBackground}}>
             <SelectProducts
-                widgetMode={'embedded'}
+                widgetMode={'normal'}
                 event={eventQuery.data}
                 colors={settings.colors}
                 continueButtonText={settings.continueButtonText}
