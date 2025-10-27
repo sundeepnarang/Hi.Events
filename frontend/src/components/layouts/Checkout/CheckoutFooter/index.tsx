@@ -23,7 +23,7 @@ export const CheckoutFooter = ({isLoading, buttonContent, event, order, orderQue
     console.log("event: ", event);
     console.log("order: ",order);
     console.log("orderQuestions: ",orderQuestions);
-    const hasRequiredConsent = orderQuestions.some(d=>d.title==REQUIRED_CONSENT_QUESTION_TITLE);
+    const hasRequiredConsent = orderQuestions.filter(d=>d.title==REQUIRED_CONSENT_QUESTION_TITLE).length>0;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [checked, setChecked] = useState(true);
     return (
