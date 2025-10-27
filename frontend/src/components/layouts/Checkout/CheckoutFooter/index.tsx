@@ -20,10 +20,7 @@ interface ContinueButtonProps {
 }
 
 export const CheckoutFooter = ({isLoading, buttonContent, event, order, orderQuestions, onClick, isOrderComplete = false}: ContinueButtonProps) => {
-    console.log("event: ", event);
-    console.log("order: ",order);
-    console.log("orderQuestions: ",orderQuestions);
-    const hasRequiredConsent = orderQuestions.filter(d=>d.title==REQUIRED_CONSENT_QUESTION_TITLE).length>0;
+    const hasRequiredConsent = orderQuestions?.filter(d=>d.title==REQUIRED_CONSENT_QUESTION_TITLE).length>0;
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [checked, setChecked] = useState(true);
     return (
