@@ -42,6 +42,7 @@
             iframe.setAttribute('title', 'Event Widget');
             iframe.style.border = 'none';
             iframe.style.width = '100%';
+            iframe.style.height = '100%';
 
             const iframeId = `hievents-iframe-${index}`;
             iframe.id = iframeId;
@@ -71,7 +72,7 @@
                     if (type === 'resize' && height && messageIframeId === iframeId) {
                         const targetIframe = document.getElementById(messageIframeId);
                         if (targetIframe) {
-                            targetIframe.style.height = `${height}px`;
+                            targetIframe.style.minHeight = `${height}px`;
                         }
                     }
                 });
