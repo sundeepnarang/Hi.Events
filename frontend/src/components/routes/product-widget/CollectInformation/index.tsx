@@ -345,7 +345,6 @@ export const CollectInformation = () => {
 
                     {orderRequiresAttendeeDetails && (
                         <Checkbox
-                            style={{"display":"none"}}
                             checked={copyToAttendees}
                             onChange={(event) => {
                                 setCopyToAttendees(event.currentTarget.checked);

@@ -1,4 +1,4 @@
-import {ActionIcon, Button, Checkbox} from "@mantine/core";
+import {ActionIcon, Button, Checkbox, Spoiler} from "@mantine/core";
 import {t} from "@lingui/macro";
 import {IconShoppingCartDown, IconShoppingCartUp} from "@tabler/icons-react";
 import classes from "./CheckoutFooter.module.scss";
@@ -34,7 +34,13 @@ export const CheckoutFooter = ({isLoading, buttonContent, event, order, orderQue
                         <Checkbox
                             checked={checked}
                             onChange={(event) => setChecked(event.currentTarget.checked)}
-                            label={t`I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with Science of Spirituality’s Privacy Policy and Terms of Use. I agree to receive updates and communications related to this event and understand that I may opt out anytime.`}
+                            label={ <Spoiler
+                                maxHeight={20}
+                                showLabel="Show more"
+                                hideLabel="Hide"
+                                transitionDuration={300}
+                            >{t`I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with Science of Spirituality’s Privacy Policy and Terms of Use. I agree to receive updates and communications related to this event and understand that I may opt out anytime.`}</Spoiler>}
+
                         />
                     </div>
                 )}
