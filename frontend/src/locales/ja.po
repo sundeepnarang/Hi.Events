@@ -1565,7 +1565,7 @@ msgstr "このリンクをコピーしてどこでも共有できます"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:356
 msgid "Copy to Attendees"
-msgstr ""
+msgstr "出席者にコピーします。"
 
 #: src/components/modals/ShareModal/index.tsx:248
 msgid "Copy to clipboard"
