@@ -5,7 +5,7 @@ import {t} from "@lingui/macro";
 import {Countdown} from "../../common/Countdown";
 import {CheckoutSidebar} from "./CheckoutSidebar";
 import {ActionIcon, Button, Group, Modal, Tooltip} from "@mantine/core";
-import {IconArrowLeft, IconPrinter, IconReceipt} from "@tabler/icons-react";
+import {IconArrowLeft, IconX, IconPrinter, IconReceipt} from "@tabler/icons-react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {AddToEventCalendarButton} from "../../common/AddEventToCalendarButton";
@@ -85,6 +85,7 @@ const Checkout = () => {
                                         <Button
                                             title={t`Close popup window and return to event page.`}
                                             onClick={handlePopClose}
+                                            leftSection={<IconX size={20}/>}
                                         >
                                             {!isMobile && t`Close`}
                                         </Button>
