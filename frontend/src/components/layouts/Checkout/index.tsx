@@ -10,7 +10,7 @@ import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {AddToEventCalendarButton} from "../../common/AddEventToCalendarButton";
 import {useMediaQuery} from "@mantine/hooks";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Invoice} from "../../../types.ts";
 import {orderClientPublic} from "../../../api/order.client.ts";
 import {downloadBinary} from "../../../utilites/download.ts";
@@ -26,6 +26,16 @@ const Checkout = () => {
     const orderIsAwaitingOfflinePayment = order?.status === 'AWAITING_OFFLINE_PAYMENT';
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [isExpired, setIsExpired] = useState(false);
+    const [inIframe, setInIframe] = useState(false);
+
+    useEffect(() => {
+        try {
+            setInIframe(window.self !== window.top);
+        } catch {
+            setInIframe(true);
+        }
+    }, []);
+
     const orderHasAttendees = order?.attendees && order.attendees.length > 0;
 
     const handleExpiry = () => {
@@ -35,6 +45,10 @@ const Checkout = () => {
     const handleReturn = () => {
         navigate(`/event/${event?.id}/${event?.slug}`);
     };
+
+    const handlePopClose = () => {
+        window?.parent?.postMessage({ type: 'REGISTRATION_COMPLETE' }, '*');
+    }
 
     const handleInvoiceDownload = async (invoice: Invoice) => {
         await withLoadingNotification(
@@ -67,15 +81,25 @@ const Checkout = () => {
                         {(event) && (
                             <div className={classes.actionBar}>
                                 <Group justify="space-between" wrap="nowrap">
-                                    <Button
-                                        title={t`Back to event page`}
-                                        component={NavLink}
-                                        variant="subtle"
-                                        leftSection={<IconArrowLeft size={20}/>}
-                                        to={eventHomepageUrl(event)}
-                                    >
-                                        {!isMobile && t`Event Homepage`}
-                                    </Button>
+                                    {inIframe && (
+                                        <Button
+                                            title={t`Close popup window and return to event page.`}
+                                            onClick={handlePopClose}
+                                        >
+                                            {!isMobile && t`Close`}
+                                        </Button>
+                                    )}
+                                    {!inIframe && (
+                                        <Button
+                                            title={t`Back to event page`}
+                                            component={NavLink}
+                                            variant="subtle"
+                                            leftSection={<IconArrowLeft size={20}/>}
+                                            to={eventHomepageUrl(event)}
+                                        >
+                                            {!isMobile && t`Event Homepage`}
+                                        </Button>
+                                    )}
 
                                     <span className={classes.title}>
                                         {order.status === 'RESERVED' && t`Checkout`}
