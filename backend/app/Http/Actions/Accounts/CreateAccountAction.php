@@ -21,6 +21,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 class CreateAccountAction extends BaseAuthAction
 {
@@ -38,6 +39,7 @@ class CreateAccountAction extends BaseAuthAction
      */
     public function __invoke(CreateAccountRequest $request): JsonResponse
     {
+        Log::debug("Creating account : $request");
         try {
             $accountData = $this->createAccountHandler->handle(CreateAccountDTO::fromArray([
                 'first_name' => $request->validated('first_name'),
