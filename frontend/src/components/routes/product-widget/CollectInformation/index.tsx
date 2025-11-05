@@ -21,6 +21,7 @@ import {eventCheckoutPath, eventHomepagePath} from "../../../../utilites/urlHelp
 import {formatCurrency} from "../../../../utilites/currency.ts";
 import {showInfo} from "../../../../utilites/notifications.tsx";
 import countries from "../../../../../data/countries.json";
+import {trackMetaPixel} from "../../../../utilites/metaPixel.ts";
 
 const LoadingSkeleton = () =>
     (
@@ -140,6 +141,7 @@ export const CollectInformation = () => {
 
         onSuccess: (data) => {
             const nextPage = order?.is_payment_required ? 'payment' : 'summary';
+            trackMetaPixel(`Complete registration`, {eventId: eventId, eventName: event?.title});
             navigate(eventCheckoutPath(eventId, data.data.short_id, nextPage));
         },
 
