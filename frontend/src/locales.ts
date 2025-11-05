@@ -11,7 +11,6 @@ export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     fr: '🇫🇷',
     it: '🇮🇹',
     nl: '🇳🇱',
-	hu: '🇭🇺',
     pt: '🇵🇹',
     es: '🇪🇸',
     "zh-cn": '🇨🇳',
@@ -19,6 +18,7 @@ export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     "pt-br": '🇧🇷',
     vi: '🇻🇳',
     tr: '🇹🇷',
+    hu: '🇭🇺',
 };
 
 export const localeToNameMap: Record<SupportedLocales, string> = {
@@ -27,7 +27,6 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     fr: `French`,
     it: `Italian`,
     nl: `Dutch`,
-	hu: `Hungarian`,
     ja: `Japanese`,
     pt: `Portuguese`,
     es: `Spanish`,
@@ -36,6 +35,7 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     "pt-br": `Portuguese (Brazil)`,
     vi: `Vietnamese`,
     tr: `Turkish`,
+    hu: `Hungarian`,
 };
 
 export const getLocaleName = (locale: SupportedLocales) => {
@@ -67,7 +67,8 @@ export async function dynamicActivateLocale(locale: string) {
         i18n.load(locale, module.messages);
         i18n.activate(locale);
     } catch (error) {
-        i18n.activate("en");
+        console.error("Error loading locale:", error);
+        // i18n.activate("en");
     }
 }
 
