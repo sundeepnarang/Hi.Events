@@ -36,5 +36,5 @@ export const trackMetaPixel = (eventName: string, eventData: any) => {
         console.log("Meta Pixel not initialized")
         return;
     }
-    (window as any).fbq("track", eventName, eventData);
+    (window as any).fbq("trackCustom", eventName, eventData);
 };

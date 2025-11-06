@@ -73,6 +73,10 @@ const Checkout = () => {
     };
 
     const handlePopClose = () => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+
         window?.parent?.postMessage({ type: 'REGISTRATION_COMPLETE' }, '*');
     }
 
