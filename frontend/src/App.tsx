@@ -84,6 +84,9 @@ export const App: FC<
                                               type="image/svg+xml"
                                               href={getConfig("VITE_APP_FAVICON", "/favicon.svg")}
                                         />
+                                        <link rel="icon" href="/cropped-alternate-icon-32x32.jpg" sizes="32x32" />
+                                        <link rel="icon" href="/cropped-alternate-icon-192x192.jpg" sizes="192x192" />
+                                        <link rel="apple-touch-icon" href="/cropped-alternate-icon-180x180.jpg" />
                                     </Helmet>
                                     {props.children}
                                 </ModalsProvider>
