@@ -11,6 +11,16 @@ $breakpoints: (
         'xxl': 1440px,
 );
 
+@mixin ios-input-fix {
+  @supports (-webkit-touch-callout: none) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+}
+
 // Option to specify if the query should be a container query
 @mixin respond-above($breakpoint, $container-query: false) {
   @if map.has-key($breakpoints, $breakpoint) {

@@ -6,6 +6,8 @@
   overflow-y: auto;
   padding: 20px 60px;
 
+@include mixins.ios-input-fix();
+
   @include mixins.scrollbar();
 
   &.hasFooter {
