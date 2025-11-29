@@ -66,7 +66,7 @@ const CheckIn = () => {
     const queryFilters: QueryFilters = {
         pageNumber: 1,
         query: searchQueryDebounced,
-        perPage: 150,
+        perPage: 1000,
         filterFields: {
             status: {operator: QueryFilterOperator.Equals, value: 'ACTIVE'},
         },
