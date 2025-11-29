@@ -116,13 +116,14 @@ class AttendeeRepository extends BaseRepository implements AttendeeRepositoryInt
             ->join('check_in_lists', 'check_in_lists.id', '=', 'product_check_in_lists.check_in_list_id')
             ->where('check_in_lists.short_id', $shortId)
             ->whereIn('attendees.status',[AttendeeStatus::ACTIVE->name, AttendeeStatus::CANCELLED->name, AttendeeStatus::AWAITING_PAYMENT->name])
-            ->whereIn('orders.status', [OrderStatus::COMPLETED->name, OrderStatus::AWAITING_OFFLINE_PAYMENT->name]);
+            ->whereIn('orders.status', [OrderStatus::COMPLETED->name, OrderStatus::AWAITING_OFFLINE_PAYMENT->name])
+            ->orderBy('attendees.' . AttendeeDomainObjectAbstract::FIRST_NAME, 'asc');
 
         $this->loadRelation(new Relationship(AttendeeCheckInDomainObject::class, name: 'check_ins'));
 
         return $this->simplePaginateWhere(
             where: $where,
-            limit: min($params->per_page, 250),
+            limit: min($params->per_page, 1000),
         );
     }
 }

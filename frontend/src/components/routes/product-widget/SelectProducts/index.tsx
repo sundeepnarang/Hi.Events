@@ -294,7 +294,7 @@ const SelectProducts = (props: SelectProductsProps) => {
     let productIndex = 0;
 
     return (
-        <div className={'hi-product-widget-container'}
+        <div id={'tickets-container'} className={'hi-product-widget-container'}
              ref={resizeRef}
              style={{
                  '--widget-background-color': props.colors?.background,
