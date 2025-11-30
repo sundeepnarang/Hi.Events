@@ -26,7 +26,7 @@ interface RepositoryInterface
     public const DEFAULT_PAGINATE_LIMIT = 20;
 
     /** @var int */
-    public const MAX_PAGINATE_LIMIT = 100;
+    public const MAX_PAGINATE_LIMIT = 1000;
 
     /**
      * Return the FQCL of the domain object associated with this repository
