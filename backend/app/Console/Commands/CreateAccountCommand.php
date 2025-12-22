@@ -27,17 +27,16 @@ class CreateAccountCommand extends Command
     protected $description = 'Create a new account and owner user';
 
     public function __construct(
-        private readonly CreateAccountHandler $createAccountHandler,
-        private readonly LoggerInterface      $logger,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct();
     }
 
-    public function handle(): int
+    public function handle(CreateAccountHandler $handler): int
     {
         $email = strtolower($this->argument('email'));
-        $password = $this->argument('password');
-        $firstName = $this->argument('first_name');
+        $password = (string) $this->argument('password');
+        $firstName = (string) $this->argument('first_name');
 
         // Basic validation (mirrors console password rules)
         if (strlen($password) < 8) {
@@ -58,23 +57,21 @@ class CreateAccountCommand extends Command
         }
 
         try {
-            $account = $this->createAccountHandler->handle(
-                new CreateAccountDTO(
-                    email: $email,
-                    password: $password,
-                    first_name: $firstName,
-                    locale: $this->option('locale') ?? config('app.locale'),
-                    last_name: $this->option('last_name'),
-                    timezone: $this->option('timezone'),
-                    currency_code: $this->option('currency_code'),
-                    invite_token: $this->option('invite_token'),
-                )
-            );
+            $account = $handler->handle(new CreateAccountDTO(
+                email: $email,
+                password: $password,
+                first_name: $firstName,
+                locale: $this->option('locale') ?? config('app.locale'),
+                last_name: $this->option('last_name'),
+                timezone: $this->option('timezone'),
+                currency_code: $this->option('currency_code'),
+                invite_token: $this->option('invite_token'),
+            ));
 
             $this->logger->info('Account created via console command', [
                 'account_id' => $account->getId(),
                 'account_email' => $account->getEmail(),
-                'command' => $this->signature,
+                'command' => $this->getName(),
             ]);
 
             $this->newLine();
