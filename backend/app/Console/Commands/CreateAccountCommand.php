@@ -7,6 +7,7 @@ namespace HiEvents\Console\Commands;
 use Exception;
 use HiEvents\Services\Application\Handlers\Account\CreateAccountHandler;
 use HiEvents\Services\Application\Handlers\Account\DTO\CreateAccountDTO;
+use HiEvents\Services\Application\Handlers\Account\Exceptions\AccountRegistrationDisabledException;
 use Illuminate\Console\Command;
 use Illuminate\Validation\ValidationException;
 use Psr\Log\LoggerInterface;
@@ -22,7 +23,8 @@ class CreateAccountCommand extends Command
         {--timezone= : Account timezone}
         {--currency_code= : Account currency code}
         {--locale= : Locale (e.g. en_US)}
-        {--invite_token= : Encrypted invite token}';
+        {--invite_token= : Encrypted invite token}
+        {--force : Bypass registration disabled checks}';
 
     protected $description = 'Create a new account and owner user';
 
@@ -34,7 +36,7 @@ class CreateAccountCommand extends Command
 
     public function handle(CreateAccountHandler $handler): int
     {
-        $email = strtolower($this->argument('email'));
+        $email = strtolower((string) $this->argument('email'));
         $password = (string) $this->argument('password');
         $firstName = (string) $this->argument('first_name');
 
@@ -44,7 +46,12 @@ class CreateAccountCommand extends Command
             return self::FAILURE;
         }
 
-        $this->info('Account details:');
+        if ($this->option('force')) {
+            config()->set('app.disable_registration', false);
+            $this->warn('⚠ Registration disabled flag bypassed (--force)');
+        }
+
+        $this->info('Account details');
         $this->line("  Email: {$email}");
         $this->line("  Name: {$firstName} {$this->option('last_name')}");
         $this->line("  Timezone: " . ($this->option('timezone') ?? 'default'));
@@ -71,6 +78,7 @@ class CreateAccountCommand extends Command
             $this->logger->info('Account created via console command', [
                 'account_id' => $account->getId(),
                 'account_email' => $account->getEmail(),
+                'forced' => (bool) $this->option('force'),
                 'command' => $this->getName(),
             ]);
 
@@ -81,18 +89,39 @@ class CreateAccountCommand extends Command
             $this->line("  Account Email: {$account->getEmail()}");
 
             return self::SUCCESS;
+
+        } catch (AccountRegistrationDisabledException $e) {
+            $this->error('Account registration is disabled.');
+            $this->line('Use --force to bypass this restriction.');
+
+            $this->logger->error('Account creation blocked by registration disabled flag', [
+                'email' => $email,
+                'exception' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
+            ]);
+
+            return self::FAILURE;
+
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $messages) {
                 foreach ($messages as $message) {
                     $this->error("{$field}: {$message}");
                 }
             }
+
+            $this->logger->error('Account creation validation failed', [
+                'email' => $email,
+                'errors' => $e->errors(),
+                'stacktrace' => $e->getTraceAsString(),
+            ]);
+
         } catch (Throwable $e) {
             $this->error('Failed to create account: ' . $e->getMessage());
 
             $this->logger->error('Account creation failed via console command', [
                 'email' => $email,
                 'error' => $e->getMessage(),
+                'stacktrace' => $e->getTraceAsString(),
             ]);
         }
 
