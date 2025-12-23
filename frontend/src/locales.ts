@@ -1,5 +1,4 @@
 import {i18n} from "@lingui/core";
-import {t} from "@lingui/macro";
 
 export type SupportedLocales = "en" | "de" | "fr" | "hu"| "it" | "ja" | "nl" | "pt" | "es" | "zh-cn" | "pt-br" | "vi" |"zh-hk" | "tr";
 
@@ -39,7 +38,7 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
 };
 
 export const getLocaleName = (locale: SupportedLocales) => {
-    return t`${localeToNameMap[locale]}`
+    return localeToNameMap[locale];
 }
 
 export const getClientLocale = () => {

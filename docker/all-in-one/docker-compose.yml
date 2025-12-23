@@ -9,6 +9,8 @@ services:
       - 9090:80
     volumes:
       - ./storage:/app/backend/storage
+    networks:
+      - hi-events-network
     environment:
       - APP_NAME=${APP_NAME}
       - VITE_FRONTEND_URL=${VITE_FRONTEND_URL}
@@ -16,6 +18,7 @@ services:
       - VITE_API_URL_SERVER=${VITE_API_URL_SERVER}
       - VITE_STRIPE_PUBLISHABLE_KEY=${VITE_STRIPE_PUBLISHABLE_KEY}
       - VITE_META_PIXEL_ID=${VITE_META_PIXEL_ID}
+      - VITE_APP_NAME=${VITE_APP_NAME}
       - LOG_CHANNEL=${LOG_CHANNEL}
       - QUEUE_CONNECTION=${QUEUE_CONNECTION}
       - APP_KEY=${APP_KEY}
@@ -43,10 +46,28 @@ services:
       - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - WEBHOOK_QUEUE_NAME=webhook-queue
 
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - hi-events-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
 
   postgres:
     image: postgres:latest
@@ -54,6 +75,8 @@ services:
     restart: always
     ports:
       - 5432:5432
+    networks:
+      - hi-events-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -66,5 +89,12 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+networks:
+  hi-events-network:
+    driver: bridge
+
 volumes:
   pgdata:
+    driver: local
+  redisdata:
+    driver: local

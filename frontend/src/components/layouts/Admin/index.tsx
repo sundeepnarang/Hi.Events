@@ -1,4 +1,4 @@
-import {IconUsers, IconBuildingBank, IconLayoutDashboard} from "@tabler/icons-react";
+import {IconUsers, IconBuildingBank, IconLayoutDashboard, IconCalendar, IconReceipt, IconSettings, IconChartBar} from "@tabler/icons-react";
 import {t} from "@lingui/macro";
 import {NavItem, BreadcrumbItem} from "../AppLayout/types";
 import AppLayout from "../AppLayout";
@@ -13,6 +13,10 @@ const AdminLayout = () => {
         {link: '', label: t`Dashboard`, icon: IconLayoutDashboard},
         {link: 'accounts', label: t`Accounts`, icon: IconBuildingBank},
         {link: 'users', label: t`Users`, icon: IconUsers},
+        {link: 'events', label: t`Events`, icon: IconCalendar},
+        {link: 'orders', label: t`Orders`, icon: IconReceipt},
+        {link: 'attribution', label: t`UTM Analytics`, icon: IconChartBar},
+        {link: 'configurations', label: t`Configurations`, icon: IconSettings},
     ];
 
     const breadcrumbItems: BreadcrumbItem[] = [

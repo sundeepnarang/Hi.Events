@@ -351,12 +351,13 @@ const SelectProducts = (props: SelectProductsProps) => {
                                 size="md"
                                 styles={{
                                     root: {
-                                        backgroundColor: props.colors?.secondary || '#228be6',
-                                        color: props.colors?.secondaryText || 'white',
+                                        backgroundColor: props.colors?.secondary || 'var(--primary-color, #228be6)',
+                                        color: props.colors?.secondaryText || 'var(--accent-contrast, white)',
                                         fontWeight: 600,
                                         marginBottom: '12px',
                                         '&:hover': {
-                                            backgroundColor: props.colors?.secondary || '#1c7ed6',
+                                            backgroundColor: props.colors?.secondary || 'var(--primary-color, #1c7ed6)',
+                                            filter: 'brightness(0.95)',
                                         }
                                     }
                                 }}
@@ -382,7 +383,7 @@ const SelectProducts = (props: SelectProductsProps) => {
                                 size={'xs'}
                                 styles={{
                                     root: {
-                                        color: props.colors?.primaryText || '#228be6',
+                                        color: props.colors?.primaryText || 'var(--primary-color, #228be6)',
                                         '&:hover': {
                                             backgroundColor: 'transparent',
                                             textDecoration: 'underline'
@@ -440,7 +441,12 @@ const SelectProducts = (props: SelectProductsProps) => {
                                             };
 
                                             return (
-                                                <div key={product.id} className={'hi-product-row'}>
+                                                <div key={product.id} className={`hi-product-row ${product.is_highlighted ? 'hi-product-highlighted' : ''}`}>
+                                                    {product.is_highlighted && product.highlight_message && (
+                                                        <div className={'hi-product-highlight-message'}>
+                                                            {product.highlight_message}
+                                                        </div>
+                                                    )}
                                                     <div className={'hi-title-row'}>
                                                         <UnstyledButton variant={'transparent'}
                                                                         className={'hi-product-title'}
