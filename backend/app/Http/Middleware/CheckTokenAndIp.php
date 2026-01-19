@@ -37,7 +37,7 @@ class CheckTokenAndIp
         if ($allowedIps) {
             $ips = array_map('trim', explode(',', $allowedIps));
             if (!in_array('*', $ips) && !in_array($request->ip(), $ips)) {
-                return response()->json(['message' => 'Forbidden'], 403);
+                return response()->json(['message' => 'Not Found'], 404);
             }
         }
 
