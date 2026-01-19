@@ -120,7 +120,7 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
             ->with(['account_id' => $accountId, 'role' => $role])
             ->andReturnSelf();
         
-        Auth::shouldReceive('loginUsingId')
+        Auth::shouldReceive('tokenById')
             ->once()
             ->with($userId)
             ->andReturn('mocked-jwt');

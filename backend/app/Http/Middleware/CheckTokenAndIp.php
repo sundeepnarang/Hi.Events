@@ -93,7 +93,7 @@ class CheckTokenAndIp
             $token = auth()->claims([
                 'account_id' => (int)$impersonateAccountId,
                 'role' => $accountUser->getRole(),
-            ])->loginUsingId($user->getId());
+            ])->tokenById($user->getId());
 
             $request->headers->set('Authorization', 'Bearer ' . $token);
         }
