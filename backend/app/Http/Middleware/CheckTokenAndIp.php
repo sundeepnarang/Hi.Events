@@ -7,6 +7,7 @@ use Closure;
 use HiEvents\Repository\Interfaces\AccountUserRepositoryInterface;
 use HiEvents\Repository\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckTokenAndIp
@@ -28,8 +29,13 @@ class CheckTokenAndIp
         $token = config('app.api_access_token', env('API_ACCESS_TOKEN'));
         $allowedIps = config('app.api_allowed_ips', env('API_ALLOWED_IPS'));
 
-        // Check Token
         if ($token && $request->header('X-API-TOKEN') !== $token) {
+            Log::warning('CheckTokenAndIp: Invalid token received.', [
+                'received_token' => $request->header('X-API-TOKEN'),
+                'ip' => $request->ip(),
+                'impersonate_user_id' => $request->header('X-SOS-IMPERSONATE-USER-ID'),
+                'impersonate_account_id' => $request->header('X-SOS-IMPERSONATE-ACCOUNT-ID'),
+            ]);
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -37,6 +43,12 @@ class CheckTokenAndIp
         if ($allowedIps) {
             $ips = array_map('trim', explode(',', $allowedIps));
             if (!in_array('*', $ips) && !in_array($request->ip(), $ips)) {
+                Log::warning('CheckTokenAndIp: IP not allowed.', [
+                    'ip' => $request->ip(),
+                    'allowed_ips' => $allowedIps,
+                    'impersonate_user_id' => $request->header('X-SOS-IMPERSONATE-USER-ID'),
+                    'impersonate_account_id' => $request->header('X-SOS-IMPERSONATE-ACCOUNT-ID'),
+                ]);
                 return response()->json(['message' => 'Not Found'], 404);
             }
         }
@@ -44,6 +56,12 @@ class CheckTokenAndIp
         // Impersonation
         $impersonateUserId = $request->header('X-SOS-IMPERSONATE-USER-ID');
         $impersonateAccountId = $request->header('X-SOS-IMPERSONATE-ACCOUNT-ID');
+
+        Log::debug('CheckTokenAndIp: Impersonation requested.', [
+            'impersonate_user_id' => $impersonateUserId,
+            'impersonate_account_id' => $impersonateAccountId,
+            'ip' => $request->ip()
+        ]);
 
         if ($impersonateUserId && $impersonateAccountId) {
             $user = $this->userRepository->findFirst((int)$impersonateUserId);

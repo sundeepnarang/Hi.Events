@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 use Mockery;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CheckTokenAndIpMiddlewareTest extends TestCase
 {
@@ -27,7 +28,7 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
         $this->accountUserRepository = Mockery::mock(AccountUserRepositoryInterface::class);
 
         $this->app->instance(UserRepositoryInterface::class, $this->userRepository);
-        $this->app->instance(AccountUserRepositoryInterface::class, $this->accountUserRepository);
+        $this->withoutExceptionHandling();
 
         Route::get('/middleware-test', function () {
             return response()->json(['message' => 'OK']);
@@ -45,14 +46,41 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
 
     public function test_it_returns_401_with_invalid_token()
     {
-        $response = $this->withHeaders(['X-API-TOKEN' => 'wrong-token'])->getJson('/middleware-test');
+        Log::shouldReceive('warning')
+            ->once()
+            ->with('CheckTokenAndIp: Invalid token received.', Mockery::on(function ($context) {
+                // Using array_key_exists because values might be null if not sent
+                return array_key_exists('received_token', $context)
+                    && array_key_exists('ip', $context)
+                    && array_key_exists('impersonate_user_id', $context)
+                    && array_key_exists('impersonate_account_id', $context);
+            }));
+
+        $response = $this->withHeaders([
+            'X-API-TOKEN' => 'wrong-token',
+            'X-SOS-IMPERSONATE-USER-ID' => '1',
+            'X-SOS-IMPERSONATE-ACCOUNT-ID' => '1'
+        ])->getJson('/middleware-test');
         $response->assertStatus(401);
     }
 
     public function test_it_returns_403_with_invalid_ip()
     {
+        Log::shouldReceive('warning')
+            ->once()
+            ->with('CheckTokenAndIp: IP not allowed.', Mockery::on(function ($context) {
+                 return array_key_exists('ip', $context)
+                    && array_key_exists('allowed_ips', $context)
+                    && array_key_exists('impersonate_user_id', $context)
+                    && array_key_exists('impersonate_account_id', $context);
+            }));
+
         $this->serverVariables = ['REMOTE_ADDR' => '10.0.0.1'];
-        $response = $this->withHeaders(['X-API-TOKEN' => 'test-token'])->getJson('/middleware-test');
+        $response = $this->withHeaders([
+            'X-API-TOKEN' => 'test-token',
+            'X-SOS-IMPERSONATE-USER-ID' => '1',
+            'X-SOS-IMPERSONATE-ACCOUNT-ID' => '1'
+        ])->getJson('/middleware-test');
         $response->assertStatus(404);
     }
 
@@ -68,6 +96,9 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
         $userId = 1;
         $accountId = 1;
         $role = 'ORGANIZER';
+
+        // Re-bind to see if it fixes it
+        $this->app->instance(AccountUserRepositoryInterface::class, $this->accountUserRepository);
 
         $userDomain = Mockery::mock(UserDomainObject::class);
         $userDomain->shouldReceive('getId')->andReturn($userId);
@@ -125,8 +156,12 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
 
     public function test_impersonation_fails_if_user_not_in_account()
     {
+        // Re-bind to see if it fixes it
+        $this->app->instance(AccountUserRepositoryInterface::class, $this->accountUserRepository);
+        
         $userId = 1;
         $accountId = 2;
+        // ...
 
         $userDomain = Mockery::mock(UserDomainObject::class);
         $userDomain->shouldReceive('getId')->andReturn($userId);
