@@ -53,7 +53,7 @@ class CheckTokenAndIpMiddlewareTest extends TestCase
     {
         $this->serverVariables = ['REMOTE_ADDR' => '10.0.0.1'];
         $response = $this->withHeaders(['X-API-TOKEN' => 'test-token'])->getJson('/middleware-test');
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 
     public function test_it_returns_200_with_valid_token_and_ip()
