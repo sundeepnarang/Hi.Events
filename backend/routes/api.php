@@ -144,6 +144,7 @@ use HiEvents\Http\Actions\Reports\GetReportAction;
 use HiEvents\Http\Actions\Sitemap\GetSitemapEventsAction;
 use HiEvents\Http\Actions\Sitemap\GetSitemapIndexAction;
 use HiEvents\Http\Actions\Sitemap\GetSitemapOrganizersAction;
+use HiEvents\Http\Actions\SosAdmin\EchoUserAction;
 use HiEvents\Http\Actions\TaxesAndFees\CreateTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\DeleteTaxOrFeeAction;
 use HiEvents\Http\Actions\TaxesAndFees\EditTaxOrFeeAction;
@@ -515,12 +516,190 @@ $router->prefix('/public')->group(
     }
 );
 
+
+/**
+ * SOS Admin routes
+ */
 $router->prefix('/sos-admin')->middleware(['check.token.ip'])->group(
     function (Router $router): void {
         // SOS Admin routes
-        $router->get('/ping', function () {
-            return response()->json(['message' => 'pong']);
-        });
+        $router->get('/ping', EchoUserAction::class);
+        // Users
+        $router->post('/users', CreateUserAction::class);
+        $router->get('/users', GetUsersAction::class);
+        $router->get('/users/{user_id}', GetUserAction::class);
+        $router->put('/users/{user_id}', UpdateUserAction::class);
+        $router->post('/users/{user_id}/email-change/{changeToken}', ConfirmEmailChangeAction::class);
+        $router->post('/users/{user_id}/invitation', ResendInvitationAction::class);
+        $router->delete('/users/{user_id}/invitation', DeleteInvitationAction::class);
+        $router->delete('/users/{user_id}/email-change', CancelEmailChangeAction::class);
+        $router->post('/users/{user_id}/confirm-email/{resetToken}', ConfirmEmailAddressAction::class);
+        $router->post('/users/{user_id}/resend-email-confirmation', ResendEmailConfirmationAction::class);
+        $router->post('/users/{user_id}/confirm-email-with-code', ConfirmEmailWithCodeAction::class);
+
+        // Accounts
+        $router->get('/accounts/{account_id?}', GetAccountAction::class);
+        $router->put('/accounts/{account_id?}', UpdateAccountAction::class);
+        $router->get('/accounts/{account_id}/stripe/connect_accounts', GetStripeConnectAccountsAction::class);
+        $router->post('/accounts/{account_id}/stripe/connect', CreateStripeConnectAccountAction::class);
+
+        // VAT Settings
+        $router->get('/accounts/{account_id}/vat-settings', GetAccountVatSettingAction::class);
+        $router->post('/accounts/{account_id}/vat-settings', UpsertAccountVatSettingAction::class);
+
+        // Organizers
+        $router->post('/organizers', CreateOrganizerAction::class);
+        // This is POST instead of PUT because you can't upload files via PUT in PHP (at least not easily)
+        $router->post('/organizers/{organizer_id}', EditOrganizerAction::class);
+        $router->put('/organizers/{organizer_id}/status', UpdateOrganizerStatusAction::class);
+        $router->get('/organizers', GetOrganizersAction::class);
+        $router->get('/organizers/{organizer_id}', GetOrganizerAction::class);
+        $router->get('/organizers/{organizer_id}/events', GetOrganizerEventsAction::class);
+        $router->get('/organizers/{organizer_id}/stats', GetOrganizerStatsAction::class);
+        $router->get('/organizers/{organizer_id}/orders', GetOrganizerOrdersAction::class);
+        $router->get('/organizers/{organizer_id}/settings', GetOrganizerSettingsAction::class);
+        $router->patch('/organizers/{organizer_id}/settings', PartialUpdateOrganizerSettingsAction::class);
+        $router->get('/organizers/{organizer_id}/reports/{report_type}', GetOrganizerReportAction::class);
+        $router->get('/organizers/{organizer_id}/reports/{report_type}/export', ExportOrganizerReportAction::class);
+
+        // Email Templates - Organizer level
+        $router->get('/organizers/{organizerId}/email-templates', GetOrganizerEmailTemplatesAction::class);
+        $router->get('/email-templates/defaults', GetDefaultEmailTemplateAction::class);
+        $router->post('/organizers/{organizerId}/email-templates', CreateOrganizerEmailTemplateAction::class);
+        $router->put('/organizers/{organizerId}/email-templates/{templateId}', UpdateOrganizerEmailTemplateAction::class);
+        $router->delete('/organizers/{organizerId}/email-templates/{templateId}', DeleteOrganizerEmailTemplateAction::class);
+        $router->post('/organizers/{organizerId}/email-templates/preview', PreviewOrganizerEmailTemplateAction::class);
+        $router->get('/email-templates/tokens/{templateType}', GetAvailableTokensAction::class);
+
+        // Taxes and Fees
+        $router->post('/accounts/{account_id}/taxes-and-fees', CreateTaxOrFeeAction::class);
+        $router->get('/accounts/{account_id}/taxes-and-fees', GetTaxOrFeeAction::class);
+        $router->put('/accounts/{account_id}/taxes-and-fees/{tax_or_fee_id}', EditTaxOrFeeAction::class);
+        $router->delete('/accounts/{account_id}/taxes-and-fees/{tax_or_fee_id}', DeleteTaxOrFeeAction::class);
+
+        // Events
+        $router->post('/events', CreateEventAction::class);
+        $router->get('/events', GetEventsAction::class);
+        $router->get('/events/{event_id}', GetEventAction::class);
+        $router->put('/events/{event_id}', UpdateEventAction::class);
+        $router->put('/events/{event_id}/status', UpdateEventStatusAction::class);
+        $router->post('/events/{event_id}/duplicate', DuplicateEventAction::class);
+
+        // Product Categories
+        $router->post('/events/{event_id}/product-categories', CreateProductCategoryAction::class);
+        $router->get('/events/{event_id}/product-categories', GetProductCategoriesAction::class);
+        $router->get('/events/{event_id}/product-categories/{category_id}', GetProductCategoryAction::class);
+        $router->put('/events/{event_id}/product-categories/{category_id}', EditProductCategoryAction::class);
+        $router->delete('/events/{event_id}/product-categories/{category_id}', DeleteProductCategoryAction::class);
+
+        // Products
+        $router->post('/events/{event_id}/products', CreateProductAction::class);
+        $router->post('/events/{event_id}/products/sort', SortProductsAction::class);
+        $router->put('/events/{event_id}/products/{ticket_id}', EditProductAction::class);
+        $router->get('/events/{event_id}/products/{ticket_id}', GetProductAction::class);
+        $router->delete('/events/{event_id}/products/{ticket_id}', DeleteProductAction::class);
+        $router->get('/events/{event_id}/products', GetProductsAction::class);
+
+        // Stats
+        $router->get('/events/{event_id}/stats', GetEventStatsAction::class);
+
+        // Email Templates - Event level
+        $router->get('/events/{eventId}/email-templates', GetEventEmailTemplatesAction::class);
+        $router->post('/events/{eventId}/email-templates', CreateEventEmailTemplateAction::class);
+        $router->put('/events/{eventId}/email-templates/{templateId}', UpdateEventEmailTemplateAction::class);
+        $router->delete('/events/{eventId}/email-templates/{templateId}', DeleteEventEmailTemplateAction::class);
+        $router->post('/events/{eventId}/email-templates/preview', PreviewEventEmailTemplateAction::class);
+
+        // Attendees
+        $router->post('/events/{event_id}/attendees', CreateAttendeeAction::class);
+        $router->get('/events/{event_id}/attendees', GetAttendeesAction::class);
+        $router->get('/events/{event_id}/attendees/{attendee_id}', GetAttendeeAction::class);
+        $router->put('/events/{event_id}/attendees/{attendee_id}', EditAttendeeAction::class);
+        $router->patch('/events/{event_id}/attendees/{attendee_id}', PartialEditAttendeeAction::class);
+        $router->post('/events/{event_id}/attendees/export', ExportAttendeesAction::class);
+        $router->post('/events/{event_id}/attendees/{attendee_public_id}/resend-ticket', ResendAttendeeTicketAction::class);
+        $router->post('/events/{event_id}/attendees/{attendee_public_id}/check_in', CheckInAttendeeAction::class);
+
+        // Orders
+        $router->get('/events/{event_id}/orders', GetOrdersAction::class);
+        $router->get('/events/{event_id}/orders/{order_id}', GetOrderAction::class);
+        $router->put('/events/{event_id}/orders/{order_id}', EditOrderAction::class);
+        $router->post('/events/{event_id}/orders/{order_id}/message', MessageOrderAction::class);
+        $router->post('/events/{event_id}/orders/{order_id}/refund', RefundOrderAction::class);
+        $router->post('/events/{event_id}/orders/{order_id}/resend_confirmation', ResendOrderConfirmationAction::class);
+        $router->post('/events/{event_id}/orders/{order_id}/cancel', CancelOrderAction::class);
+        $router->post('/events/{event_id}/orders/{order_id}/mark-as-paid', MarkOrderAsPaidAction::class);
+        $router->post('/events/{event_id}/orders/export', ExportOrdersAction::class);
+        $router->get('/events/{event_id}/orders/{order_id}/invoice', DownloadOrderInvoiceAction::class);
+
+        // Questions
+        $router->post('/events/{event_id}/questions', CreateQuestionAction::class);
+        $router->put('/events/{event_id}/questions/{question_id}', EditQuestionAction::class);
+        $router->get('/events/{event_id}/questions/{question_id}', GetQuestionAction::class);
+        $router->delete('/events/{event_id}/questions/{question_id}', DeleteQuestionAction::class);
+        $router->get('/events/{event_id}/questions', GetQuestionsAction::class);
+        $router->post('/events/{event_id}/questions/export', ExportOrdersAction::class);
+        $router->post('/events/{event_id}/questions/sort', SortQuestionsAction::class);
+        $router->put('/events/{event_id}/questions/{question_id}/answers/{answer_id}', EditQuestionAnswerAction::class);
+        $router->match(['get', 'post'], '/events/{event_id}/questions/answers/export', ExportQuestionAnswersAction::class);
+
+        // Images
+        $router->post('/events/{event_id}/images', CreateEventImageAction::class);
+        $router->get('/events/{event_id}/images', GetEventImagesAction::class);
+        $router->delete('/events/{event_id}/images/{image_id}', DeleteEventImageAction::class);
+
+        // Promo Codes
+        $router->post('/events/{event_id}/promo-codes', CreatePromoCodeAction::class);
+        $router->put('/events/{event_id}/promo-codes/{promo_code_id}', UpdatePromoCodeAction::class);
+        $router->get('/events/{event_id}/promo-codes', GetPromoCodesAction::class);
+        $router->get('/events/{event_id}/promo-codes/{promo_code_id}', GetPromoCodeAction::class);
+        $router->delete('/events/{event_id}/promo-codes/{promo_code_id}', DeletePromoCodeAction::class);
+
+        // Affiliates
+        $router->post('/events/{event_id}/affiliates', CreateAffiliateAction::class);
+        $router->put('/events/{event_id}/affiliates/{affiliate_id}', UpdateAffiliateAction::class);
+        $router->get('/events/{event_id}/affiliates', GetAffiliatesAction::class);
+        $router->get('/events/{event_id}/affiliates/{affiliate_id}', GetAffiliateAction::class);
+        $router->delete('/events/{event_id}/affiliates/{affiliate_id}', DeleteAffiliateAction::class);
+        $router->post('/events/{event_id}/affiliates/export', ExportAffiliatesAction::class);
+
+        // Messages
+        $router->post('/events/{event_id}/messages', SendMessageAction::class);
+        $router->get('/events/{event_id}/messages', GetMessagesAction::class);
+
+        // Event Settings
+        $router->get('/events/{event_id}/settings', GetEventSettingsAction::class);
+        $router->put('/events/{event_id}/settings', EditEventSettingsAction::class);
+        $router->patch('/events/{event_id}/settings', PartialEditEventSettingsAction::class);
+
+        // Capacity Assignments
+        $router->post('/events/{event_id}/capacity-assignments', CreateCapacityAssignmentAction::class);
+        $router->get('/events/{event_id}/capacity-assignments', GetCapacityAssignmentsAction::class);
+        $router->get('/events/{event_id}/capacity-assignments/{capacity_assignment_id}', GetCapacityAssignmentAction::class);
+        $router->put('/events/{event_id}/capacity-assignments/{capacity_assignment_id}', UpdateCapacityAssignmentAction::class);
+        $router->delete('/events/{event_id}/capacity-assignments/{capacity_assignment_id}', DeleteCapacityAssignmentAction::class);
+
+        // Check-In Lists
+        $router->post('/events/{event_id}/check-in-lists', CreateCheckInListAction::class);
+        $router->get('/events/{event_id}/check-in-lists', GetCheckInListsAction::class);
+        $router->get('/events/{event_id}/check-in-lists/{check_in_list_id}', GetCheckInListAction::class);
+        $router->put('/events/{event_id}/check-in-lists/{check_in_list_id}', UpdateCheckInListAction::class);
+        $router->delete('/events/{event_id}/check-in-lists/{check_in_list_id}', DeleteCheckInListAction::class);
+
+        // Webhooks
+        $router->post('/events/{event_id}/webhooks', CreateWebhookAction::class);
+        $router->get('/events/{event_id}/webhooks', GetWebhooksAction::class);
+        $router->put('/events/{event_id}/webhooks/{webhook_id}', EditWebhookAction::class);
+        $router->get('/events/{event_id}/webhooks/{webhook_id}', GetWebhookAction::class);
+        $router->delete('/events/{event_id}/webhooks/{webhook_id}', DeleteWebhookAction::class);
+        $router->get('/events/{event_id}/webhooks/{webhook_id}/logs', GetWebhookLogsAction::class);
+
+        // Reports
+        $router->get('/events/{event_id}/reports/{report_type}', GetReportAction::class);
+
+        // Images
+        $router->post('/images', CreateImageAction::class);
+        $router->delete('/images/{image_id}', DeleteImageAction::class);
     }
 );
 
