@@ -906,6 +906,7 @@ export enum OrganizerReportTypes {
     EventsPerformance = 'events_performance',
     TaxSummary = 'tax_summary',
     CheckInSummary = 'check_in_summary',
+    PlatformFees = 'platform_fees',
 }
 
 export interface Webhook {
