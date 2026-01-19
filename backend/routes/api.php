@@ -196,6 +196,7 @@ use HiEvents\Http\Actions\Webhooks\EditWebhookAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhookAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhookLogsAction;
 use HiEvents\Http\Actions\Webhooks\GetWebhooksAction;
+use HiEvents\Http\Request\Account\CreateAccountRequest;
 use Illuminate\Routing\Router;
 
 /** @var Router|Router $router */
@@ -538,6 +539,14 @@ $router->prefix('/sos-admin')->middleware(['check.token.ip'])->group(
         $router->post('/users/{user_id}/confirm-email-with-code', ConfirmEmailWithCodeAction::class);
 
         // Accounts
+        $router->post('/accounts', function (
+            CreateAccountRequest $request,
+            CreateAccountAction $action
+        ) {
+            config(['app.disable_registration' => false]);
+            return $action($request);
+        });
+
         $router->get('/accounts/{account_id?}', GetAccountAction::class);
         $router->put('/accounts/{account_id?}', UpdateAccountAction::class);
         $router->get('/accounts/{account_id}/stripe/connect_accounts', GetStripeConnectAccountsAction::class);

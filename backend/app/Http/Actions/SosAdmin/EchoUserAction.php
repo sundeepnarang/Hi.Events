@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace HiEvents\Http\Actions\Users;
+namespace HiEvents\Http\Actions\SosAdmin;
 
 use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\Exceptions\ResourceConflictException;
