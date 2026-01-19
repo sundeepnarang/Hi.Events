@@ -3,6 +3,7 @@
 namespace HiEvents\Http;
 
 use HiEvents\Http\Middleware\Authenticate;
+use HiEvents\Http\Middleware\CheckTokenAndIp;
 use HiEvents\Http\Middleware\EncryptCookies;
 use HiEvents\Http\Middleware\HandleDeprecatedTimezones;
 use HiEvents\Http\Middleware\LogImpersonationMiddleware;
@@ -94,5 +95,6 @@ class Kernel extends HttpKernel
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
+        'check.token.ip' => CheckTokenAndIp::class,
     ];
 }

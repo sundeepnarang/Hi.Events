@@ -515,4 +515,13 @@ $router->prefix('/public')->group(
     }
 );
 
+$router->prefix('/sos-admin')->middleware(['check.token.ip'])->group(
+    function (Router $router): void {
+        // SOS Admin routes
+        $router->get('/ping', function () {
+            return response()->json(['message' => 'pong']);
+        });
+    }
+);
+
 include_once __DIR__ . '/mail.php';
