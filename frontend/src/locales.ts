@@ -1,8 +1,24 @@
 import {i18n} from "@lingui/core";
 
-export type SupportedLocales = "en" | "de" | "fr" | "hu"| "it" | "ja" | "nl" | "pt" | "es" | "zh-cn" | "pt-br" | "vi" |"zh-hk" | "tr";
+export type SupportedLocales =
+    "en"
+    | "de"
+    | "fr"
+    | "ja"
+    | "it"
+    | "nl"
+    | "pt"
+    | "es"
+    | "zh-cn"
+    | "pt-br"
+    | "vi"
+    | "zh-hk"
+    | "tr"
+    | "hu"
+    | "pl"
+    | "se";
 
-export const availableLocales = ["en", "de", "fr", "hu", "it", "ja", "nl", "pt", "es", "zh-cn", "zh-hk", "pt-br", "vi", "tr"];
+export const availableLocales = ["en", "de", "fr", "it", "ja", "nl", "pt", "es", "zh-cn", "zh-hk", "pt-br", "vi", "tr", "hu", "pl", "se"];
 
 export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     en: '🇬🇧',
@@ -18,6 +34,8 @@ export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     vi: '🇻🇳',
     tr: '🇹🇷',
     hu: '🇭🇺',
+    pl: '🇵🇱',
+    se: '🇸🇪',
 };
 
 export const localeToNameMap: Record<SupportedLocales, string> = {
@@ -35,6 +53,8 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     vi: `Vietnamese`,
     tr: `Turkish`,
     hu: `Hungarian`,
+    pl: `Polish`,
+    se: `Swedish`,
 };
 
 export const getLocaleName = (locale: SupportedLocales) => {
