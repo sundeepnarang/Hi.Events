@@ -101,6 +101,7 @@ class CreateAccountAction extends BaseAuthAction
             resource: AccountResource::class,
             data: $accountData,
             statusCode: ResponseCodes::HTTP_CREATED,
+            user: $loginResponse->user,
         ), $loginResponse->token);
     }
 }
