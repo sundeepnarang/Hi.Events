@@ -97,13 +97,12 @@ class CreateAccountAction extends BaseAuthAction
             );
         }
 
-        return $this->addTokenToResponse($this->resourceResponse(
-            resource: AccountResource::class,
-            data: $accountData,
-            statusCode: ResponseCodes::HTTP_CREATED,
-            meta: [
+        $resource = (new AccountResource($accountData))->additional([
+            'meta' => [
                 'user_id' => $loginResponse->user->getId(),
-            ]
-        ), $loginResponse->token);
+            ],
+        ])->response()->setStatusCode(ResponseCodes::HTTP_CREATED);
+
+        return $this->addTokenToResponse($resource, $loginResponse->token);
     }
 }
