@@ -33,6 +33,7 @@ import countries from "../../../../../data/countries.json";
 import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
 import {trackMetaPixel} from "../../../../utilites/metaPixel.ts";
+import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 
 const LoadingSkeleton = () =>
     (
@@ -217,7 +218,6 @@ export const CollectInformation = () => {
             if (nextPage === 'summary') {
                 trackEvent(AnalyticsEvents.PURCHASE_COMPLETED_FREE);
             }
-            trackMetaPixel(`Complete registration`, {eventId: eventId, eventName: event?.title});
             navigate(eventCheckoutPath(eventId, data.data.short_id, nextPage));
         },
 
@@ -361,11 +361,17 @@ export const CollectInformation = () => {
     }
 
     if (isOrderError && orderError?.response?.status === 404) {
+        if (isFromWaitlist && eventId) {
+            clearWaitlistJoinedForEvent(eventId);
+        }
+
         return (
             <HomepageInfoMessage
                 status="not_found"
-                message={t`Order not found`}
-                subtitle={t`We couldn't find this order. It may have been removed.`}
+                message={isFromWaitlist ? t`Waitlist offer expired` : t`Order not found`}
+                subtitle={isFromWaitlist
+                    ? t`Your waitlist offer has expired and we were unable to complete your order. Please rejoin the waitlist to be notified when more spots become available.`
+                    : t`We couldn't find this order. It may have been removed.`}
                 link={eventHomepagePath(event as Event)}
                 linkText={t`Go to Event Page`}
             />
