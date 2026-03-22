@@ -23,6 +23,7 @@ export const clientBuildEnv: { [K in ConfigKeys]: string } = {
     'VITE_API_URL_SERVER': import.meta.env.VITE_API_URL_SERVER,
     'VITE_API_URL_CLIENT': import.meta.env.VITE_API_URL_CLIENT,
     'VITE_META_PIXEL_ID': import.meta.env.VITE_META_PIXEL_ID,
+    'VITE_DATA_COLLECTION_DISCLAIMER': import.meta.env.VITE_DATA_COLLECTION_DISCLAIMER
 }
 
 export const getConfig = (key: ConfigKeys, fallback?: string): string | undefined => {

@@ -22,7 +22,8 @@ export type ConfigKeys =
     | 'VITE_STRIPE_PUBLISHABLE_KEY'
     | 'VITE_I_HAVE_PURCHASED_A_LICENCE'
     | 'VITE_DEFAULT_IMAGE_URL'
-    | 'VITE_META_PIXEL_ID';
+    | 'VITE_META_PIXEL_ID'
+    | 'VITE_DATA_COLLECTION_DISCLAIMER';
 
 export enum StripePlatform {
     Canada = 'ca',
@@ -243,6 +244,7 @@ export interface EventSettings {
 
     // Marketing settings
     show_marketing_opt_in?: boolean;
+    show_data_collection_disclaimer?: boolean;
 
     // Platform fee settings
     pass_platform_fee_to_buyer?: boolean;
