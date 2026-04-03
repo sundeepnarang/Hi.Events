@@ -296,21 +296,24 @@ export const router: RouteObject[] = [
                 path: "settings",
                 async lazy() {
                     const Settings = await import("./components/routes/organizer/Settings");
-                    return { Component: Settings.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><Settings.default /></ReadOnlyGuard.default> };
                 }
             },
             {
                 path: "organizer-homepage-designer",
                 async lazy() {
                     const OrganizerHomepageDesigner = await import("./components/routes/organizer/OrganizerHomepageDesigner");
-                    return { Component: OrganizerHomepageDesigner.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><OrganizerHomepageDesigner.default /></ReadOnlyGuard.default> };
                 }
             },
             {
                 path: "webhooks",
                 async lazy() {
                     const Webhooks = await import("./components/routes/organizer/Webhooks");
-                    return { Component: Webhooks.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><Webhooks.default /></ReadOnlyGuard.default> };
                 }
             },
             {
@@ -383,7 +386,8 @@ export const router: RouteObject[] = [
                 path: "questions",
                 async lazy() {
                     const Questions = await import("./components/routes/event/questions");
-                    return { Component: Questions.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><Questions.default /></ReadOnlyGuard.default> };
                 }
             },
             {
@@ -432,28 +436,32 @@ export const router: RouteObject[] = [
                 path: "widget",
                 async lazy() {
                     const Widget = await import("./components/routes/event/widget");
-                    return { Component: Widget.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><Widget.default /></ReadOnlyGuard.default> };
                 }
             },
             {
                 path: "homepage-designer",
                 async lazy() {
                     const HomepageDesigner = await import("./components/routes/event/HomepageDesigner");
-                    return { Component: HomepageDesigner.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><HomepageDesigner.default /></ReadOnlyGuard.default> };
                 }
             },
             {
                 path: "ticket-designer",
                 async lazy() {
                     const TicketDesigner = await import("./components/routes/event/TicketDesigner");
-                    return { Component: TicketDesigner.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><TicketDesigner.default /></ReadOnlyGuard.default> };
                 }
             },
             {
                 path: "getting-started",
                 async lazy() {
                     const GettingStarted = await import("./components/routes/event/GettingStarted");
-                    return { Component: GettingStarted.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><GettingStarted.default /></ReadOnlyGuard.default> };
                 }
             },
             {
@@ -474,7 +482,8 @@ export const router: RouteObject[] = [
                 path: "webhooks",
                 async lazy() {
                     const Webhooks = await import("./components/routes/event/Webhooks");
-                    return { Component: Webhooks.default };
+                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
+                    return { element: <ReadOnlyGuard.default><Webhooks.default /></ReadOnlyGuard.default> };
                 }
             }
         ]

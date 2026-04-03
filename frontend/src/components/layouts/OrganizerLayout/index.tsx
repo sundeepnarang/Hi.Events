@@ -41,8 +41,10 @@ import { confirmationDialog } from "../../../utilites/confirmationDialog.tsx";
 import { showError, showSuccess } from "../../../utilites/notifications.tsx";
 import { useResendEmailConfirmation } from "../../../mutations/useResendEmailConfirmation.ts";
 import { useGetMe } from "../../../queries/useGetMe.ts";
+import { useIsReadOnly } from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 const OrganizerLayout = () => {
+    const isReadOnly = useIsReadOnly();
     const { organizerId } = useParams();
     const location = useLocation();
     const { data: organizer } = useGetOrganizer(organizerId);
@@ -85,13 +87,13 @@ const OrganizerLayout = () => {
 
         { label: t`Manage` },
         { link: 'events', label: t`Events`, icon: IconCalendar },
-        { link: 'settings', label: t`Settings`, icon: IconSettings },
+        { link: 'settings', label: t`Settings`, icon: IconSettings, showWhen: () => !isReadOnly },
 
-        { label: t`Tools` },
-        { link: 'organizer-homepage-designer', label: t`Homepage Designer`, icon: IconPaint },
+        { label: t`Tools`, showWhen: () => !isReadOnly },
+        { link: 'organizer-homepage-designer', label: t`Homepage Designer`, icon: IconPaint, showWhen: () => !isReadOnly },
 
         { label: t`Integrations` },
-        { link: 'webhooks', label: t`Webhooks`, icon: IconWebhook },
+        { link: 'webhooks', label: t`Webhooks`, icon: IconWebhook, showWhen: () => !isReadOnly },
     ];
 
     const handleEmailConfirmationResend = () => {
@@ -149,7 +151,7 @@ const OrganizerLayout = () => {
             link: `/manage/organizer/${organizerId}`,
             content: organizer?.name,
         },
-        {
+        ...(!isReadOnly ? [{
             content: (
                 <span
                     className={classes.createEventBreadcrumb}
@@ -158,10 +160,10 @@ const OrganizerLayout = () => {
                     <IconCalendarPlus size={16} /> {t`Create Event`}
                 </span>
             ),
-        }
+        }] : [])
     ];
 
-    const callouts: CalloutConfig[] = [
+    const callouts: CalloutConfig[] = !isReadOnly ? [
         {
             icon: <IconUsersGroup size={20} />,
             heading: t`Invite Your Team`,
@@ -173,9 +175,9 @@ const OrganizerLayout = () => {
             },
             storageKey: `organizer-${organizerId}-team-callout-dismissed`
         },
-    ];
+    ] : [];
 
-    if (account && !account?.stripe_connect_setup_complete) {
+    if (!isReadOnly && account && !account?.stripe_connect_setup_complete) {
         callouts.unshift({
             icon: <IconBrandStripe size={20} />,
             heading: t`Connect Stripe`,
@@ -200,7 +202,7 @@ const OrganizerLayout = () => {
                 entityType="organizer"
                 topBarContent={(
                     <div className={classes.statusToggleContainer}>
-                        {organizer && (
+                        {organizer && !isReadOnly && (
                             <TopBarButton
                                 onClick={handleStatusToggle}
                                 size="sm"

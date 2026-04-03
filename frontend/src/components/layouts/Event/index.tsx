@@ -45,11 +45,13 @@ import {TopBarButton} from "../../common/TopBarButton";
 import {useWindowWidth} from "../../../hooks/useWindowWidth.ts";
 import {SidebarCallout} from "../../common/SidebarCallout";
 import {useGetMe} from "../../../queries/useGetMe.ts";
+import {useIsReadOnly} from "../../../hooks/useIsCurrentUserAdmin.ts";
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
 import {useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 
 const EventLayout = () => {
+    const isReadOnly = useIsReadOnly();
     const location = useLocation();
     const {eventId} = useParams();
 
@@ -89,7 +91,7 @@ const EventLayout = () => {
             link: 'getting-started',
             label: t`Getting Started`,
             icon: IconStar,
-            showWhen: () => !eventSettings?.hide_getting_started_page
+            showWhen: () => !eventSettings?.hide_getting_started_page && !isReadOnly
         },
         {link: 'dashboard', label: t`Dashboard`, icon: IconDashboard},
         {
@@ -102,9 +104,9 @@ const EventLayout = () => {
         // 2. EVENT SETUP
         {label: t`Setup & Design`},
         {link: 'settings', label: t`Event Settings`, icon: IconSettings},
-        {link: 'homepage-designer', label: t`Homepage Designer`, icon: IconPaint},
-        {link: 'ticket-designer', label: t`Ticket Designer`, icon: IconTicket},
-        {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion},
+        {link: 'homepage-designer', label: t`Homepage Designer`, icon: IconPaint, showWhen: () => !isReadOnly},
+        {link: 'ticket-designer', label: t`Ticket Designer`, icon: IconTicket, showWhen: () => !isReadOnly},
+        {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion, showWhen: () => !isReadOnly},
 
         // 3. Ticketing & Sales
         {label: t`Ticketing & Sales`},
@@ -123,8 +125,8 @@ const EventLayout = () => {
 
         // 5. INTEGRATIONS
         {label: t`Integrations`},
-        {link: 'widget', label: t`Widget Embed`, icon: IconDeviceTabletCode},
-        {link: 'webhooks', label: t`Webhooks`, icon: IconWebhook},
+        {link: 'widget', label: t`Widget Embed`, icon: IconDeviceTabletCode, showWhen: () => !isReadOnly},
+        {link: 'webhooks', label: t`Webhooks`, icon: IconWebhook, showWhen: () => !isReadOnly},
 
 
     ];
@@ -180,7 +182,7 @@ const EventLayout = () => {
             entityType="event"
             topBarContent={(
                 <div className={classes.statusToggleContainer}>
-                    {isEventFetched && (
+                    {isEventFetched && !isReadOnly && (
                         <TopBarButton
                             onClick={handleStatusToggle}
                             size="sm"
