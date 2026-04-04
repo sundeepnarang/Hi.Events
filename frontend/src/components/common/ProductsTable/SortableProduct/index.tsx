@@ -466,7 +466,8 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                         <IconDotsVertical size={16} className={classes.actionButtonIcon}/>
                                     </Button>
                                 </div>
-                            </Menu.Target                            <Menu.Dropdown>
+                            </Menu.Target>
+                            <Menu.Dropdown>
                                 <Menu.Label>{t`Actions`}</Menu.Label>
  
                                 {isTicket && (
@@ -505,7 +506,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                     </>
                                 )}
                             </Menu.Dropdown>
->
                         </Menu>
                     </Group>
                 </div>
