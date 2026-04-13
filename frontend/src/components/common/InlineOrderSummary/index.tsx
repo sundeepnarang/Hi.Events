@@ -88,11 +88,11 @@ export const InlineOrderSummary = ({
                         </div>
                     </div>
 
-                    {(totalAmount > 0 || order.is_payment_required) && (
+                    {order.order_items && order.order_items.length > 0 && (
                         <>
                             <div className={classes.divider}/>
                             <div className={classes.lineItems}>
-                                {order.order_items?.map((item) => (
+                                {order.order_items.map((item) => (
                                     <div key={item.id} className={classes.lineItem}>
                                         <div className={classes.lineItemLeft}>
                                             <span title={item.item_name}
@@ -100,20 +100,26 @@ export const InlineOrderSummary = ({
                                             {/* eslint-disable-next-line lingui/no-unlocalized-strings */}
                                             <span className={classes.lineItemQuantity}>× {item.quantity}</span>
                                         </div>
-                                        <div className={classes.lineItemPriceWrapper}>
-                                            {!!item.price_before_discount && (
-                                                <span className={classes.lineItemPriceOriginal}>
-                                                    {formatCurrency(item.price_before_discount * item.quantity, order.currency)}
+                                        {(totalAmount > 0 || order.is_payment_required) && (
+                                            <div className={classes.lineItemPriceWrapper}>
+                                                {!!item.price_before_discount && (
+                                                    <span className={classes.lineItemPriceOriginal}>
+                                                        {formatCurrency(item.price_before_discount * item.quantity, order.currency)}
+                                                    </span>
+                                                )}
+                                                <span className={classes.lineItemPrice}>
+                                                    {formatCurrency(item.price * item.quantity, order.currency)}
                                                 </span>
-                                            )}
-                                            <span className={classes.lineItemPrice}>
-                                                {formatCurrency(item.price * item.quantity, order.currency)}
-                                            </span>
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
+                        </>
+                    )}
 
+                    {(totalAmount > 0 || order.is_payment_required) && (
+                        <>
                             {order.promo_code && totalDiscount > 0 && (
                                 <div className={classes.promoCode}>
                                     <div className={classes.promoCodeLeft}>
