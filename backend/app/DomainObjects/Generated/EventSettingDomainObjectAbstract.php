@@ -81,7 +81,7 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected string $updated_at;
     protected ?string $deleted_at = null;
     protected bool $require_attendee_details = true;
-    protected int $order_timeout_in_minutes = 15;
+    protected int $order_timeout_in_minutes = 60;
     protected ?string $website_url = null;
     protected ?string $maps_url = null;
     protected ?string $homepage_background_color = null;
