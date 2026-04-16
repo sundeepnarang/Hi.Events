@@ -725,7 +725,7 @@ export const CollectInformation = () => {
                         rightSection={order?.is_payment_required ? <IconArrowRight size={18}/> : undefined}
                         leftSection={!order?.is_payment_required ? <IconCheck size={18}/> : undefined}
                     >
-                        {order?.is_payment_required ? t`Continue to Payment` : t`Complete Order`}
+                            {order?.is_payment_required ? t`Continue to Payment` : t`Register for the event`}
                     </Button>
                     {!!getConfig('VITE_TOS_URL') && (
                         <p className={classes.tosNotice}>
