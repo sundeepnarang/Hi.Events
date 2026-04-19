@@ -158,9 +158,9 @@ class EmailTemplateService
     {
         return [
             EmailTemplateType::ORDER_CONFIRMATION->value => [
-                'subject' => 'Your registration is Complete! 🎉',
+                'subject' => 'Your Order is Confirmed! 🎉',
                 'body' => <<<'LIQUID'
-<strong>Your registration is Complete! 🎉</strong><br>
+<strong>Your Order is Confirmed! 🎉</strong><br>
 
 {% if order.is_awaiting_offline_payment %}
 <strong>ℹ️ Payment Pending:</strong> Your order is pending payment. Tickets have been issued but will not be valid until payment is received.<br>

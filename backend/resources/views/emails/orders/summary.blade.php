@@ -8,7 +8,7 @@
 @php /** @see \HiEvents\Mail\Order\OrderSummary */ @endphp
 
 <x-mail::message>
-# {{ __('Your registration is Complete! ') }} 🎉
+# {{ __('Your Order is Confirmed! ') }} 🎉
 
 @if($order->isOrderAwaitingOfflinePayment() === false)
 
@@ -55,7 +55,7 @@
 - **{{ __('Total Amount:') }}** {{ Currency::format($order->getTotalGross(), $event->getCurrency()) }}
 
 <x-mail::button :url="$orderUrl">
-    {{ __('View Registration and Details') }}
+    {{ __('View Order Summary & Tickets') }}
 </x-mail::button>
 
 {{ __('If you have any questions or need assistance, feel free to reach out to our friendly support team at') }} <a href="mailto:{{ $organizer->getEmail() }}">{{ $organizer->getEmail() }}</a>.
