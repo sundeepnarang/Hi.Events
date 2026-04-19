@@ -46,7 +46,20 @@ export const getLocalizedConfig = (key: ConfigKeys, locale: string, fallback?: s
             return parsed[locale] || parsed['en'] || Object.values(parsed)[0] as string;
         }
     } catch (e) {
-        // Not a JSON object string, fallback to raw value
+        // Try custom pipe-based format without double quotes: en=Text|el=Text
+        if (rawValue.includes('|') && rawValue.includes('=')) {
+            const parts = rawValue.split('|');
+            const map: Record<string, string> = {};
+            for (const part of parts) {
+                const [k, ...v] = part.split('=');
+                if (k && v.length > 0) {
+                    map[k.trim()] = v.join('=').trim();
+                }
+            }
+            if (Object.keys(map).length > 0) {
+                return map[locale] || map['en'] || Object.values(map)[0];
+            }
+        }
     }
     
     return rawValue;
