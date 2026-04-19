@@ -16,8 +16,8 @@ import 'dayjs/locale/zh-cn';
 import 'dayjs/locale/pt-br';
 import 'dayjs/locale/vi';
 import 'dayjs/locale/zh-hk';
-import 'dayjs/locale/tr';
 import 'dayjs/locale/hu';
+import 'dayjs/locale/el';
 
 /**
  * Locale-specific date formats following cultural conventions
@@ -173,6 +173,17 @@ export const localeFormats: Record<SupportedLocales, {
         monthShort: 'MMM',
         dayOfMonth: 'D.',
         dayName: 'dddd, MMMM D.',
+        timeOnly: 'HH:mm',
+        timezone: 'z'
+    },
+    'el': {
+        fullDateTime: 'ddd, D MMM YYYY HH:mm',
+        shortDateTime: 'D MMM YYYY HH:mm',
+        shortDate: 'D MMM YYYY',
+        chartDate: 'D MMM',
+        monthShort: 'MMM',
+        dayOfMonth: 'D',
+        dayName: 'dddd, D MMMM',
         timeOnly: 'HH:mm',
         timezone: 'z'
     },
