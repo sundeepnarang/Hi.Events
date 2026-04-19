@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import {IconArrowRight, IconCheck, IconCircleCheck, IconClock} from "@tabler/icons-react";
 import {t, Trans} from "@lingui/macro";
+import {useLingui} from "@lingui/react";
 import {useForm} from "@mantine/form";
 import {notifications} from "@mantine/notifications";
 import {useGetOrderPublic} from "../../../../queries/useGetOrderPublic.ts";
@@ -24,7 +25,7 @@ import {useEffect, useState} from "react";
 import {InputGroup} from "../../../common/InputGroup";
 import {Card} from "../../../common/Card";
 import {CheckoutContent} from "../../../layouts/Checkout/CheckoutContent";
-import {getConfig} from "../../../../utilites/config.ts";
+import {getConfig, getLocalizedConfig} from "../../../../utilites/config.ts";
 import {HomepageInfoMessage} from "../../../common/HomepageInfoMessage";
 import {InlineOrderSummary} from "../../../common/InlineOrderSummary";
 import {eventCheckoutPath, eventHomepagePath} from "../../../../utilites/urlHelper.ts";
@@ -45,6 +46,7 @@ const LoadingSkeleton = () =>
     );
 
 export const CollectInformation = () => {
+    const {i18n} = useLingui();
     const {eventId, orderShortId} = useParams();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -570,7 +572,7 @@ export const CollectInformation = () => {
                             mt="md"
                             required
                             label={
-                                (getConfig('VITE_DATA_COLLECTION_DISCLAIMER') as string || t`I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with {event.organizer} Privacy Policy and Terms of Use.`)
+                                (getLocalizedConfig('VITE_DATA_COLLECTION_DISCLAIMER', i18n.locale) || t`I confirm that I am 18 years of age and consent to the collection and use of my information for this registration in accordance with {event.organizer} Privacy Policy and Terms of Use.`)
                                     .replace('{event.organizer}', event?.organizer?.name || t`this organizer`)
                             }
                             {...form.getInputProps('order.data_collection_disclaimer', {type: 'checkbox'})}

@@ -35,3 +35,20 @@ export const getConfig = (key: ConfigKeys, fallback?: string): string | undefine
     const clientEnv = typeof window !== "undefined" && window.hievents ? window.hievents : {};
     return clientEnv[key] || clientBuildEnv[key] || fallback;
 };
+
+export const getLocalizedConfig = (key: ConfigKeys, locale: string, fallback?: string): string | undefined => {
+    const rawValue = getConfig(key, fallback);
+    if (!rawValue) return undefined;
+    
+    try {
+        const parsed = JSON.parse(rawValue);
+        if (typeof parsed === 'object' && parsed !== null) {
+            return parsed[locale] || parsed['en'] || Object.values(parsed)[0] as string;
+        }
+    } catch (e) {
+        // Not a JSON object string, fallback to raw value
+    }
+    
+    return rawValue;
+};
+
