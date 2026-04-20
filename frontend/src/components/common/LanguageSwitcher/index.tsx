@@ -42,7 +42,10 @@ export const LanguageSwitcher = () => {
                 return t`Polish`;
             case "se":
                 return t`Swedish`;
+            case "el":
+                return t`Greek`;
         }
+        return '';
     };
 
     return (
