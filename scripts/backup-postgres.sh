@@ -1,0 +1,5 @@
+echo "Navigate to docker compose directory"
+echo "Run the following command to create a backup of the database:"
+echo "docker exec postgres pg_dump -U [POSTGRES-USER] [DB-NAME] > [BACKUP-PATH]/sos-hievents_backup_$(date +%Y%m%d).sql"
+echo ""
+echo "Example: docker exec postgres pg_dump -U postgres sos-events-db > /Users/sundeepnarang/dev/sos_work/hi.events/docker/all-in-one/sos-hievents_backup_$(date +%Y%m%d).sql"
