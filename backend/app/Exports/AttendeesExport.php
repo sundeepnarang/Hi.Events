@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\Enums\ProductPriceType;
 use HiEvents\DomainObjects\Enums\QuestionTypeEnum;
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\OrderDomainObject;
 use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\DomainObjects\ProductPriceDomainObject;
@@ -26,16 +27,18 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
     private LengthAwarePaginator|Collection $data;
     private Collection $productQuestions;
     private Collection $orderQuestions;
+    private ?EventDomainObject $event = null;
 
     public function __construct(private QuestionAnswerFormatter $questionAnswerFormatter)
     {
     }
 
-    public function withData(LengthAwarePaginator|Collection $data, Collection $productQuestions, Collection $orderQuestions): AttendeesExport
+    public function withData(LengthAwarePaginator|Collection $data, Collection $productQuestions, Collection $orderQuestions, ?EventDomainObject $event = null): AttendeesExport
     {
         $this->data = $data;
         $this->productQuestions = $productQuestions;
         $this->orderQuestions = $orderQuestions;
+        $this->event = $event;
         return $this;
     }
 
@@ -59,6 +62,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             __('Product ID'),
             __('Product Name'),
             __('Event ID'),
+            __('Event Name'),
             __('Public ID'),
             __('Short ID'),
             __('Created Date'),
@@ -129,6 +133,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             $attendee->getProductId(),
             $ticketName,
             $attendee->getEventId(),
+            $this->event?->getTitle() ?? __('Unknown'),
             $attendee->getPublicId(),
             $attendee->getShortId(),
             Carbon::parse($attendee->getCreatedAt())->format('Y-m-d H:i:s'),

@@ -15,6 +15,7 @@ use HiEvents\Exports\AttendeesExport;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
+use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\QuestionRepositoryInterface;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -24,7 +25,8 @@ class ExportAttendeesAction extends BaseAction
     public function __construct(
         private readonly AttendeesExport             $export,
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly QuestionRepositoryInterface $questionRepository
+        private readonly QuestionRepositoryInterface $questionRepository,
+        private readonly EventRepositoryInterface    $eventRepository,
     )
     {
     }
@@ -78,8 +80,11 @@ class ExportAttendeesAction extends BaseAction
             'belongs_to' => QuestionBelongsTo::ORDER->name,
         ]);
 
+        /** @var EventDomainObject $event */
+        $event = $this->eventRepository->findById($eventId);
+
         return Excel::download(
-            $this->export->withData($attendees, $productQuestions, $orderQuestions),
+            $this->export->withData($attendees, $productQuestions, $orderQuestions, $event),
             'attendees.xlsx'
         );
     }
