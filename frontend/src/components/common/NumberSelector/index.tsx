@@ -16,13 +16,13 @@ interface NumberSelectorProps extends TextInputProps {
 
 export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}: NumberSelectorProps) => {
     const handlers = useRef<NumberInputHandlers>(null);
-    // Start with 1, ensuring it's treated as number for consistency
-    const [value, setValue] = useState<number>(1);
+    const minValue = min !== undefined ? min : 0;
+    const maxValue = max !== undefined ? max : 100;
 
-    const minValue = min || 0;
-    const maxValue = max || 100;
+    // Start with minValue if provided, otherwise 1
+    const [value, setValue] = useState<number>(min !== undefined ? min : 1);
 
-    const [sharedVals] = useState<SharedValues>(sharedValues ?? new SharedValues(maxValue));
+    const [sharedVals] = useState<SharedValues>(sharedValues ?? new SharedValues(maxValue, min !== undefined ? min : 1));
 
     useEffect(() => {
         formInstance.setFieldValue(fieldName, value);
@@ -151,9 +151,9 @@ export class SharedValues {
     sharedMax: number;
     currentValue: number;
 
-    constructor(sharedMax: number) {
+    constructor(sharedMax: number, initialValue: number = 1) {
         this.sharedMax = sharedMax;
-        this.currentValue = 1;
+        this.currentValue = initialValue;
     }
 
     get quantityRemaining() {
