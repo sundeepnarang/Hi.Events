@@ -382,6 +382,27 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                 </div>
                             </div>
 
+                            {/* Tickets Section */}
+                            <div className={`${classes.section} ${classes.ticketsSection}`} ref={ticketsSectionRef}
+                                 id="tickets">
+                                <SelectProducts
+                                    colors={{
+                                        background: "transparent",
+                                        primary: "var(--event-primary-color)",
+                                        primaryText: "var(--event-primary-text-color)",
+                                        secondary: "var(--event-primary-color)",
+                                        secondaryText: "var(--event-accent-contrast)",
+                                        bodyBackground: "var(--event-bg-color)",
+                                    }}
+                                    continueButtonText={event.settings?.continue_button_text}
+                                    padding={"0px"}
+                                    event={event}
+                                    promoCodeValid={promoCodeValid}
+                                    promoCode={promoCode}
+                                    showPoweredBy={false}
+                                />
+                            </div>  
+
                             {/* About Section */}
                             {event?.description && (
                                 <div className={classes.section}>
@@ -466,27 +487,6 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                                     </div>
                                 </div>
                             )}
-
-                            {/* Tickets Section */}
-                            <div className={`${classes.section} ${classes.ticketsSection}`} ref={ticketsSectionRef}
-                                 id="tickets">
-                                <SelectProducts
-                                    colors={{
-                                        background: "transparent",
-                                        primary: "var(--event-primary-color)",
-                                        primaryText: "var(--event-primary-text-color)",
-                                        secondary: "var(--event-primary-color)",
-                                        secondaryText: "var(--event-accent-contrast)",
-                                        bodyBackground: "var(--event-bg-color)",
-                                    }}
-                                    continueButtonText={event.settings?.continue_button_text}
-                                    padding={"0px"}
-                                    event={event}
-                                    promoCodeValid={promoCodeValid}
-                                    promoCode={promoCode}
-                                    showPoweredBy={false}
-                                />
-                            </div>
 
                             {/* Organizer Section */}
                             {organizer && organizer.status === OrganizerStatus.LIVE && (
