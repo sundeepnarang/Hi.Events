@@ -52,7 +52,6 @@
 
 # {{ __('Order Summary') }}
 - **{{ __('Order Number:') }}** {{ $order->getPublicId() }}
-- **{{ __('Total Amount:') }}** {{ Currency::format($order->getTotalGross(), $event->getCurrency()) }}
 
 <x-mail::button :url="$orderUrl">
     {{ __('View Order Summary & Tickets') }}
