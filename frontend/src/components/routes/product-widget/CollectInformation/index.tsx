@@ -430,7 +430,7 @@ export const CollectInformation = () => {
                     {t`Your Details`}
                 </h2>
                 <p className={classes.sectionHelper}>
-                    {t`We'll send your tickets to this email`}
+                    {t`We'll send your confirmation to this email`}
                 </p>
 
                 <Card>

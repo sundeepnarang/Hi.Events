@@ -149,7 +149,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
             return null;
         }
 
-        return {text: t`Tickets Available`, variant: 'success'};
+        return {text: t`Register`, variant: 'success'};
     };
 
     const statusBadge = getStatusBadge();
@@ -616,7 +616,7 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
                             onClick={scrollToTickets}
                         >
                             <IconTicket size={18}/>
-                            {t`Get Tickets`}
+                            {t`Register`}
                         </button>
                     )}
 
