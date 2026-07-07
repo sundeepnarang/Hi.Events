@@ -67,6 +67,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             __('Short ID'),
             __('Created Date'),
             __('Last Updated Date'),
+            __('Locale'),
             __('Notes'),
         ], $productQuestionTitles, $orderQuestionsTitles);
     }
@@ -138,6 +139,7 @@ class AttendeesExport implements FromCollection, WithHeadings, WithMapping, With
             $attendee->getShortId(),
             Carbon::parse($attendee->getCreatedAt())->format('Y-m-d H:i:s'),
             Carbon::parse($attendee->getUpdatedAt())->format('Y-m-d H:i:s'),
+            $attendee->getLocale(),
             $attendee->getNotes(),
         ], $productAnswers->toArray(), $orderAnswers->toArray());
     }
