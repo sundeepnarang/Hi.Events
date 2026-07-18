@@ -122,7 +122,7 @@ export const CollectInformation = () => {
                 email_confirmation: (value, values, path) => {
                     const index = parseInt(path.split('.')[1]);
                     const product = values.products[index];
-                    if (product && product.email !== value) {
+                    if (product && product.email.toLowerCase() !== value.toLowerCase()) {
                         return t`Email addresses do not match`;
                     }
                     return null;
