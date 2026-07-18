@@ -112,7 +112,7 @@ export const CollectInformation = () => {
         validate: {
             order: {
                 email_confirmation: (value, values) =>
-                    value.toLowerCase() !== values.order.email.toLowerCase() ? t`Email addresses do not match` : null,
+                    (value || '').trim().toLowerCase() !== (values.order.email || '').trim().toLowerCase() ? t`Email addresses do not match` : null,
                 data_collection_disclaimer: (value) =>
                     event?.settings?.show_data_collection_disclaimer && !value
                         ? t`You must agree to the data collection disclaimer`
@@ -122,7 +122,7 @@ export const CollectInformation = () => {
                 email_confirmation: (value, values, path) => {
                     const index = parseInt(path.split('.')[1]);
                     const product = values.products[index];
-                    if (product && product.email.toLowerCase() !== value.toLowerCase()) {
+                    if (product && (product.email || '').trim().toLowerCase() !== (value || '').trim().toLowerCase()) {
                         return t`Email addresses do not match`;
                     }
                     return null;
