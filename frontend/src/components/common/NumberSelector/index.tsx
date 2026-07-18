@@ -91,6 +91,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
                 hideControls
                 onChange={changeValue}
                 classNames={{input: classes.input}}
+                style={{fontWeight: "900", fontSize: "12pt"}}
             />
 
             <ActionIcon

@@ -96,7 +96,7 @@ export const CollectInformation = () => {
                 email_confirmation: "",
                 address: {},
                 questions: {},
-                opted_into_marketing: false,
+                opted_into_marketing: true,
                 data_collection_disclaimer: false,
             },
             products: [{
@@ -112,7 +112,7 @@ export const CollectInformation = () => {
         validate: {
             order: {
                 email_confirmation: (value, values) =>
-                    value !== values.order.email ? t`Email addresses do not match` : null,
+                    value.toLowerCase() !== values.order.email.toLowerCase() ? t`Email addresses do not match` : null,
                 data_collection_disclaimer: (value) =>
                     event?.settings?.show_data_collection_disclaimer && !value
                         ? t`You must agree to the data collection disclaimer`
