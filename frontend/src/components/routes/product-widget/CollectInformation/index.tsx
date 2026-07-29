@@ -350,7 +350,7 @@ export const CollectInformation = () => {
     }
 
     if (order?.status === 'COMPLETED') {
-        trackMetaPixel("complete registration", {id: order?.id});
+        trackMetaPixel("complete_registration", {id: order?.id});
         return <HomepageInfoMessage
             message={t`This order is complete`}
             link={eventCheckoutPath(eventId, orderShortId, 'summary')}
