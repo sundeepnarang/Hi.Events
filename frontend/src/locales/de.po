@@ -9632,6 +9632,10 @@ msgstr ""
 msgid "We'll send your tickets to this email"
 msgstr "Wir senden Ihre Tickets an diese E-Mail"
 
+#: src/components/routes/product-widget/CollectInformation/index.tsx:434
+msgid "We'll send your confirmation to this email"
+msgstr "Wir senden Ihre Bestätigung an diese E-Mail"
+
 #: src/components/routes/account/ManageAccount/sections/PaymentSettings/VatSettings/VatSettingsForm.tsx:75
 msgid "We'll validate your VAT number in the background. If there are any issues, we'll let you know."
 msgstr "Wir validieren Ihre Umsatzsteuer-Identifikationsnummer im Hintergrund. Falls es Probleme gibt, werden wir Sie informieren."
