@@ -3999,7 +3999,7 @@ msgstr "Passwort vergessen?"
 #: src/components/layouts/OrganizerHomepage/EventCard/index.tsx:180
 #: src/components/routes/product-widget/SelectProducts/Prices/Tiered/index.tsx:53
 msgid "Free"
-msgstr "Frei"
+msgstr "Kostenfrei"
 
 #: src/components/forms/ProductForm/index.tsx:160
 msgid "Free Product"
