@@ -7,6 +7,7 @@ import {
     IconEyeOff,
     IconLock,
     IconPackage,
+    IconPuzzle,
     IconPencil,
     IconReceipt,
     IconSend,
@@ -28,27 +29,31 @@ import {
     ProductCategory,
     ProductPrice,
     ProductPriceType,
+    ProductQuantityAppliesTo,
     ProductType
 } from "../../../../types.ts";
 import {useDisclosure} from "@mantine/hooks";
 import {useDeleteProduct} from "../../../../mutations/useDeleteProduct.ts";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
+import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {EditProductModal} from "../../../modals/EditProductModal";
 import {SendMessageModal} from "../../../modals/SendMessageModal";
 import {SortArrows} from "../../SortArrows";
 import {useSortProducts} from "../../../../mutations/useSortProducts.ts";
 import {DuplicateProductModal} from "../../../modals/DuplicateProductModal";
-import {useIsReadOnly} from "../../../../hooks/useIsCurrentUserAdmin.ts";
 
 interface SortableProductProps {
     product: Product;
     currencyCode: string;
     category: ProductCategory;
     categories: ProductCategory[];
+    isRecurringEvent?: boolean;
+    isSeated?: boolean;
 }
 
-export const SortableProduct = ({product, currencyCode, category, categories}: SortableProductProps) => {
-    const isReadOnly = useIsReadOnly();
+const addonBadgeLabel = (count: number): string => count === 1 ? t`1 add-on` : t`${count} add-ons`;
+
+export const SortableProduct = ({product, currencyCode, category, categories, isRecurringEvent, isSeated}: SortableProductProps) => {
     const [isEditModalOpen, editModal] = useDisclosure(false);
     const [isDuplicateModalOpen, duplicateModal] = useDisclosure(false);
     const [isMessageModalOpen, messageModal] = useDisclosure(false);
@@ -66,15 +71,19 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
     }
 
     const handleDeleteProduct = (productId: IdParam, eventId: IdParam) => {
-        deleteMutation.mutate({productId, eventId}, {
-            onSuccess: () => {
-                showSuccess(t`Product deleted successfully`);
-            },
-            onError: (error: any) => {
-                if (error.response?.status === 409) {
-                    showError(error.response.data.message || t`This product cannot be deleted because it is associated with an order. You can hide it instead.`);
+        confirmationDialog(t`Delete this product? This cannot be undone.`, () => {
+            deleteMutation.mutate({productId, eventId}, {
+                onSuccess: () => {
+                    showSuccess(t`Product deleted successfully`);
+                },
+                onError: (error: any) => {
+                    if (error.response?.status === 409) {
+                        showError(error.response.data.message || t`This product cannot be deleted because it is associated with an order. You can hide it instead.`);
+                    } else {
+                        showError(error.response?.data?.message || t`Failed to delete product. Please try again.`);
+                    }
                 }
-            }
+            });
         });
     }
 
@@ -147,12 +156,41 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
         return product.taxes_and_fees.map(tf => tf.name).join(', ');
     }
 
+    const quantityScope = (): 'per-date' | 'total' | 'mixed' | null => {
+        const prices = product.prices ?? [];
+        if (!isRecurringEvent || prices.length === 0) {
+            return null;
+        }
+        if (prices.every(price => price.quantity_applies_to === ProductQuantityAppliesTo.Occurrence)) {
+            return 'per-date';
+        }
+        if (prices.every(price => price.quantity_applies_to === ProductQuantityAppliesTo.Event)) {
+            return 'total';
+        }
+        return 'mixed';
+    };
+
+    const quantityScopeLabel = (): string | null => {
+        switch (quantityScope()) {
+            case 'per-date':
+                return t`per date`;
+            case 'total':
+                return t`total`;
+            case 'mixed':
+                return t`mixed`;
+            default:
+                return null;
+        }
+    };
+
+    const perDateAllocation = product.initial_quantity_available;
+
     const getSalesProgress = () => {
         const sold = Number(product.quantity_sold) || 0;
         const initial = product.initial_quantity_available;
 
         if (!initial || initial <= 0) {
-            return null; // Unlimited
+            return null;
         }
 
         const percentage = Math.min((sold / initial) * 100, 100);
@@ -251,22 +289,17 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                 classes.productCard,
                 {[classes.soldOut]: product.is_sold_out}
             )}>
-                {/* Sort controls */}
-                {!isReadOnly && (
-                    <div className={classes.sortControls}>
-                        <SortArrows
-                            upArrowEnabled={canMoveUp}
-                            downArrowEnabled={canMoveDown}
-                            onSortUp={() => handleSort(product.id, 'up')}
-                            onSortDown={() => handleSort(product.id, 'down')}
-                            flexDirection={'column'}
-                        />
-                    </div>
-                )}
+                <div className={classes.sortControls}>
+                    <SortArrows
+                        upArrowEnabled={canMoveUp}
+                        downArrowEnabled={canMoveDown}
+                        onSortUp={() => handleSort(product.id, 'up')}
+                        onSortDown={() => handleSort(product.id, 'down')}
+                        flexDirection={'column'}
+                    />
+                </div>
 
-                {/* Main content */}
                 <div className={classes.productContent}>
-                    {/* Header row with badges */}
                     <div className={classes.productHeader}>
                         <div className={classes.badgeRow}>
                             <div className={classes.typeBadges}>
@@ -289,7 +322,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                         {t`Product`}
                                     </Badge>
                                 )}
-                                {product.waitlist_enabled && (
+                                {product.waitlist_enabled && !isSeated && (
                                     <Badge
                                         variant="light"
                                         color="secondary"
@@ -326,6 +359,36 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                         </Badge>
                                     </Tooltip>
                                 )}
+                                {product.is_addon_only && (
+                                    <Tooltip
+                                        label={t`Only shown as an add-on to the products it's attached to`}
+                                        withArrow
+                                    >
+                                        <Badge
+                                            variant="light"
+                                            color="teal"
+                                            size="sm"
+                                            leftSection={<IconPuzzle size={12}/>}
+                                        >
+                                            {t`Add-on only`}
+                                        </Badge>
+                                    </Tooltip>
+                                )}
+                                {!!product.addons?.length && (
+                                    <Tooltip
+                                        label={product.addons.map(addon => addon.title).join(', ')}
+                                        withArrow
+                                    >
+                                        <Badge
+                                            variant="light"
+                                            color="grape"
+                                            size="sm"
+                                            leftSection={<IconPuzzle size={12}/>}
+                                        >
+                                            {addonBadgeLabel(product.addons.length)}
+                                        </Badge>
+                                    </Tooltip>
+                                )}
                                 {product.is_highlighted && (
                                     <Tooltip
                                         label={product.highlight_message || t`This product is highlighted on the event page`}
@@ -357,9 +420,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                         </h3>
                     </div>
 
-                    {/* Details grid */}
                     <div className={classes.detailsGrid}>
-                        {/* Price */}
                         <div className={classes.detailItem}>
                             <span className={classes.detailLabel}>{t`Price`}</span>
                             <div className={classes.priceValue}>
@@ -380,17 +441,29 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             </div>
                         </div>
 
-                        {/* Sales / Quantity */}
                         <div className={classes.detailItem}>
                             <span className={classes.detailLabel}>
                                 {isTicket ? t`Attendees` : t`Sold`}
                             </span>
                             <div className={classes.salesValue}>
-                                {salesProgress ? (
+                                {isSeated && !product.initial_quantity_available ? (
+                                    <span className={classes.salesCount}>
+                                        {Number(product.quantity_sold)}
+                                        <span className={classes.unlimited}>{t`Reserved seating`}</span>
+                                    </span>
+                                ) : quantityScope() === 'per-date' && perDateAllocation ? (
+                                    <span className={classes.salesCount}>
+                                        {Number(product.quantity_sold)}
+                                        <span className={classes.salesTotal}> · {t`up to ${perDateAllocation} per date`}</span>
+                                    </span>
+                                ) : salesProgress ? (
                                     <div className={classes.salesWithProgress}>
                                         <span className={classes.salesCount}>
                                             {salesProgress.sold}
                                             <span className={classes.salesTotal}>/ {salesProgress.total}</span>
+                                            {quantityScopeLabel() && (
+                                                <span className={classes.salesTotal}> {quantityScopeLabel()}</span>
+                                            )}
                                         </span>
                                         <Progress
                                             value={salesProgress.percentage}
@@ -413,7 +486,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             </div>
                         </div>
 
-                        {/* Sale period */}
                         <div className={classes.detailItem}>
                             <span className={classes.detailLabel}>{t`Sale Period`}</span>
                             <div className={classes.dateValue}>
@@ -451,7 +523,6 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className={classes.actionSection}>
                     <Group wrap="nowrap" gap={0}>
                         <Menu shadow="md" width={200} position="bottom-end">
@@ -461,6 +532,7 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                                         size="xs"
                                         variant="subtle"
                                         className={classes.actionButton}
+                                        data-testid="product-manage-button"
                                     >
                                         <span className={classes.actionButtonText}>{t`Manage`}</span>
                                         <IconDotsVertical size={16} className={classes.actionButtonIcon}/>
@@ -469,42 +541,39 @@ export const SortableProduct = ({product, currencyCode, category, categories}: S
                             </Menu.Target>
                             <Menu.Dropdown>
                                 <Menu.Label>{t`Actions`}</Menu.Label>
- 
+
                                 {isTicket && (
                                     <Menu.Item
                                         onClick={() => handleModalClick(product.id, messageModal)}
-                                        leftSection={<IconSend size={14} />}
+                                        leftSection={<IconSend size={14}/>}
                                     >
                                         {t`Message Attendees`}
                                     </Menu.Item>
                                 )}
- 
-                                {!isReadOnly && (
-                                    <>
-                                        <Menu.Item
-                                            onClick={() => handleModalClick(product.id, editModal)}
-                                            leftSection={<IconPencil size={14} />}
-                                        >
-                                            <Trans>Edit {isTicket ? t`Ticket` : t`Product`}</Trans>
-                                        </Menu.Item>
-                                        <Menu.Item
-                                            onClick={() => handleModalClick(product.id, duplicateModal)}
-                                            leftSection={<IconCopyPlus size={14} />}
-                                        >
-                                            {t`Duplicate`}
-                                        </Menu.Item>
- 
-                                        <Menu.Divider />
-                                        <Menu.Label>{t`Danger zone`}</Menu.Label>
-                                        <Menu.Item
-                                            onClick={() => handleDeleteProduct(product.id, product.event_id)}
-                                            color="red"
-                                            leftSection={<IconTrash size={14} />}
-                                        >
-                                            {t`Delete`}
-                                        </Menu.Item>
-                                    </>
-                                )}
+
+                                <Menu.Item
+                                    onClick={() => handleModalClick(product.id, editModal)}
+                                    leftSection={<IconPencil size={14}/>}
+                                    data-testid="product-edit-menu-item"
+                                >
+                                    <Trans>Edit {isTicket ? t`Ticket` : t`Product`}</Trans>
+                                </Menu.Item>
+                                <Menu.Item
+                                    onClick={() => handleModalClick(product.id, duplicateModal)}
+                                    leftSection={<IconCopyPlus size={14}/>}
+                                >
+                                    {t`Duplicate`}
+                                </Menu.Item>
+
+                                <Menu.Divider/>
+                                <Menu.Label>{t`Danger zone`}</Menu.Label>
+                                <Menu.Item
+                                    onClick={() => handleDeleteProduct(product.id, product.event_id)}
+                                    color="red"
+                                    leftSection={<IconTrash size={14}/>}
+                                >
+                                    {t`Delete`}
+                                </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>
                     </Group>

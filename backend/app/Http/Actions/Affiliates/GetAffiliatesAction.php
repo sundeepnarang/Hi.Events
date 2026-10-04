@@ -16,9 +16,7 @@ use Illuminate\Http\Request;
 
 class GetAffiliatesAction extends BaseAction
 {
-    public function __construct(private readonly AffiliateRepositoryInterface $affiliateRepository)
-    {
-    }
+    public function __construct(private readonly AffiliateRepositoryInterface $affiliateRepository) {}
 
     public function __invoke(Request $request, int $eventId): JsonResponse
     {

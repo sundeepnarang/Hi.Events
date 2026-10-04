@@ -18,12 +18,10 @@ import {affiliateClient} from "../../../../api/affiliate.client.ts";
 import {downloadBinary} from "../../../../utilites/download.ts";
 import {withLoadingNotification} from "../../../../utilites/withLoadingNotification.tsx";
 import {useState} from "react";
-
-import {useIsReadOnly} from "../../../../hooks/useIsCurrentUserAdmin.ts";
+import {SortSelector} from "../../../common/SortSelector";
 
 const Affiliates = () => {
     const {eventId} = useParams();
-    const isReadOnly = useIsReadOnly();
     const [searchParams, setSearchParams] = useFilterQueryParamSync();
     const {data: affiliatesData} = useGetAffiliates(
         eventId,
@@ -66,14 +64,26 @@ const Affiliates = () => {
                 {t`Affiliates`}
             </PageTitle>
 
-            <ToolBar searchComponent={() => (
-                <SearchBarWrapper
-                    placeholder={t`Search affiliates...`}
-                    setSearchParams={setSearchParams}
-                    searchParams={searchParams}
-                    pagination={pagination}
-                />
-            )}>
+            <ToolBar
+                searchComponent={() => (
+                    <SearchBarWrapper
+                        placeholder={t`Search affiliates...`}
+                        setSearchParams={setSearchParams}
+                        searchParams={searchParams}
+                    />
+                )}
+                filterComponent={pagination?.allowed_sorts ? (
+                    <SortSelector
+                        selected={searchParams.sortBy && searchParams.sortDirection
+                            ? searchParams.sortBy + ':' + searchParams.sortDirection
+                            : pagination.default_sort + ':' + pagination.default_sort_direction}
+                        options={pagination.allowed_sorts}
+                        onSortSelect={(key, sortDirection) => {
+                            setSearchParams({sortBy: key, sortDirection});
+                        }}
+                    />
+                ) : undefined}
+            >
                 <Button
                     onClick={() => handleExport(eventId)}
                     rightSection={<IconDownload size={14}/>}
@@ -83,13 +93,12 @@ const Affiliates = () => {
                 >
                     {t`Export`}
                 </Button>
-                {!isReadOnly && (
-                    <Button
-                        leftSection={<IconPlus/>}
-                        color={'green'}
-                        onClick={openCreateModal}>{t`Create Affiliate`}
-                    </Button>
-                )}
+                <Button
+                    leftSection={<IconPlus/>}
+                    color={'green'}
+                    data-testid="affiliate-create-button"
+                    onClick={openCreateModal}>{t`Create Affiliate`}
+                </Button>
             </ToolBar>
 
             <TableSkeleton isVisible={!affiliates}/>

@@ -1,5 +1,5 @@
 import {t} from "@lingui/macro";
-import {Button, Switch} from "@mantine/core";
+import {Button} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useParams} from "react-router";
 import {useEffect} from "react";
@@ -14,17 +14,13 @@ import {CustomSelect, ItemProps} from "../../../../../common/CustomSelect";
 import {IconCoin, IconCoins} from "@tabler/icons-react";
 import {SelfServiceSettings} from "../../../../../common/SelfServiceSettings";
 
-import {useIsReadOnly} from "../../../../../../hooks/useIsCurrentUserAdmin.ts";
-
 export const MiscSettings = () => {
-    const isReadOnly = useIsReadOnly();
     const {eventId} = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
     const updateMutation = useUpdateEventSettings();
     const form = useForm({
         initialValues: {
             price_display_mode: 'EXCLUSIVE',
-            hide_getting_started_page: false,
             allow_attendee_self_edit: false,
         }
     });
@@ -34,7 +30,6 @@ export const MiscSettings = () => {
         if (eventSettingsQuery?.isFetched && eventSettingsQuery?.data) {
             form.setValues({
                 price_display_mode: eventSettingsQuery.data.price_display_mode,
-                hide_getting_started_page: eventSettingsQuery.data.hide_getting_started_page,
                 allow_attendee_self_edit: eventSettingsQuery.data.allow_attendee_self_edit ?? false,
             });
         }
@@ -76,7 +71,7 @@ export const MiscSettings = () => {
                 description={t`Customize the miscellaneous settings for this event`}
             />
             <form onSubmit={form.onSubmit(handleSubmit as any)}>
-                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending || isReadOnly}>
+                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending}>
                     <CustomSelect
                         optionList={priceOptions}
                         form={form}
@@ -89,12 +84,6 @@ export const MiscSettings = () => {
                             {form.errors['price_display_mode']}
                         </div>
                     )}
-
-                    <Switch
-                        {...form.getInputProps('hide_getting_started_page', {type: 'checkbox'})}
-                        label={t`Hide getting started page`}
-                        description={t`Hide the getting started page from the sidebar`}
-                    />
 
                     <SelfServiceSettings
                         value={form.values.allow_attendee_self_edit}

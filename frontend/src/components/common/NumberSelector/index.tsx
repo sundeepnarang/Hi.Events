@@ -2,9 +2,9 @@ import {ActionIcon, NumberInput, NumberInputHandlers, Select, TextInputProps} fr
 import {useEffect, useRef, useState} from "react";
 import {UseFormReturnType} from "@mantine/form";
 import {IconMinus, IconPlus} from "@tabler/icons-react";
+import {t} from "@lingui/macro";
 import classes from './NumberSelector.module.scss';
 import classNames from "classnames";
-import _ from "lodash";
 
 interface NumberSelectorProps extends TextInputProps {
     formInstance: UseFormReturnType<any>;
@@ -12,52 +12,61 @@ interface NumberSelectorProps extends TextInputProps {
     min?: number;
     max?: number;
     sharedValues?: SharedValues;
+    selectorSize?: 'default' | 'compact';
+    onLimitReached?: () => void;
 }
 
-export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}: NumberSelectorProps) => {
+const getFormValue = (values: Record<string, any>, fieldName: string) =>
+    Number(fieldName.split('.').reduce<any>((acc, key) => acc?.[key], values) ?? 0);
+
+export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues, selectorSize = 'default', onLimitReached}: NumberSelectorProps) => {
     const handlers = useRef<NumberInputHandlers>(null);
     const minValue = min !== undefined ? min : 0;
     const maxValue = max !== undefined ? max : 100;
 
-    // Start with minValue if provided, otherwise 1
-    const [value, setValue] = useState<number>(min !== undefined ? min : 1);
+    const initialQuantity = min !== undefined ? min : 1;
+    const [value, setValue] = useState<number>(() => {
+        const existing = getFormValue(formInstance.values, fieldName);
+        return existing > 0 ? existing : initialQuantity;
+    });
 
-    const [sharedVals] = useState<SharedValues>(sharedValues ?? new SharedValues(maxValue, min !== undefined ? min : 1));
+    const [sharedVals] = useState<SharedValues>(() => {
+        const shared = sharedValues ?? new SharedValues(maxValue);
+        shared.changeValue(value);
+        return shared;
+    });
 
     useEffect(() => {
         formInstance.setFieldValue(fieldName, value);
     }, [value]);
 
     useEffect(() => {
-        // to handle application promo code after updating the quantity
-        const formValue = _.get(formInstance.values, fieldName)
+        const formValue = getFormValue(formInstance.values, fieldName);
         if (formValue !== value) {
-            formInstance.setFieldValue(fieldName, value);
+            const adjustedDifference = sharedVals.changeValue(formValue - value);
+            setValue(value + adjustedDifference);
         }
     }, [formInstance.values]);
 
     const increment = () => {
-        // Adjust from 0 to minValue on the first increment, if minValue is greater than 0
+        // Adjust from 0 to minValue on the first increment, if minValue is greater than 1
         if (value === 0 && minValue > 1) {
-            // If incrementing from 0, we have a few scenarios:
-            // 1. If there is sufficient quantity, increment to the minValue
-            // 2. If there is insufficient quantity to reach minValue, increment to the remaining quantity
-            // 3. If another NumberSelector is sharing this NumberSelector's SharedValues, and the amount
-            //    selected on that NumberSelector is less than minValue, increment to an amount where the
-            //    combined count across the NumberSelectors is minValue (or at least 1)
             let adjustedMinimum = Math.max(1, minValue - sharedVals.currentValue)
             setValue(sharedVals.changeValue(Math.min(adjustedMinimum, maxValue, sharedVals.quantityRemaining)))
         } else if (sharedVals.currentValue < minValue) {
-            setValue(prevValue => prevValue + (sharedVals.changeValue(minValue - sharedVals.currentValue)))
+            const adjustedDifference = sharedVals.changeValue(minValue - sharedVals.currentValue);
+            setValue(prevValue => prevValue + adjustedDifference);
         } else if (value < maxValue) {
-            setValue(prevValue => prevValue + sharedVals.changeValue(1));
+            const adjustedDifference = sharedVals.changeValue(1);
+            setValue(prevValue => prevValue + adjustedDifference);
         }
     };
 
     const decrement = () => {
         // Ensure decrement does not bring the current shared value between 0 and minValue
         if (sharedVals.currentValue > minValue) {
-            setValue(prevValue => prevValue + sharedVals.changeValue(-1));
+            const adjustedDifference = sharedVals.changeValue(-1);
+            setValue(prevValue => prevValue + adjustedDifference);
         } else {
             sharedVals.changeValue(-value)
             setValue(0);
@@ -69,39 +78,69 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues}
         setValue(value + adjustedDifference);
     };
 
+    const atMax = value >= maxValue || sharedVals.quantityRemaining == 0;
+
+    const handleIncrement = () => {
+        if (atMax) {
+            onLimitReached?.();
+            return;
+        }
+        increment();
+    };
+
+    const isEmpty = value === 0;
+    const buttonSize = selectorSize === 'compact'
+        ? (isEmpty ? 30 : 26)
+        : (isEmpty ? 38 : 30);
+    const iconSize = selectorSize === 'compact'
+        ? (isEmpty ? 14 : 13)
+        : (isEmpty ? 16 : 15);
+
     return (
-        <div className={classNames(classes.wrapper, 'button-input')}>
-            <ActionIcon
-                size={28}
-                onClick={decrement}
-                disabled={value === 0}
-                onMouseDown={(event) => event.preventDefault()}
-                className={classes.control}
-            >
-                <IconMinus size="1rem" stroke={1.5}/>
-            </ActionIcon>
+        <div className={classNames(classes.wrapper, 'button-input', selectorSize === 'compact' && classes.compact)}
+             data-empty={value === 0 || undefined}>
+            {value > 0 && (
+                <>
+                    <ActionIcon
+                        size={buttonSize}
+                        radius={999}
+                        variant={'transparent'}
+                        onClick={decrement}
+                        aria-label={t`Decrease quantity`}
+                        onMouseDown={(event) => event.preventDefault()}
+                        className={classNames(classes.control, classes.decrement)}
+                    >
+                        <IconMinus size={iconSize} stroke={2}/>
+                    </ActionIcon>
 
-            <NumberInput
-                mb={0}
-                variant="unstyled"
-                min={minValue}
-                max={maxValue}
-                handlersRef={handlers}
-                value={value}
-                hideControls
-                onChange={changeValue}
-                classNames={{input: classes.input}}
-                style={{fontWeight: "900", fontSize: "12pt"}}
-            />
+                    <NumberInput
+                        mb={0}
+                        variant="unstyled"
+                        min={0}
+                        max={maxValue}
+                        handlersRef={handlers}
+                        value={value}
+                        hideControls
+                        onChange={(newValue) => changeValue(Number(newValue) || 0)}
+                        aria-label={t`Quantity`}
+                        classNames={{input: classes.input}}
+                        style={{fontWeight: "900", fontSize: "12pt"}}
+                    />
+                </>
+            )}
 
             <ActionIcon
-                size={28}
-                onClick={increment}
-                disabled={value >= maxValue || sharedVals.quantityRemaining == 0}
+                size={buttonSize}
+                radius={999}
+                variant={'transparent'}
+                onClick={handleIncrement}
+                aria-label={t`Increase quantity`}
+                aria-disabled={atMax}
+                data-limit={atMax || undefined}
                 onMouseDown={(event) => event.preventDefault()}
-                className={classes.control}
+                className={classNames(classes.control, classes.increment)}
             >
-                <IconPlus size="1rem" stroke={1.5}/>
+                <IconPlus size={iconSize} stroke={2}/>
             </ActionIcon>
         </div>
     );
@@ -152,7 +191,7 @@ export class SharedValues {
     sharedMax: number;
     currentValue: number;
 
-    constructor(sharedMax: number, initialValue: number = 1) {
+    constructor(sharedMax: number, initialValue: number = 0) {
         this.sharedMax = sharedMax;
         this.currentValue = initialValue;
     }

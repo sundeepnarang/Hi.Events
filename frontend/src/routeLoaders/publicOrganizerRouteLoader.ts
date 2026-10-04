@@ -2,7 +2,6 @@ import {LoaderFunctionArgs, redirect} from "react-router";
 import {getQueryClient} from "../utilites/ssrQueryClient.ts";
 import {getOrganizerPublicQuery} from "../queries/useGetOrganizerPublic.ts";
 import {getOrganizerPublicEventsQuery} from "../queries/useGetOrganizerEventsPublic.ts";
-import {EventStatus, QueryFilterOperator} from "../types.ts";
 
 export const publicOrganizerRouteLoader = async ({params, request}: LoaderFunctionArgs) => {
     const {organizerId, organizerSlug} = params;
@@ -36,10 +35,10 @@ export const publicOrganizerRouteLoader = async ({params, request}: LoaderFuncti
             };
         } else {
             filter = {
-                filterFields: {
-                    end_date: {operator: QueryFilterOperator.LessThanOrEquals, value: 'now'},
-                    status: {operator: QueryFilterOperator.NotEquals, value: EventStatus.ARCHIVED},
-                }
+                additionalParams: {
+                    eventsStatus: 'ended',
+                },
+                filterFields: {}
             };
         }
 
@@ -59,7 +58,6 @@ export const publicOrganizerRouteLoader = async ({params, request}: LoaderFuncti
             isPastEvents
         };
     } catch (error: any) {
-        // Re-throw redirect responses so React Router can handle them
         if (error instanceof Response) {
             throw error;
         }

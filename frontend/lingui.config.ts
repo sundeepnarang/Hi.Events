@@ -5,6 +5,7 @@ const config: LinguiConfig = {
         "en", // English
         "zh-cn", // Mandarin Chinese (Simplified)
         "es", // Spanish
+        "fi", // Finnish
         "fr", // French
         "nl", // Dutch
 		"hu", // Hungarian
@@ -17,9 +18,10 @@ const config: LinguiConfig = {
         "se", // Swedish
         "it", // Italian
         "pl", // Polish
+        "sk", // Slovak
         "el", // Greek
         // "ja", // Japanese
-        // "ko", // Korean
+        "ko", // Korean
         // "id", // Indonesian
         "zh-hk", // Cantonese Chinese (Hong Kong)
         // "cs", // Czech

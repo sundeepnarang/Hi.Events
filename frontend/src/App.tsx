@@ -1,12 +1,13 @@
 import React, {FC, PropsWithChildren, useEffect} from "react";
-import {MantineProvider} from "@mantine/core";
+import {MantineProvider, v8CssVariablesResolver} from "@mantine/core";
 import {Notifications} from "@mantine/notifications";
 import {i18n} from "@lingui/core";
 import {I18nProvider} from "@lingui/react";
 import {ModalsProvider} from "@mantine/modals";
-import {HydrationBoundary, QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {DatesProvider} from "@mantine/dates";
+import {DehydratedState, HydrationBoundary, QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Helmet, HelmetProvider} from "react-helmet-async";
-import {generateColors} from '@mantine/colors-generator';
+import type {ThemeColors} from "./utilites/themeColors.ts";
 
 import "@mantine/core/styles/global.css";
 import "@mantine/core/styles.css";
@@ -20,6 +21,8 @@ import {isSsr} from "./utilites/helpers.ts";
 import {StartupChecks} from "./StartupChecks.tsx";
 import {ThirdPartyScripts} from "./components/common/ThirdPartyScripts";
 import {getConfig} from "./utilites/config.ts";
+import {CookieConsentBanner} from "./components/common/CookieConsentBanner";
+import {isConsentBannerEnabled} from "./utilites/cookieConsent";
 
 declare global {
     interface Window {
@@ -31,12 +34,12 @@ export const App: FC<
     PropsWithChildren<{
         queryClient: QueryClient;
         locale: string;
+        themeColors: ThemeColors;
         helmetContext?: any;
-        dehydratedState?: unknown;
+        dehydratedState?: DehydratedState;
     }>
 > = (props) => {
     const [isLoadedOnBrowser, setIsLoadedOnBrowser] = React.useState(false);
-
     useEffect(() => {
         setIsLoadedOnBrowser(!isSsr());
     }, []);
@@ -61,18 +64,18 @@ export const App: FC<
                 }}
             />
             <MantineProvider
+                cssVariablesResolver={v8CssVariablesResolver}
                 theme={{
-                    colors: {
-                        primary: generateColors(getConfig("VITE_APP_PRIMARY_COLOR", "#40296C") as string),
-                        secondary: generateColors(getConfig("VITE_APP_SECONDARY_COLOR", "#3d0b44") as string),
-                    },
+                    colors: props.themeColors,
                     primaryColor: "primary",
                     fontFamily: "Outfit, sans-serif",
                     primaryShade: 8,
+                    defaultRadius: "sm",
                 }}
             >
                 <HelmetProvider context={props.helmetContext}>
                     <I18nProvider i18n={i18n}>
+                        <DatesProvider settings={{locale: props.locale}}>
                         <QueryClientProvider client={props.queryClient}>
                             <HydrationBoundary state={props.dehydratedState}>
                                 <StartupChecks/>
@@ -90,9 +93,11 @@ export const App: FC<
                                     </Helmet>
                                     {props.children}
                                 </ModalsProvider>
-                                <Notifications/>
+                                <Notifications pauseResetOnHover="notification" zIndex={20000}/>
+                                {isConsentBannerEnabled() && <CookieConsentBanner/>}
                             </HydrationBoundary>
                         </QueryClientProvider>
+                        </DatesProvider>
                     </I18nProvider>
                 </HelmetProvider>
             </MantineProvider>

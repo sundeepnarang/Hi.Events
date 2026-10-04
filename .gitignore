@@ -6,8 +6,8 @@
 frontend/.env
 backend/.env
 docker/all-in-one/.env
+docker-compose.override.yml
 todo.md
-CLAUDE.md
 /prompts/**
 /prompts
 
@@ -20,3 +20,15 @@ prompts/
 
 /plans/**
 /plans
+
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+tmp_translate/
+test_results/
+
+/demo-reel/**
+/demo-reel/
+
+/release-notes/**
+/release-notes/
+/release-notes.md

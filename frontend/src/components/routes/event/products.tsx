@@ -16,7 +16,6 @@ import {SearchBar} from "../../common/SearchBar";
 import {useState} from "react";
 import {CreateProductCategoryModal} from "../../modals/CreateProductCategoryModal";
 import {IdParam} from "../../../types.ts";
-import {useIsReadOnly} from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 export const Products = () => {
     const [createProductModalOpen, {
@@ -29,7 +28,6 @@ export const Products = () => {
     }] = useDisclosure(false);
     const {eventId} = useParams();
     const {data: event} = useGetEvent(eventId);
-    const isReadOnly = useIsReadOnly();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategoryId, setSelectedCategoryId] = useState<IdParam>(null);
 
@@ -60,49 +58,48 @@ export const Products = () => {
                     />
                 )}
             >
-                {!isReadOnly && (
-                    <Menu
-                        transitionProps={{transition: 'pop-top-right'}}
-                        position="bottom"
-                        width={220}
-                        withinPortal
-                    >
-                        <Menu.Target>
-                            <Button
-                                leftSection={<IconPlus/>}
-                                color={'green'}
-                                rightSection={
-                                    <IconChevronDown stroke={1.5}/>
-                                }
-                                pr={12}
-                            >
-                                {t`Create`}
-                            </Button>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                            <Menu.Item
-                                leftSection={
-                                    <IconShoppingCart
-                                        stroke={1.5}
-                                    />
-                                }
-                                onClick={() => openCreateProduct(undefined)}
-                            >
-                                {t`Ticket or Product`}
-                            </Menu.Item>
-                            <Menu.Item
-                                leftSection={
-                                    <IconCategory
-                                        stroke={1.5}
-                                    />
-                                }
-                                onClick={openCreateProductCategoryModal}
-                            >
-                                {t`Category`}
-                            </Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-                )}
+                <Menu
+                    transitionProps={{transition: 'pop-top-right'}}
+                    position="bottom"
+                    width={220}
+                    withinPortal
+                >
+                    <Menu.Target>
+                        <Button
+                            leftSection={<IconPlus/>}
+                            color={'green'}
+                            data-testid="product-create-button"
+                            rightSection={
+                                <IconChevronDown stroke={1.5}/>
+                            }
+                            pr={12}
+                        >
+                            {t`Create`}
+                        </Button>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Item
+                            leftSection={
+                                <IconShoppingCart
+                                    stroke={1.5}
+                                />
+                            }
+                            onClick={() => openCreateProduct(undefined)}
+                        >
+                            {t`Ticket or Product`}
+                        </Menu.Item>
+                        <Menu.Item
+                            leftSection={
+                                <IconCategory
+                                    stroke={1.5}
+                                />
+                            }
+                            onClick={openCreateProductCategoryModal}
+                        >
+                            {t`Category`}
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
             </ToolBar>
 
             <TableSkeleton isVisible={!productCategories || !event}/>

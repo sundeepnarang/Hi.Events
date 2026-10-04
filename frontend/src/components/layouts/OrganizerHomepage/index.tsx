@@ -17,6 +17,10 @@ import {StatusToggle} from "../../common/StatusToggle";
 import {getConfig} from "../../../utilites/config.ts";
 import {Pagination} from "../../common/Pagination";
 import {computeThemeVariables, validateThemeSettings} from "../../../utilites/themeUtils.ts";
+import {ensureHomepageFontLoaded} from "../../../utilites/fontLoader.ts";
+import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
+import {CookieSettingsLink} from "../../common/CookieSettingsLink";
+import {UserGeneratedContent} from "../../common/UserGeneratedContent";
 
 interface OrganizerHomepageProps {
     organizer?: Organizer;
@@ -44,6 +48,10 @@ export const OrganizerHomepage = ({
                                   }: OrganizerHomepageProps) => {
     const navigate = useNavigate();
     const [contactModalOpen, setContactModalOpen] = useState(false);
+
+    useOrganizerTrackingPixels(
+        organizer?.settings?.tracking_pixels
+    );
 
     if (!organizer) {
         return null;
@@ -85,6 +93,10 @@ export const OrganizerHomepage = ({
     const cssVars = computeThemeVariables(themeSettings);
     const backgroundType = themeSettings.background_type;
 
+    useEffect(() => {
+        ensureHomepageFontLoaded(themeSettings.font_family);
+    }, [themeSettings.font_family]);
+
     const themeStyles = {
         '--organizer-bg-color': themeSettings.background,
         '--organizer-content-bg-color': cssVars['--theme-surface'],
@@ -96,6 +108,8 @@ export const OrganizerHomepage = ({
         '--organizer-accent-soft': cssVars['--theme-accent-soft'],
         '--organizer-accent-muted': cssVars['--theme-accent-muted'],
         '--organizer-border-color': cssVars['--theme-border'],
+        '--theme-font-family': cssVars['--theme-font-family'],
+        fontFamily: cssVars['--theme-font-family'],
     } as React.CSSProperties;
 
     return (
@@ -186,16 +200,16 @@ export const OrganizerHomepage = ({
                                                 <div className={classes.nameSection}>
                                                     <h1>{organizer?.name}</h1>
                                                     <div className={classes.organizerMeta}>
-                                                        {getShortLocationDisplay(organizer?.settings?.location_details) && (
+                                                        {getShortLocationDisplay(organizer?.location?.structured_address) && (
                                                             <div className={classes.metaItem}>
                                                                 <IconMapPin size={15} className={classes.metaIcon}/>
                                                                 <a
-                                                                    href={getGoogleMapsUrl(organizer.settings!.location_details)}
+                                                                    href={getGoogleMapsUrl(organizer.location!.structured_address!)}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     className={classes.mapLink}
                                                                 >
-                                                                    <span>{getShortLocationDisplay(organizer.settings!.location_details)}</span>
+                                                                    <span>{getShortLocationDisplay(organizer.location!.structured_address!)}</span>
                                                                     <IconExternalLink size={12}/>
                                                                 </a>
                                                             </div>
@@ -249,9 +263,9 @@ export const OrganizerHomepage = ({
                                         </div>
                                     </div>
                                     {organizer?.description && (
-                                        <div
+                                        <UserGeneratedContent
                                             className={classes.description}
-                                            dangerouslySetInnerHTML={{__html: organizer.description}}
+                                            html={organizer.description}
                                         />
                                     )}
                                 </div>
@@ -336,6 +350,7 @@ export const OrganizerHomepage = ({
                                 </Anchor>
                             </div>
                             <PoweredByFooter className={classes.poweredByFooter}/>
+                            <CookieSettingsLink/>
                         </div>
                     </div>
 

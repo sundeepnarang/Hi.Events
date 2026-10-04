@@ -16,6 +16,7 @@ import {useResendUserInvitation} from "../../../../../../mutations/useResendUser
 import {showError, showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {useDeleteUserInvitation} from "../../../../../../mutations/useDeleteUserInvitation.ts";
 import {LoadingMask} from "../../../../../common/LoadingMask";
+import {confirmationDialog} from "../../../../../../utilites/confirmationDialog.tsx";
 
 const Users = () => {
     const usersQuery = useGetUsers();
@@ -46,16 +47,18 @@ const Users = () => {
     }
 
     const handleRevokeInvitation = (user: User) => {
-        revokeInvitationMutation.mutate({
-            userId: user.id,
-        }, {
-            onSuccess: () => {
-                showSuccess(t`Invitation revoked!`);
-            },
-            onError: (error) => {
-                console.error(error);
-                showError(t`Something went wrong! Please try again`);
-            }
+        confirmationDialog(t`Are you sure you want to revoke this invitation?`, () => {
+            revokeInvitationMutation.mutate({
+                userId: user.id,
+            }, {
+                onSuccess: () => {
+                    showSuccess(t`Invitation revoked!`);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    showError(t`Something went wrong! Please try again`);
+                }
+            });
         });
     }
 
@@ -93,8 +96,7 @@ const Users = () => {
                 <Badge variant="outline">
                     <Group gap={5}>
                         {user.role === 'ORGANIZER' && <IconUser size={14}/>}
-                        {user.role === 'ADMIN' && <IconUserShield size={14}/>}
-                        {user.role === 'READONLY' && <IconEye size={14}/>} {user.role}
+                        {user.role === 'ADMIN' && <IconUserShield size={14}/>} {user.role === 'ADMIN' ? t`Admin` : user.role === 'ORGANIZER' ? t`Organizer` : user.role}
                     </Group>
                 </Badge>
             </Table.Td>
@@ -103,7 +105,7 @@ const Users = () => {
             </Table.Td>
             <Table.Td>
                 <Badge color={statusColor(user.status as string)} variant="light">
-                    {user.status}
+                    {user.status === 'ACTIVE' ? t`Active` : user.status === 'INVITED' ? t`Invited` : user.status === 'INACTIVE' ? t`Inactive` : user.status}
                 </Badge>
             </Table.Td>
             <Table.Td width={'60px'}>
@@ -144,6 +146,7 @@ const Users = () => {
                 subHeading={t`Manage your users and their permissions`}
                 buttonText={t`Invite User`}
                 buttonAction={openCreateModal}
+                buttonDataTestId="team-invite-button"
             />
 
             <Card style={{padding: 0, position: 'relative'}}>

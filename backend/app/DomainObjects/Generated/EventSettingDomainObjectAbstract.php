@@ -41,7 +41,6 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const SEO_KEYWORDS = 'seo_keywords';
     final public const NOTIFY_ORGANIZER_OF_NEW_ORDERS = 'notify_organizer_of_new_orders';
     final public const PRICE_DISPLAY_MODE = 'price_display_mode';
-    final public const HIDE_GETTING_STARTED_PAGE = 'hide_getting_started_page';
     final public const SHOW_SHARE_BUTTONS = 'show_share_buttons';
     final public const HOMEPAGE_BODY_BACKGROUND_COLOR = 'homepage_body_background_color';
     final public const HOMEPAGE_BACKGROUND_TYPE = 'homepage_background_type';
@@ -68,6 +67,10 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     final public const WAITLIST_AUTO_PROCESS = 'waitlist_auto_process';
     final public const WAITLIST_OFFER_TIMEOUT_MINUTES = 'waitlist_offer_timeout_minutes';
     final public const SHOW_DATA_COLLECTION_DISCLAIMER = 'show_data_collection_disclaimer';
+    final public const ALLOW_COPY_DETAILS_TO_ALL_ATTENDEES = 'allow_copy_details_to_all_attendees';
+    final public const SHOW_AVAILABLE_OCCURRENCE_CAPACITY = 'show_available_occurrence_capacity';
+    final public const HIDE_SOLD_OUT_OCCURRENCES = 'hide_sold_out_occurrences';
+    final public const GET_TICKETS_BUTTON_TEXT = 'get_tickets_button_text';
 
     protected int $id;
     protected int $event_id;
@@ -100,7 +103,6 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected ?string $seo_keywords = null;
     protected bool $notify_organizer_of_new_orders = true;
     protected string $price_display_mode = 'INCLUSIVE';
-    protected bool $hide_getting_started_page = false;
     protected bool $show_share_buttons = true;
     protected ?string $homepage_body_background_color = null;
     protected string $homepage_background_type = 'COLOR';
@@ -127,6 +129,10 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     protected bool $waitlist_auto_process = false;
     protected ?int $waitlist_offer_timeout_minutes = null;
     protected bool $show_data_collection_disclaimer = true;
+    protected bool $allow_copy_details_to_all_attendees = true;
+    protected bool $show_available_occurrence_capacity = false;
+    protected bool $hide_sold_out_occurrences = false;
+    protected ?string $get_tickets_button_text = null;
 
     public function toArray(): array
     {
@@ -162,7 +168,6 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'seo_keywords' => $this->seo_keywords ?? null,
                     'notify_organizer_of_new_orders' => $this->notify_organizer_of_new_orders ?? null,
                     'price_display_mode' => $this->price_display_mode ?? null,
-                    'hide_getting_started_page' => $this->hide_getting_started_page ?? null,
                     'show_share_buttons' => $this->show_share_buttons ?? null,
                     'homepage_body_background_color' => $this->homepage_body_background_color ?? null,
                     'homepage_background_type' => $this->homepage_background_type ?? null,
@@ -189,6 +194,10 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
                     'waitlist_auto_process' => $this->waitlist_auto_process ?? null,
                     'waitlist_offer_timeout_minutes' => $this->waitlist_offer_timeout_minutes ?? null,
                     'show_data_collection_disclaimer' => $this->show_data_collection_disclaimer ?? null,
+                    'allow_copy_details_to_all_attendees' => $this->allow_copy_details_to_all_attendees ?? null,
+                    'show_available_occurrence_capacity' => $this->show_available_occurrence_capacity ?? null,
+                    'hide_sold_out_occurrences' => $this->hide_sold_out_occurrences ?? null,
+                    'get_tickets_button_text' => $this->get_tickets_button_text ?? null,
                 ];
     }
 
@@ -533,17 +542,6 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
         return $this->price_display_mode;
     }
 
-    public function setHideGettingStartedPage(bool $hide_getting_started_page): self
-    {
-        $this->hide_getting_started_page = $hide_getting_started_page;
-        return $this;
-    }
-
-    public function getHideGettingStartedPage(): bool
-    {
-        return $this->hide_getting_started_page;
-    }
-
     public function setShowShareButtons(bool $show_share_buttons): self
     {
         $this->show_share_buttons = $show_share_buttons;
@@ -829,5 +827,50 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     public function getShowDataCollectionDisclaimer(): bool
     {
         return $this->show_data_collection_disclaimer;
+    }
+
+    public function setAllowCopyDetailsToAllAttendees(bool $allow_copy_details_to_all_attendees): self
+    {
+        $this->allow_copy_details_to_all_attendees = $allow_copy_details_to_all_attendees;
+        return $this;
+    }
+
+    public function getAllowCopyDetailsToAllAttendees(): bool
+    {
+        return $this->allow_copy_details_to_all_attendees;
+    }
+
+    public function setShowAvailableOccurrenceCapacity(bool $show_available_occurrence_capacity): self
+    {
+        $this->show_available_occurrence_capacity = $show_available_occurrence_capacity;
+        return $this;
+    }
+
+    public function getShowAvailableOccurrenceCapacity(): bool
+    {
+        return $this->show_available_occurrence_capacity;
+    }
+
+    public function setHideSoldOutOccurrences(bool $hide_sold_out_occurrences): self
+    {
+        $this->hide_sold_out_occurrences = $hide_sold_out_occurrences;
+        return $this;
+    }
+
+    public function getHideSoldOutOccurrences(): bool
+    {
+        return $this->hide_sold_out_occurrences;
+    }
+
+    public function setGetTicketsButtonText(?string $get_tickets_button_text): self
+    {
+        $this->get_tickets_button_text = $get_tickets_button_text;
+        return $this;
+    }
+
+    public function getGetTicketsButtonText(): ?string
+    {
+        return $this->get_tickets_button_text;
+    }
     }
 }

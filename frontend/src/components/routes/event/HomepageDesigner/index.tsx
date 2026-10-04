@@ -19,11 +19,14 @@ import {ImageUploadDropzone} from "../../../common/ImageUploadDropzone";
 import {queryClient} from "../../../../utilites/queryClient.ts";
 import {GET_EVENT_PUBLIC_QUERY_KEY} from "../../../../queries/useGetEventPublic.ts";
 import {ThemeColorControls} from "../../../common/ThemeColorControls";
+import {ThemeFontControl} from "../../../common/ThemeFontControl";
 import {validateThemeSettings} from "../../../../utilites/themeUtils.ts";
+import {DEFAULT_HOMEPAGE_FONT} from "../../../../constants/homepageFonts.ts";
 
 interface FormValues {
     homepage_theme_settings: Partial<HomepageThemeSettings>;
     continue_button_text: string;
+    get_tickets_button_text: string;
 }
 
 const HomepageDesigner = () => {
@@ -38,7 +41,7 @@ const HomepageDesigner = () => {
     const [iframeSrc, setIframeSrc] = useState<string | null>(null);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const [lastCoverId, setLastCoverId] = useState<IdParam | null>(null);
-    const [accordionValue, setAccordionValue] = useState<string[]>(['images', 'colors', 'button']);
+    const [accordionValue, setAccordionValue] = useState<string[]>(['images', 'colors', 'typography', 'button']);
 
     const existingCover = eventImagesQuery.data?.find((image) => image.type === 'EVENT_COVER');
 
@@ -49,8 +52,10 @@ const HomepageDesigner = () => {
                 background: '#f5f3ff',
                 mode: 'light',
                 background_type: 'COLOR',
+                font_family: DEFAULT_HOMEPAGE_FONT,
             },
             continue_button_text: '',
+            get_tickets_button_text: '',
         }
     });
 
@@ -64,6 +69,7 @@ const HomepageDesigner = () => {
             form.setValues({
                 homepage_theme_settings: themeSettings,
                 continue_button_text: settings.continue_button_text,
+                get_tickets_button_text: settings.get_tickets_button_text || '',
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -88,6 +94,7 @@ const HomepageDesigner = () => {
         const eventSettings: Partial<EventSettings> = {
             homepage_theme_settings: validatedTheme,
             continue_button_text: values.continue_button_text,
+            get_tickets_button_text: values.get_tickets_button_text,
             // Also update legacy fields for backward compatibility during transition
             homepage_primary_color: validatedTheme.accent,
             homepage_body_background_color: validatedTheme.background,
@@ -123,6 +130,7 @@ const HomepageDesigner = () => {
             const settingsToSend = {
                 homepage_theme_settings: themeSettings,
                 continue_button_text: form.values.continue_button_text,
+                get_tickets_button_text: form.values.get_tickets_button_text,
             };
 
             const settingsJson = JSON.stringify(settingsToSend);
@@ -240,6 +248,24 @@ const HomepageDesigner = () => {
                             </Accordion.Panel>
                         </Accordion.Item>
 
+                        <Accordion.Item value="typography" className={classes.accordionItem}>
+                            <Accordion.Control icon={<IconTypography size={20} />}>
+                                <Text fw={500}>{t`Typography`}</Text>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending} className={classes.fieldset}>
+                                    <ThemeFontControl
+                                        value={form.values.homepage_theme_settings.font_family}
+                                        onChange={(fontFamily) => form.setFieldValue('homepage_theme_settings', {
+                                            ...form.values.homepage_theme_settings,
+                                            font_family: fontFamily,
+                                        })}
+                                        disabled={eventSettingsQuery.isLoading || updateMutation.isPending}
+                                    />
+                                </fieldset>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+
                         <Accordion.Item value="button" className={classes.accordionItem}>
                             <Accordion.Control icon={<IconTypography size={20} />}>
                                 <Text fw={500}>{t`Button Text`}</Text>
@@ -254,6 +280,13 @@ const HomepageDesigner = () => {
                                                 placeholder={t`e.g., Get Tickets, Register Now`}
                                                 size="sm"
                                                 {...form.getInputProps('continue_button_text')}
+                                            />
+                                            <TextInput
+                                                label={t`Get Tickets Button Text`}
+                                                description={t`Customize the text shown on the floating button that scrolls to the tickets section`}
+                                                placeholder={t`Get Tickets`}
+                                                size="sm"
+                                                {...form.getInputProps('get_tickets_button_text')}
                                             />
                                         </Stack>
                                     </fieldset>

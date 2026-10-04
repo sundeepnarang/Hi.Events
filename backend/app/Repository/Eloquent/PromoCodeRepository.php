@@ -28,19 +28,19 @@ class PromoCodeRepository extends BaseRepository implements PromoCodeRepositoryI
     public function findByEventId(int $eventId, QueryParamsDTO $params): LengthAwarePaginator
     {
         $where = [
-            [PromoCodeDomainObjectAbstract::EVENT_ID, '=', $eventId]
+            [PromoCodeDomainObjectAbstract::EVENT_ID, '=', $eventId],
         ];
 
         if ($params->query) {
             $where[] = static function (Builder $builder) use ($params) {
                 $builder
-                    ->orWhere(PromoCodeDomainObjectAbstract::CODE, 'ilike', '%' . $params->query . '%');
+                    ->orWhere(PromoCodeDomainObjectAbstract::CODE, 'ilike', '%'.$params->query.'%');
             };
         }
 
         $this->model = $this->model->orderBy(
-            column: $params->sort_by ?? PromoCodeDomainObject::getDefaultSort(),
-            direction: $params->sort_direction ?? 'desc',
+            column: $this->validateSortColumn($params->sort_by, PromoCodeDomainObject::class),
+            direction: $this->validateSortDirection($params->sort_direction, PromoCodeDomainObject::class),
         );
 
         return $this->paginateWhere(

@@ -19,6 +19,7 @@ use HiEvents\Services\Application\Handlers\Account\DTO\CreateAccountDTO;
 use HiEvents\Services\Application\Handlers\Account\Exceptions\AccountConfigurationDoesNotExist;
 use HiEvents\Services\Application\Handlers\Account\Exceptions\AccountRegistrationDisabledException;
 use HiEvents\Services\Domain\Account\AccountUserAssociationService;
+use HiEvents\Services\Domain\Account\AttributionSourceClassifier;
 use HiEvents\Services\Domain\User\EmailConfirmationService;
 use Illuminate\Config\Repository;
 use Illuminate\Database\DatabaseManager;
@@ -30,20 +31,19 @@ use Throwable;
 class CreateAccountHandler
 {
     public function __construct(
-        private readonly UserRepositoryInterface                 $userRepository,
-        private readonly AccountRepositoryInterface              $accountRepository,
-        private readonly HashManager                             $hashManager,
-        private readonly DatabaseManager                         $databaseManager,
-        private readonly Repository                              $config,
-        private readonly EmailConfirmationService                $emailConfirmationService,
-        private readonly AccountUserAssociationService           $accountUserAssociationService,
-        private readonly AccountUserRepositoryInterface          $accountUserRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly AccountRepositoryInterface $accountRepository,
+        private readonly HashManager $hashManager,
+        private readonly DatabaseManager $databaseManager,
+        private readonly Repository $config,
+        private readonly EmailConfirmationService $emailConfirmationService,
+        private readonly AccountUserAssociationService $accountUserAssociationService,
+        private readonly AccountUserRepositoryInterface $accountUserRepository,
         private readonly AccountConfigurationRepositoryInterface $accountConfigurationRepository,
-        private readonly AccountAttributionRepositoryInterface   $accountAttributionRepository,
-        private readonly LoggerInterface                         $logger,
-    )
-    {
-    }
+        private readonly AccountAttributionRepositoryInterface $accountAttributionRepository,
+        private readonly AttributionSourceClassifier $attributionSourceClassifier,
+        private readonly LoggerInterface $logger,
+    ) {}
 
     /**
      * @throws Throwable
@@ -51,17 +51,17 @@ class CreateAccountHandler
     public function handle(CreateAccountDTO $accountData): AccountDomainObject
     {
         if ($this->config->get('app.disable_registration')) {
-            throw new AccountRegistrationDisabledException();
+            throw new AccountRegistrationDisabledException;
         }
 
         $isSaasMode = $this->config->get('app.saas_mode_enabled');
-        $passwordHash = $this->hashManager->make($accountData->password);;
+        $passwordHash = $this->hashManager->make($accountData->password);
 
         return $this->databaseManager->transaction(function () use ($isSaasMode, $passwordHash, $accountData) {
             $account = $this->accountRepository->create([
                 'timezone' => $this->getTimezone($accountData),
                 'currency_code' => $this->getCurrencyCode($accountData),
-                'name' => $accountData->first_name . ($accountData->last_name ? ' ' . $accountData->last_name : ''),
+                'name' => $accountData->first_name.($accountData->last_name ? ' '.$accountData->last_name : ''),
                 'email' => strtolower($accountData->email),
                 'short_id' => IdHelper::shortId(IdHelper::ACCOUNT_PREFIX),
                 'account_verified_at' => $isSaasMode ? null : now()->toDateTimeString(),
@@ -100,7 +100,13 @@ class CreateAccountHandler
                     'landing_page' => $accountData->landing_page,
                     'gclid' => $accountData->gclid,
                     'fbclid' => $accountData->fbclid,
-                    'source_type' => $this->classifySourceType($accountData),
+                    'source_type' => $this->attributionSourceClassifier->classify(
+                        utmMedium: $accountData->utm_medium,
+                        referrerUrl: $accountData->referrer_url,
+                        gclid: $accountData->gclid,
+                        fbclid: $accountData->fbclid,
+                        utmRaw: $accountData->utm_raw,
+                    )->value,
                     'utm_raw' => $accountData->utm_raw,
                 ]);
             }
@@ -214,55 +220,12 @@ class CreateAccountHandler
         return $data->utm_source !== null
             || $data->utm_medium !== null
             || $data->utm_campaign !== null
-            || $data->gclid !== null
-            || $data->fbclid !== null;
-    }
-
-    private function classifySourceType(CreateAccountDTO $data): string
-    {
-        if ($data->gclid !== null) {
-            return 'paid';
-        }
-
-        if ($data->fbclid !== null) {
-            return 'paid';
-        }
-
-        $paidMediums = ['cpc', 'ppc', 'paid', 'paidsocial', 'display', 'retargeting'];
-        $normalizedMedium = $this->normalizeUtmValue($data->utm_medium);
-
-        if ($normalizedMedium !== null && in_array($normalizedMedium, $paidMediums, true)) {
-            return 'paid';
-        }
-
-        if ($data->referrer_url !== null && !$this->isInternalReferrer($data->referrer_url)) {
-            return 'referral';
-        }
-
-        return 'organic';
-    }
-
-    private function isInternalReferrer(?string $referrer): bool
-    {
-        if ($referrer === null || trim($referrer) === '') {
-            return false;
-        }
-
-        $appUrl = $this->config->get('app.url');
-
-        if ($appUrl === null) {
-            return false;
-        }
-
-        $appHost = parse_url($appUrl, PHP_URL_HOST);
-        $referrerHost = parse_url($referrer, PHP_URL_HOST);
-
-        return $appHost === $referrerHost;
+            || $data->fbclid !== null
+            || $this->attributionSourceClassifier->hasPaidClickId($data->gclid, $data->utm_raw);
     }
 
     private function getDefaultMessagingTierId(): int
     {
-        // Self-hosted instances get Premium tier, SaaS gets Untrusted
         return $this->config->get('app.is_hi_events') ? 1 : 3;
     }
 }

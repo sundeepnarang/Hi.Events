@@ -166,6 +166,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "deletion-requests",
+                async lazy() {
+                    const DeletionRequests = await import("./components/routes/admin/DeletionRequests");
+                    return { Component: DeletionRequests.default };
+                }
+            },
+            {
                 path: "users",
                 async lazy() {
                     const Users = await import("./components/routes/admin/Users");
@@ -201,6 +208,20 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "feature-flags",
+                async lazy() {
+                    const FeatureFlags = await import("./components/routes/admin/FeatureFlags");
+                    return { Component: FeatureFlags.default };
+                }
+            },
+            {
+                path: "licence",
+                async lazy() {
+                    const Licence = await import("./ee/licensing/components/routes/admin/Licence");
+                    return { Component: Licence.default };
+                }
+            },
+            {
                 path: "failed-jobs",
                 async lazy() {
                     const FailedJobs = await import("./components/routes/admin/FailedJobs");
@@ -212,6 +233,20 @@ export const router: RouteObject[] = [
                 async lazy() {
                     const Messages = await import("./components/routes/admin/Messages");
                     return { Component: Messages.default };
+                }
+            },
+            {
+                path: "spam-events",
+                async lazy() {
+                    const SpamEvents = await import("./components/routes/admin/SpamEvents");
+                    return { Component: SpamEvents.default };
+                }
+            },
+            {
+                path: "announcements",
+                async lazy() {
+                    const Announcements = await import("./components/routes/admin/Announcements");
+                    return { Component: Announcements.default };
                 }
             }
         ]
@@ -260,10 +295,10 @@ export const router: RouteObject[] = [
                         }
                     },
                     {
-                        path: "payment",
+                        path: "danger-zone",
                         async lazy() {
-                            const PaymentSettings = await import("./components/routes/account/ManageAccount/sections/PaymentSettings");
-                            return { Component: PaymentSettings.default };
+                            const DangerZone = await import("./components/routes/account/ManageAccount/sections/DangerZone");
+                            return { Component: DangerZone.default };
                         }
                     },
                 ]
@@ -296,24 +331,49 @@ export const router: RouteObject[] = [
                 path: "settings",
                 async lazy() {
                     const Settings = await import("./components/routes/organizer/Settings");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><Settings.default /></ReadOnlyGuard.default> };
+                    return { Component: Settings.default };
                 }
             },
             {
                 path: "organizer-homepage-designer",
                 async lazy() {
                     const OrganizerHomepageDesigner = await import("./components/routes/organizer/OrganizerHomepageDesigner");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><OrganizerHomepageDesigner.default /></ReadOnlyGuard.default> };
+                    return { Component: OrganizerHomepageDesigner.default };
                 }
             },
             {
                 path: "webhooks",
                 async lazy() {
                     const Webhooks = await import("./components/routes/organizer/Webhooks");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><Webhooks.default /></ReadOnlyGuard.default> };
+                    return { Component: Webhooks.default };
+                }
+            },
+            {
+                path: "locations",
+                async lazy() {
+                    const Locations = await import("./components/routes/organizer/Locations");
+                    return { Component: Locations.default };
+                }
+            },
+            {
+                path: "seat-maps",
+                async lazy() {
+                    const SeatMaps = await import("./ee/seating/components/routes/organizer/SeatMaps");
+                    return { Component: SeatMaps.default };
+                }
+            },
+            {
+                path: "seat-maps/:seatMapId",
+                async lazy() {
+                    const SeatMapDesigner = await import("./ee/seating/components/routes/organizer/SeatMapDesigner");
+                    return { Component: SeatMapDesigner.default };
+                }
+            },
+            {
+                path: "payments",
+                async lazy() {
+                    const PaymentsRedirect = await import("./components/routes/organizer/Payments/Redirect");
+                    return { Component: PaymentsRedirect.default };
                 }
             },
             {
@@ -355,6 +415,10 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "getting-started",
+                element: <Navigate to="../dashboard" replace={true} />
+            },
+            {
                 path: "reports",
                 async lazy() {
                     const Reports = await import("./components/routes/event/Reports");
@@ -386,8 +450,7 @@ export const router: RouteObject[] = [
                 path: "questions",
                 async lazy() {
                     const Questions = await import("./components/routes/event/questions");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><Questions.default /></ReadOnlyGuard.default> };
+                    return { Component: Questions.default };
                 }
             },
             {
@@ -419,6 +482,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "box-office",
+                async lazy() {
+                    const BoxOffices = await import("./ee/box-office/components/routes/event/BoxOffices");
+                    return { Component: BoxOffices.default };
+                }
+            },
+            {
                 path: "messages",
                 async lazy() {
                     const Messages = await import("./components/routes/event/messages");
@@ -436,32 +506,21 @@ export const router: RouteObject[] = [
                 path: "widget",
                 async lazy() {
                     const Widget = await import("./components/routes/event/widget");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><Widget.default /></ReadOnlyGuard.default> };
+                    return { Component: Widget.default };
                 }
             },
             {
                 path: "homepage-designer",
                 async lazy() {
                     const HomepageDesigner = await import("./components/routes/event/HomepageDesigner");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><HomepageDesigner.default /></ReadOnlyGuard.default> };
+                    return { Component: HomepageDesigner.default };
                 }
             },
             {
                 path: "ticket-designer",
                 async lazy() {
                     const TicketDesigner = await import("./components/routes/event/TicketDesigner");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><TicketDesigner.default /></ReadOnlyGuard.default> };
-                }
-            },
-            {
-                path: "getting-started",
-                async lazy() {
-                    const GettingStarted = await import("./components/routes/event/GettingStarted");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><GettingStarted.default /></ReadOnlyGuard.default> };
+                    return { Component: TicketDesigner.default };
                 }
             },
             {
@@ -472,6 +531,27 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "occurrences",
+                async lazy() {
+                    const OccurrencesTab = await import("./components/routes/event/OccurrencesTab");
+                    return {Component: OccurrencesTab.default};
+                }
+            },
+            {
+                path: "occurrences/calendar",
+                async lazy() {
+                    const OccurrencesTab = await import("./components/routes/event/OccurrencesTab");
+                    return {Component: OccurrencesTab.default};
+                }
+            },
+            {
+                path: "occurrences/:occurrenceId",
+                async lazy() {
+                    const OccurrenceDetail = await import("./components/routes/event/OccurrenceDetail");
+                    return {Component: OccurrenceDetail.default};
+                }
+            },
+            {
                 path: "capacity-assignments",
                 async lazy() {
                     const CapacityAssignments = await import("./components/routes/event/CapacityAssignments");
@@ -479,11 +559,31 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: "seating",
+                async lazy() {
+                    const Seating = await import("./ee/seating/components/routes/event/Seating");
+                    return { Component: Seating.default };
+                }
+            },
+            {
+                path: "seating/sales",
+                async lazy() {
+                    const SeatingSales = await import("./ee/seating/components/routes/event/SeatingSales");
+                    return { Component: SeatingSales.default };
+                }
+            },
+            {
+                path: "seating/designer",
+                async lazy() {
+                    const SeatMapDesigner = await import("./ee/seating/components/routes/event/SeatMapDesigner");
+                    return { Component: SeatMapDesigner.default };
+                }
+            },
+            {
                 path: "webhooks",
                 async lazy() {
                     const Webhooks = await import("./components/routes/event/Webhooks");
-                    const ReadOnlyGuard = await import("./components/common/ReadOnlyGuard");
-                    return { element: <ReadOnlyGuard.default><Webhooks.default /></ReadOnlyGuard.default> };
+                    return { Component: Webhooks.default };
                 }
             }
         ]
@@ -543,6 +643,14 @@ export const router: RouteObject[] = [
         async lazy() {
             const ProductWidget = await import("./components/layouts/ProductWidget");
             return { Component: ProductWidget.default };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/checkout/:eventId/seats",
+        async lazy() {
+            const SeatCheckout = await import("./ee/seating/components/layouts/SeatCheckout");
+            return { Component: SeatCheckout.default };
         },
         errorElement: <ErrorPage />,
     },
@@ -609,6 +717,14 @@ export const router: RouteObject[] = [
         errorElement: <ErrorPage />
     },
     {
+        path: "/manage/event/:eventId/seating/print",
+        async lazy() {
+            const SeatingPrint = await import("./ee/seating/components/routes/event/SeatingPrint");
+            return { Component: SeatingPrint.default };
+        },
+        errorElement: <ErrorPage />
+    },
+    {
         path: "/product/:eventId/:attendeeShortId",
         async lazy() {
             const AttendeeProductAndInformation = await import("./components/routes/product-widget/AttendeeProductAndInformation");
@@ -621,6 +737,14 @@ export const router: RouteObject[] = [
         async lazy() {
             const CheckIn = await import("./components/layouts/CheckIn");
             return { Component: CheckIn.default };
+        },
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: "/box-office/:boxOfficeShortId",
+        async lazy() {
+            const BoxOffice = await import("./ee/box-office/components/layouts/BoxOffice");
+            return { Component: BoxOffice.default };
         },
         errorElement: <ErrorPage />,
     },

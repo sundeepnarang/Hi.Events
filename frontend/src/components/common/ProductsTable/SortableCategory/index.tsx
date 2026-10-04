@@ -10,9 +10,9 @@ import {t} from "@lingui/macro";
 import {useDeleteProductCategory} from "../../../../mutations/useDeleteProductCategory.ts";
 import {useParams} from "react-router";
 import {showError, showSuccess} from "../../../../utilites/notifications.tsx";
+import {confirmationDialog} from "../../../../utilites/confirmationDialog.tsx";
 import {SortArrows} from "../../SortArrows";
 import {useSortProducts} from "../../../../mutations/useSortProducts.ts";
-import {useIsReadOnly} from "../../../../hooks/useIsCurrentUserAdmin.ts";
 
 interface SortableCategoryProps {
     category: ProductCategory;
@@ -29,7 +29,6 @@ export const SortableCategory: React.FC<SortableCategoryProps> = ({
                                                                       openCreateModal,
                                                                       categories,
                                                                   }) => {
-    const isReadOnly = useIsReadOnly();
     const [isEditModalOpen, editModal] = useDisclosure(false);
     const {eventId} = useParams();
     const deleteMutation = useDeleteProductCategory();
@@ -43,18 +42,21 @@ export const SortableCategory: React.FC<SortableCategoryProps> = ({
             return;
         }
 
-        deleteMutation.mutate({productCategoryId: category.id, eventId: eventId}, {
-            onSuccess: () => {
-                editModal.close();
-            },
-            onError: (error) => {
-                if (error?.response?.status && error.response.status === 409 && error?.response?.data?.message) {
-                    showError(error?.response?.data.message);
-                    return;
-                } else {
-                    showError(t`We couldn't delete the category. Please try again.`);
+        confirmationDialog(t`Delete this category? Any products in it will also be deleted. This cannot be undone.`, () => {
+            deleteMutation.mutate({productCategoryId: category.id, eventId: eventId}, {
+                onSuccess: () => {
+                    showSuccess(t`Category deleted successfully`);
+                    editModal.close();
+                },
+                onError: (error: any) => {
+                    if (error?.response?.status && error.response.status === 409 && error?.response?.data?.message) {
+                        showError(error?.response?.data.message);
+                        return;
+                    } else {
+                        showError(t`We couldn't delete the category. Please try again.`);
+                    }
                 }
-            }
+            });
         });
     }
 
@@ -118,43 +120,39 @@ export const SortableCategory: React.FC<SortableCategoryProps> = ({
                     </h2>
 
                     <div className={classes.categoryActions}>
-                        {!isReadOnly && (
-                            <>
-                                <SortArrows
-                                    upArrowEnabled={upSortEnabled}
-                                    downArrowEnabled={downSortEnabled}
-                                    onSortUp={() => handleSort('up')}
-                                    onSortDown={() => handleSort('down')}
-                                />
-                                <ActionIcon
-                                    className={classes.categoryAction}
-                                    onClick={openCreateModal}
-                                    title={t`Create category`}
-                                    aria-label={t`Create category`}
-                                    variant={'transparent'}
-                                >
-                                    <IconPlus size={20}/>
-                                </ActionIcon>
-                                <ActionIcon
-                                    className={classes.categoryAction}
-                                    onClick={editModal.open}
-                                    title={t`Edit category`}
-                                    aria-label={t`Edit category`}
-                                    variant={'transparent'}
-                                >
-                                    <IconPencil size={20}/>
-                                </ActionIcon>
-                                <ActionIcon
-                                    className={classes.categoryAction}
-                                    onClick={handleDelete}
-                                    title={t`Delete category`}
-                                    aria-label={t`Delete category`}
-                                    variant={'transparent'}
-                                >
-                                    {isLastCategory ? <IconTrashOff size={20}/> : <IconTrash size={20}/>}
-                                </ActionIcon>
-                            </>
-                        )}
+                        <SortArrows
+                            upArrowEnabled={upSortEnabled}
+                            downArrowEnabled={downSortEnabled}
+                            onSortUp={() => handleSort('up')}
+                            onSortDown={() => handleSort('down')}
+                        />
+                        <ActionIcon
+                            className={classes.categoryAction}
+                            onClick={openCreateModal}
+                            title={t`Create category`}
+                            aria-label={t`Create category`}
+                            variant={'transparent'}
+                        >
+                            <IconPlus size={20}/>
+                        </ActionIcon>
+                        <ActionIcon
+                            className={classes.categoryAction}
+                            onClick={editModal.open}
+                            title={t`Edit category`}
+                            aria-label={t`Edit category`}
+                            variant={'transparent'}
+                        >
+                            <IconPencil size={20}/>
+                        </ActionIcon>
+                        <ActionIcon
+                            className={classes.categoryAction}
+                            onClick={handleDelete}
+                            title={t`Delete category`}
+                            aria-label={t`Delete category`}
+                            variant={'transparent'}
+                        >
+                            {isLastCategory ? <IconTrashOff size={20}/> : <IconTrash size={20}/>}
+                        </ActionIcon>
                     </div>
                 </div>
                 <div className={classes.categoryContent}>

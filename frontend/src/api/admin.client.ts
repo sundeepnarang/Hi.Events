@@ -48,6 +48,7 @@ export interface AccountConfiguration {
     id: number;
     name: string;
     is_system_default: boolean;
+    default_for_currency: string | null;
     application_fees: {
         fixed: number;
         percentage: number;
@@ -55,6 +56,9 @@ export interface AccountConfiguration {
     };
     bypass_application_fees: boolean;
 }
+
+export const isDefaultConfiguration = (config: AccountConfiguration): boolean =>
+    config.is_system_default || Boolean(config.default_for_currency);
 
 export interface CreateConfigurationData {
     name: string;
@@ -76,38 +80,70 @@ export interface UpdateConfigurationData {
     bypass_application_fees?: boolean;
 }
 
-export interface AssignConfigurationData {
-    configuration_id: number;
-}
-
-export interface AccountVatSetting {
+export interface AdminOrganizerVatSetting {
     id: number;
-    account_id: number;
     vat_registered: boolean;
     vat_number: string | null;
     vat_validated: boolean;
+    vat_validation_status: 'PENDING' | 'VALIDATING' | 'VALID' | 'INVALID' | 'FAILED' | null;
     vat_validation_date: string | null;
     business_name: string | null;
     business_address: string | null;
     vat_country_code: string | null;
-    created_at: string;
-    updated_at: string;
+}
+
+export interface AdminOrganizerSummary {
+    id: IdParam;
+    name: string;
+    configuration: AccountConfiguration | null;
+    vat_setting: AdminOrganizerVatSetting | null;
 }
 
 export interface AdminAccountDetail extends AdminAccount {
-    configuration?: AccountConfiguration;
-    vat_setting?: AccountVatSetting;
     messaging_tier?: AccountMessagingTier;
+    organizers: AdminOrganizerSummary[];
+    is_manually_verified: boolean;
 }
 
+export interface AdminFeatureFlag {
+    key: string;
+    enabled_by_default: boolean;
+    enabled_override_count: number;
+    disabled_override_count: number;
+}
 
-export interface UpdateAccountVatSettingsData {
-    vat_registered: boolean;
+export interface AdminFeatureFlagOverride {
+    account_id: number;
+    account_name: string;
+    enabled: boolean;
+    updated_at: string;
+}
+
+export interface AdminAccountFeatureFlag {
+    key: string;
+    enabled_by_default: boolean;
+    override: boolean | null;
+    enabled: boolean;
+}
+
+export interface UpdateAdminOrganizerVatSettingData {
+    vat_registered?: boolean;
     vat_number?: string | null;
+    vat_validated?: boolean;
     business_name?: string | null;
     business_address?: string | null;
     vat_country_code?: string | null;
 }
+
+export interface UpdateOrganizerConfigurationOverrideData {
+    application_fees?: {
+        fixed: number;
+        percentage: number;
+        currency: string;
+    };
+    bypass_application_fees?: boolean;
+}
+
 
 export interface AdminStats {
     total_users: number;
@@ -204,6 +240,31 @@ export interface GetAllAccountsParams {
     search?: string;
 }
 
+export interface GetAllDeletionRequestsParams {
+    page?: number;
+    per_page?: number;
+    search?: string;
+    status?: string;
+}
+
+export interface AdminDeletionRequest {
+    id: IdParam;
+    status: 'REQUESTED' | 'CANCELLED' | 'COMPLETED';
+    initiated_by: 'ACCOUNT_OWNER' | 'ADMIN';
+    reason: string | null;
+    expected_outcome: 'HARD_DELETE' | 'ANONYMIZE' | null;
+    outcome: 'HARD_DELETE' | 'ANONYMIZE' | null;
+    scheduled_deletion_at: string;
+    reminder_sent_at: string | null;
+    cancelled_at: string | null;
+    completed_at: string | null;
+    requested_at: string;
+    deletion_manifest: Record<string, unknown>[] | Record<string, number> | null;
+    account: { id: IdParam; name: string; email: string } | null;
+    requested_by_user: { id: IdParam; full_name: string; email: string } | null;
+    cancelled_by_user: { id: IdParam; full_name: string } | null;
+}
+
 export interface GetAllEventsParams {
     page?: number;
     per_page?: number;
@@ -250,7 +311,7 @@ export interface AdminOrder {
     public_id: string;
     first_name: string;
     last_name: string;
-    email: string;
+    email: string | null;
     total_gross: number;
     total_tax: number;
     total_fee: number;
@@ -271,7 +332,7 @@ export interface UtmAttributionStats {
     live_events: number;
     stripe_connected: number;
     verified_accounts: number;
-    total_revenue: number;
+    revenue_by_currency: Record<string, number>;
     total_orders: number;
 }
 
@@ -284,8 +345,10 @@ export interface UtmAttributionSummary {
     total_accounts: number;
 }
 
+export type AttributionGroupBy = 'source' | 'medium' | 'campaign' | 'content' | 'term' | 'cta' | 'source_type';
+
 export interface GetUtmAttributionStatsParams {
-    group_by?: 'source' | 'campaign' | 'medium' | 'source_type';
+    group_by?: AttributionGroupBy;
     date_from?: string;
     date_to?: string;
     page?: number;
@@ -326,6 +389,30 @@ export interface AdminMessage {
     sent_at: string | null;
     created_at: string;
     eligibility_failures?: string[];
+}
+
+export interface SpamCheckVerdict {
+    confidence: number;
+    reasons: string[];
+}
+
+export interface AdminSpamEvent {
+    id: IdParam;
+    event_id: IdParam;
+    event_title: string;
+    event_description: string;
+    organizer_name: string | null;
+    account_name: string | null;
+    account_email: string | null;
+    account_id: IdParam;
+    verdict: SpamCheckVerdict;
+    checked_at: string;
+}
+
+export interface GetAllAdminSpamEventsParams {
+    page?: number;
+    per_page?: number;
+    search?: string;
 }
 
 export interface GetAllAdminMessagesParams {
@@ -453,14 +540,6 @@ export const adminClient = {
         return response.data;
     },
 
-    assignConfiguration: async (accountId: IdParam, data: AssignConfigurationData) => {
-        const response = await api.put(
-            `admin/accounts/${accountId}/configuration`,
-            data
-        );
-        return response.data;
-    },
-
     getAllConfigurations: async () => {
         const response = await api.get<GenericDataResponse<AccountConfiguration[]>>(
             'admin/configurations'
@@ -489,10 +568,26 @@ export const adminClient = {
         return response.data;
     },
 
-    updateAccountVatSettings: async (accountId: IdParam, data: UpdateAccountVatSettingsData) => {
-        const response = await api.put<GenericDataResponse<AccountVatSetting>>(
-            `admin/accounts/${accountId}/vat-settings`,
-            data
+    assignOrganizerConfiguration: async (organizerId: IdParam, configurationId: IdParam) => {
+        const response = await api.put(
+            `admin/organizers/${organizerId}/configuration`,
+            { configuration_id: configurationId },
+        );
+        return response.data;
+    },
+
+    updateOrganizerConfigurationOverride: async (organizerId: IdParam, data: UpdateOrganizerConfigurationOverrideData) => {
+        const response = await api.patch<GenericDataResponse<AccountConfiguration>>(
+            `admin/organizers/${organizerId}/configuration`,
+            data,
+        );
+        return response.data;
+    },
+
+    updateOrganizerVatSetting: async (organizerId: IdParam, data: UpdateAdminOrganizerVatSettingData) => {
+        const response = await api.put<GenericDataResponse<AdminOrganizerVatSetting>>(
+            `admin/organizers/${organizerId}/vat-settings`,
+            data,
         );
         return response.data;
     },
@@ -557,6 +652,27 @@ export const adminClient = {
         return response.data;
     },
 
+    getAllAdminSpamEvents: async (params: GetAllAdminSpamEventsParams = {}) => {
+        const response = await api.get<GenericPaginatedResponse<AdminSpamEvent>>('admin/spam-events', {
+            params: {
+                page: params.page || 1,
+                per_page: params.per_page || 20,
+                search: params.search || undefined,
+            }
+        });
+        return response.data;
+    },
+
+    approveSpamEvent: async (eventId: IdParam) => {
+        const response = await api.post(`admin/spam-events/${eventId}/approve`);
+        return response.data;
+    },
+
+    confirmSpamEvent: async (eventId: IdParam) => {
+        const response = await api.post(`admin/spam-events/${eventId}/confirm-spam`);
+        return response.data;
+    },
+
     updateAccountMessagingTier: async (accountId: IdParam, tierId: number) => {
         const response = await api.put(`admin/accounts/${accountId}/messaging-tier`, {
             messaging_tier_id: tierId
@@ -564,8 +680,71 @@ export const adminClient = {
         return response.data;
     },
 
+    updateAccountVerification: async (accountId: IdParam, isManuallyVerified: boolean) => {
+        const response = await api.put(`admin/accounts/${accountId}/verification`, {
+            is_manually_verified: isManuallyVerified
+        });
+        return response.data;
+    },
+
+    getFeatureFlags: async () => {
+        const response = await api.get<GenericDataResponse<AdminFeatureFlag[]>>('admin/feature-flags');
+        return response.data;
+    },
+
+    updateFeatureFlag: async (key: string, enabledByDefault: boolean) => {
+        const response = await api.put<GenericDataResponse<AdminFeatureFlag>>(`admin/feature-flags/${key}`, {
+            enabled_by_default: enabledByDefault
+        });
+        return response.data;
+    },
+
+    getFeatureFlagOverrides: async (key: string) => {
+        const response = await api.get<GenericDataResponse<AdminFeatureFlagOverride[]>>(`admin/feature-flags/${key}/overrides`);
+        return response.data;
+    },
+
+    getAccountFeatureFlags: async (accountId: IdParam) => {
+        const response = await api.get<GenericDataResponse<AdminAccountFeatureFlag[]>>(`admin/accounts/${accountId}/feature-flags`);
+        return response.data;
+    },
+
+    setAccountFeatureFlag: async (accountId: IdParam, key: string, enabled: boolean | null) => {
+        const response = await api.put<GenericDataResponse<AdminAccountFeatureFlag[]>>(`admin/accounts/${accountId}/feature-flags/${key}`, {
+            enabled
+        });
+        return response.data;
+    },
+
     getMessagingTiers: async (): Promise<GenericDataResponse<AccountMessagingTier[]>> => {
         const response = await api.get<GenericDataResponse<AccountMessagingTier[]>>('admin/messaging-tiers');
+        return response.data;
+    },
+
+    getDeletionRequests: async (params: GetAllDeletionRequestsParams = {}) => {
+        const response = await api.get<GenericPaginatedResponse<AdminDeletionRequest>>('admin/deletion-requests', {
+            params: {
+                page: params.page || 1,
+                per_page: params.per_page || 20,
+                search: params.search || undefined,
+                status: params.status || undefined,
+            }
+        });
+        return response.data;
+    },
+
+    requestAccountDeletion: async (accountId: IdParam, reason?: string) => {
+        const response = await api.post(`admin/accounts/${accountId}/deletion-request`, {reason});
+        return response.data;
+    },
+
+    cancelDeletionRequest: async (deletionRequestId: IdParam) => {
+        const response = await api.delete(`admin/deletion-requests/${deletionRequestId}`);
+        return response.data;
+    },
+
+    executeDeletionRequest: async (deletionRequestId: IdParam) => {
+        const response = await api.post(`admin/deletion-requests/${deletionRequestId}/execute`);
         return response.data;
     },
 };

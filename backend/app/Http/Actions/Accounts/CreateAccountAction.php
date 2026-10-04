@@ -27,11 +27,9 @@ class CreateAccountAction extends BaseAuthAction
 {
     public function __construct(
         private readonly CreateAccountHandler $createAccountHandler,
-        private readonly LoginHandler         $loginHandler,
-        private readonly LocaleService        $localeService,
-    )
-    {
-    }
+        private readonly LoginHandler $loginHandler,
+        private readonly LocaleService $localeService,
+    ) {}
 
     /**
      * @throws Throwable

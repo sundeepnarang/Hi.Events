@@ -10,24 +10,25 @@ use HiEvents\Services\Domain\Product\Exception\UnrecognizedProductIdException;
 class UpdateCheckInlistHandler
 {
     public function __construct(
-        private readonly UpdateCheckInlistService $updateCheckInlistService,
-    )
-    {
-    }
+        private readonly UpdateCheckInListService $updateCheckInlistService,
+    ) {}
 
     /**
      * @throws UnrecognizedProductIdException
      */
     public function handle(UpsertCheckInListDTO $data): CheckInListDomainObject
     {
-        $checkInList = (new CheckInListDomainObject())
+        $checkInList = (new CheckInListDomainObject)
             ->setId($data->id)
             ->setName($data->name)
             ->setDescription($data->description)
             ->setEventId($data->eventId)
             ->setExpiresAt($data->expiresAt)
             ->setActivatesAt($data->activatesAt)
-            ->setPassword($data->password);
+            ->setEventOccurrenceId($data->eventOccurrenceId)
+            ->setPublicShowAttendeeNotes($data->publicShowAttendeeNotes)
+            ->setPublicShowQuestionAnswers($data->publicShowQuestionAnswers)
+            ->setPublicShowOrderDetails($data->publicShowOrderDetails);
 
         return $this->updateCheckInlistService->updateCheckInlist(
             checkInList: $checkInList,

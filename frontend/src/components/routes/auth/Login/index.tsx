@@ -1,7 +1,6 @@
 import {Button, PasswordInput, TextInput, Collapse, UnstyledButton} from "@mantine/core";
 import {NavLink, useLocation} from "react-router";
 import {useMutation} from "@tanstack/react-query";
-import {notifications} from '@mantine/notifications';
 import {authClient} from "../../../../api/auth.client.ts";
 import {LoginData, LoginResponse} from "../../../../types.ts";
 import {useForm} from "@mantine/form";
@@ -48,12 +47,10 @@ const Login = () => {
             }
         },
 
-        onError: () => {
-            notifications.show({
-                message: t`Please check your email and password and try again`,
-                color: 'red',
-                position: 'top-center',
-            });
+        onError: (error: any) => {
+            showError(error?.response?.status === 429
+                ? t`Too many attempts. Please wait a minute and try again.`
+                : t`Please check your email and password and try again`);
         }
     });
 
@@ -91,23 +88,23 @@ const Login = () => {
                 <form onSubmit={form.onSubmit((values) => loginUser(values))}>
                     <TextInput {...form.getInputProps('email')}
                                label={t`Email`}
-                               placeholder="hello@example.com"
+                               placeholder="you@example.com"
                                required
                     />
+                    <div className={classes.passwordLabelRow}>
+                        <label htmlFor="login-password">{t`Password`}</label>
+                        <NavLink to={`/auth/forgot-password`} tabIndex={-1}>
+                            {t`Forgot password?`}
+                        </NavLink>
+                    </div>
                     <PasswordInput {...form.getInputProps('password')}
-                                   label={t`Password`}
+                                   id="login-password"
                                    placeholder={t`Your password`}
                                    required
-                                   mt="md"
                     />
                     <Button color="secondary.5" type="submit" fullWidth loading={isPending} disabled={isPending} mt="lg">
                         {isPending ? t`Logging in` : t`Log in`}
                     </Button>
-                    <p>
-                        <NavLink to={`/auth/forgot-password`}>
-                            {t`Forgot password?`}
-                        </NavLink>
-                    </p>
                 </form>
             </div>
 
@@ -126,7 +123,7 @@ const Login = () => {
                     />
                 </UnstyledButton>
 
-                <Collapse in={ticketLookupOpen}>
+                <Collapse expanded={ticketLookupOpen}>
                     <div className={classes.ticketLookupContent}>
                         {ticketLookupSuccess ? (
                             <div className={classes.successMessage}>

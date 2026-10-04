@@ -4,44 +4,70 @@ namespace HiEvents\Services\Application\Handlers\CheckInList\Public;
 
 use HiEvents\DomainObjects\AttendeeDomainObject;
 use HiEvents\DomainObjects\CheckInListDomainObject;
+use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\DomainObjects\Generated\CheckInListDomainObjectAbstract;
+use HiEvents\DomainObjects\ProductDomainObject;
 use HiEvents\Exceptions\CannotCheckInException;
-use HiEvents\Helper\DateHelper;
+use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\AttendeeRepositoryInterface;
-use HiEvents\Services\Domain\CheckInList\CheckInListDataService;
+use HiEvents\Repository\Interfaces\CheckInListRepositoryInterface;
+use HiEvents\Services\Domain\CheckInList\CheckInListActivityValidator;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class GetCheckInListAttendeePublicHandler
 {
     public function __construct(
         private readonly AttendeeRepositoryInterface $attendeeRepository,
-        private readonly CheckInListDataService      $checkInListDataService,
-    )
-    {
-    }
+        private readonly CheckInListRepositoryInterface $checkInListRepository,
+        private readonly CheckInListActivityValidator $checkInListActivityValidator,
+    ) {}
 
-    public function handle(string $shortId, string $attendeePublicId, ?string $password = null): AttendeeDomainObject
+    /**
+     * @throws CannotCheckInException
+     */
+    public function handle(string $shortId, string $attendeePublicId): AttendeeDomainObject
     {
-        $checkInList = $this->checkInListDataService->getCheckInList($shortId);
-        $this->validateCheckInListIsActiveAndAuthorized($checkInList, $password);
+        $checkInList = $this->checkInListRepository
+            ->loadRelation(ProductDomainObject::class)
+            ->loadRelation(new Relationship(EventDomainObject::class, name: 'event'))
+            ->findFirstWhere([
+                CheckInListDomainObjectAbstract::SHORT_ID => $shortId,
+            ]);
 
-        return $this->attendeeRepository->findFirstWhere([
+        if (! $checkInList) {
+            throw new ResourceNotFoundException(__('Check-in list not found'));
+        }
+
+        $this->checkInListActivityValidator->assertActive($checkInList);
+
+        $attendee = $this->attendeeRepository->findFirstWhere([
             'public_id' => $attendeePublicId,
             'event_id' => $checkInList->getEventId(),
         ]);
+
+        if (! $attendee) {
+            throw new ResourceNotFoundException(__('Attendee not found'));
+        }
+
+        $this->verifyAttendeeBelongsToCheckInList($checkInList, $attendee);
+
+        return $attendee;
     }
 
-    private function validateCheckInListIsActiveAndAuthorized(CheckInListDomainObject $checkInList, ?string $password): void
-    {
-        if ($checkInList->isPasswordProtected() && $checkInList->getPassword() !== $password) {
-            throw new CannotCheckInException(__('Invalid password provided'));
+    private function verifyAttendeeBelongsToCheckInList(
+        CheckInListDomainObject $checkInList,
+        AttendeeDomainObject $attendee,
+    ): void {
+        $allowedProductIds = $checkInList->getProducts()?->map(fn ($product) => $product->getId())->toArray() ?? [];
+
+        if (! empty($allowedProductIds) && ! in_array($attendee->getProductId(), $allowedProductIds, true)) {
+            throw new ResourceNotFoundException(__('Attendee not found'));
         }
 
-        if ($checkInList->getExpiresAt() && DateHelper::utcDateIsPast($checkInList->getExpiresAt())) {
-            throw new CannotCheckInException(__('Check-in list has expired'));
-        }
-
-        if ($checkInList->getActivatesAt() && DateHelper::utcDateIsFuture($checkInList->getActivatesAt())) {
-            throw new CannotCheckInException(__('Check-in list is not active yet'));
+        if ($checkInList->getEventOccurrenceId() !== null
+            && $attendee->getEventOccurrenceId() !== $checkInList->getEventOccurrenceId()
+        ) {
+            throw new ResourceNotFoundException(__('Attendee not found'));
         }
     }
 }

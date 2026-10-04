@@ -15,7 +15,7 @@ import {useFilterQueryParamSync} from "../../../hooks/useFilterQueryParamSync.ts
 import {QueryFilters} from "../../../types.ts";
 import {TableSkeleton} from "../../common/TableSkeleton";
 import {t} from "@lingui/macro";
-import {useIsReadOnly} from "../../../hooks/useIsCurrentUserAdmin.ts";
+import {SortSelector} from "../../common/SortSelector";
 
 export const PromoCodes = () => {
     const {eventId} = useParams();
@@ -25,7 +25,6 @@ export const PromoCodes = () => {
     const promoCodes = promoCodesQuery?.data?.data;
     const pagination = promoCodesQuery?.data?.meta;
     const [createModalOpen, {open: openCreateModal, close: closeCreateModal}] = useDisclosure(false);
-    const isReadOnly = useIsReadOnly();
 
     return (
         <>
@@ -33,20 +32,31 @@ export const PromoCodes = () => {
                 <PageTitle
                     subheading={t`Create discounts, access codes for hidden tickets, and special offers.`}
                 >{t`Promo Codes`}</PageTitle>
-                <ToolBar searchComponent={() => (
-                    <SearchBarWrapper
-                        placeholder={t`Search by name...`}
-                        setSearchParams={setSearchParams}
-                        searchParams={searchParams}
-                        pagination={pagination}
-                    />
-                )}>
-                    {!isReadOnly && (
-                        <Button color={'green'} size={'sm'} onClick={openCreateModal} rightSection={<IconPlus/>}>
-                            Create
-                        </Button>
+                <ToolBar
+                    searchComponent={() => (
+                        <SearchBarWrapper
+                            placeholder={t`Search by name...`}
+                            setSearchParams={setSearchParams}
+                            searchParams={searchParams}
+                        />
                     )}
-
+                    filterComponent={pagination?.allowed_sorts ? (
+                        <SortSelector
+                            selected={searchParams.sortBy && searchParams.sortDirection
+                                ? searchParams.sortBy + ':' + searchParams.sortDirection
+                                : pagination.default_sort + ':' + pagination.default_sort_direction}
+                            options={pagination.allowed_sorts}
+                            onSortSelect={(key, sortDirection) => {
+                                setSearchParams({sortBy: key, sortDirection});
+                            }}
+                        />
+                    ) : undefined}
+                    resultCount={pagination?.total}
+                    resultLabel={t`promo codes`}
+                >
+                    <Button color={'green'} size={'sm'} onClick={openCreateModal} rightSection={<IconPlus/>} data-testid="promo-code-create-button">
+                        Create
+                    </Button>
                 </ToolBar>
 
                 <TableSkeleton isVisible={!promoCodes || !event}/>

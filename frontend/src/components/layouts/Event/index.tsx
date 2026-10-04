@@ -1,5 +1,6 @@
 import {
     IconArrowLeft,
+    IconCalendarRepeat,
     IconChartPie,
     IconChevronRight,
     IconDashboard,
@@ -16,11 +17,12 @@ import {
     IconSend,
     IconSettings,
     IconShare,
-    IconStar,
+    IconCashRegister,
     IconTicket,
     IconTrendingUp,
     IconUserQuestion,
     IconUsers,
+    IconArmchair,
     IconUsersGroup,
     IconWebhook,
     IconListCheck,
@@ -28,7 +30,8 @@ import {
 import {t} from "@lingui/macro";
 import {useGetEvent} from "../../../queries/useGetEvent";
 import {useGetEventSettings} from "../../../queries/useGetEventSettings";
-import {useGetEventStats} from "../../../queries/useGetEventStats";
+import {useGetEventCounts} from "../../../queries/useGetEventCounts";
+import {useGeoStatus} from "../../../queries/useGeoStatus.ts";
 import Truncate from "../../common/Truncate";
 import {BreadcrumbItem, NavItem} from "../AppLayout/types.ts";
 import AppLayout from "../AppLayout";
@@ -40,33 +43,47 @@ import {useUpdateEventStatus} from "../../../mutations/useUpdateEventStatus.ts";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
 import {ShareModal} from "../../modals/ShareModal";
 import {EventLiveCelebrationModal} from "../../modals/EventLiveCelebrationModal";
+import {PublishEventModal} from "../../modals/PublishEventModal";
 import {useDisclosure} from "@mantine/hooks";
 import {TopBarButton} from "../../common/TopBarButton";
 import {useWindowWidth} from "../../../hooks/useWindowWidth.ts";
 import {SidebarCallout} from "../../common/SidebarCallout";
 import {useGetMe} from "../../../queries/useGetMe.ts";
-import {useIsReadOnly} from "../../../hooks/useIsCurrentUserAdmin.ts";
+import {FeatureFlag} from "../../../constants/featureFlags.ts";
 import {useResendEmailConfirmation} from "../../../mutations/useResendEmailConfirmation.ts";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {eventHomepageUrl} from "../../../utilites/urlHelper.ts";
+import {EventType} from "../../../types.ts";
+import {useGetEventOccurrence} from "../../../queries/useGetEventOccurrence.ts";
+import {useLicensedFeature} from "../../../ee/licensing/hooks/useLicensedFeature.ts";
+import {prettyDate} from "../../../utilites/dates.ts";
 
 const EventLayout = () => {
-    const isReadOnly = useIsReadOnly();
     const location = useLocation();
     const {eventId} = useParams();
 
     const [opened, {open, close}] = useDisclosure(false);
     const [celebrationOpened, {open: openCelebration, close: closeCelebration}] = useDisclosure(false);
+    const [publishModalOpened, {open: openPublishModal, close: closePublishModal}] = useDisclosure(false);
 
     const statusToggleMutation = useUpdateEventStatus();
 
     const {data: event, isFetched: isEventFetched} = useGetEvent(eventId);
-    const {data: eventSettings, isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
-    const {data: eventStats} = useGetEventStats(eventId);
+    const {isFetched: isEventSettingsFetched} = useGetEventSettings(eventId);
+    const {data: eventCounts} = useGetEventCounts(eventId);
+    const seating = useLicensedFeature(FeatureFlag.SEATING);
+    const boxOffice = useLicensedFeature(FeatureFlag.BOX_OFFICE);
     const {data: me} = useGetMe();
 
     const resendEmailConfirmationMutation = useResendEmailConfirmation();
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);
+    useGeoStatus();
+
+    const occurrenceIdFromUrl = useMemo(() => {
+        const match = location.pathname.match(/\/occurrences\/(\d+)$/);
+        return match ? match[1] : undefined;
+    }, [location.pathname]);
+    const {data: occurrence} = useGetEventOccurrence(eventId, occurrenceIdFromUrl);
 
     const handleEmailConfirmationResend = () => {
         resendEmailConfirmationMutation.mutate({
@@ -87,12 +104,6 @@ const EventLayout = () => {
 
         // 1. OVERVIEW
         {label: t`Overview`},
-        {
-            link: 'getting-started',
-            label: t`Getting Started`,
-            icon: IconStar,
-            showWhen: () => !eventSettings?.hide_getting_started_page && !isReadOnly
-        },
         {link: 'dashboard', label: t`Dashboard`, icon: IconDashboard},
         {
             link: 'reports',
@@ -103,30 +114,43 @@ const EventLayout = () => {
 
         // 2. EVENT SETUP
         {label: t`Setup & Design`},
+        {
+            link: 'occurrences',
+            label: t`Occurrence Schedule`,
+            icon: IconCalendarRepeat,
+            showWhen: () => event?.type === EventType.RECURRING,
+        },
         {link: 'settings', label: t`Event Settings`, icon: IconSettings},
-        {link: 'homepage-designer', label: t`Homepage Designer`, icon: IconPaint, showWhen: () => !isReadOnly},
-        {link: 'ticket-designer', label: t`Ticket Designer`, icon: IconTicket, showWhen: () => !isReadOnly},
-        {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion, showWhen: () => !isReadOnly},
+        {link: 'homepage-designer', label: t`Homepage Designer`, icon: IconPaint},
+        {link: 'ticket-designer', label: t`Ticket Designer`, icon: IconTicket},
+        {link: 'seating', label: t`Seating`, icon: IconArmchair, showWhen: () => seating.isEnabled || !!event?.has_seat_map},
+        {link: 'questions', label: t`Registration Questions`, icon: IconUserQuestion},
 
         // 3. Ticketing & Sales
         {label: t`Ticketing & Sales`},
         {link: 'products', label: t`Tickets & Products`, icon: IconTicket},
-        {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventStats?.total_orders},
+        {link: 'orders', label: t`Orders`, icon: IconReceipt, badge: eventCounts?.total_orders},
         {link: 'promo-codes', label: t`Promo Codes`, icon: IconDiscount2},
         {link: 'affiliates', label: t`Affiliates`, icon: IconTrendingUp},
 
         // 4. GUESTS
         {label: t`Guest Management`},
-        {link: 'attendees', label: t`Attendees`, icon: IconUsers, badge: eventStats?.total_attendees_registered},
+        {link: 'attendees', label: t`Attendees`, icon: IconUsers, badge: eventCounts?.total_attendees_registered},
         {link: 'check-in', label: t`Check-In Lists`, icon: IconQrcode},
+        {link: 'box-office', label: t`Box Office`, icon: IconCashRegister, showWhen: () => boxOffice.isVisible},
         {link: 'messages', label: t`Messages`, icon: IconSend},
         {link: 'sold-out-waitlist', label: t`Waitlist`, icon: IconListCheck},
-        {link: 'capacity-assignments', label: t`Capacity Management`, icon: IconUsersGroup},
+        {
+            link: 'capacity-assignments',
+            label: t`Capacity Management`,
+            icon: IconUsersGroup,
+            showWhen: () => event?.type !== EventType.RECURRING,
+        },
 
         // 5. INTEGRATIONS
         {label: t`Integrations`},
-        {link: 'widget', label: t`Widget Embed`, icon: IconDeviceTabletCode, showWhen: () => !isReadOnly},
-        {link: 'webhooks', label: t`Webhooks`, icon: IconWebhook, showWhen: () => !isReadOnly},
+        {link: 'widget', label: t`Widget Embed`, icon: IconDeviceTabletCode},
+        {link: 'webhooks', label: t`Webhooks`, icon: IconWebhook},
 
 
     ];
@@ -145,28 +169,39 @@ const EventLayout = () => {
         {
             link: `/manage/event/${event?.id}`,
             content: <Truncate length={breadcrumbItemsWidth} text={event?.title} showTooltip={false}/>
-        }
+        },
+        ...(occurrenceIdFromUrl && occurrence ? [{
+            link: `/manage/event/${event?.id}/occurrences/${occurrenceIdFromUrl}`,
+            content: <Truncate
+                length={breadcrumbItemsWidth}
+                text={prettyDate(occurrence.start_date, event?.timezone || 'UTC') + (occurrence.label ? ` (${occurrence.label})` : '')}
+                showTooltip={false}
+            />
+        }] : []),
     ] : [
         {link: '#', content: '...'}
     ];
 
     const handleStatusToggle = () => {
-        const isGoingLive = event?.status !== 'LIVE';
-        const message = event?.status === 'LIVE'
-            ? t`Are you sure you want to make this event draft? This will make the event invisible to the public`
-            : t`Are you sure you want to make this event public? This will make the event visible to the public`;
+        if (event?.status === 'PENDING_MANUAL_REVIEW') {
+            showError(t`This event is pending manual review and cannot be published until the review is complete.`);
+            return;
+        }
+
+        if (event?.status !== 'LIVE') {
+            openPublishModal();
+            return;
+        }
+
+        const message = t`Are you sure you want to make this event draft? This will make the event invisible to the public`;
 
         confirmationDialog(message, () => {
             statusToggleMutation.mutate({
                 eventId,
-                status: event?.status === 'LIVE' ? 'DRAFT' : 'LIVE'
+                status: 'DRAFT'
             }, {
                 onSuccess: () => {
-                    if (isGoingLive) {
-                        openCelebration();
-                    } else {
-                        showSuccess(t`Event status updated`);
-                    }
+                    showSuccess(t`Event status updated`);
                 },
                 onError: (error: any) => {
                     showError(error?.response?.data?.message || t`Event status update failed. Please try again later`);
@@ -182,18 +217,21 @@ const EventLayout = () => {
             entityType="event"
             topBarContent={(
                 <div className={classes.statusToggleContainer}>
-                    {isEventFetched && !isReadOnly && (
+                    {isEventFetched && (
                         <TopBarButton
                             onClick={handleStatusToggle}
+                            data-testid="event-status-toggle"
                             size="sm"
-                            leftSection={event?.status === 'DRAFT' ? <IconEyeOff size={16}/> : <IconEye size={16}/>}
+                            leftSection={(event?.status === 'DRAFT' || event?.status === 'PENDING_MANUAL_REVIEW') ? <IconEyeOff size={16}/> : <IconEye size={16}/>}
                             rightSection={<IconChevronRight size={14}/>}
                         >
-                            {event?.status === 'DRAFT'
-                                ? <span>{t`Draft`} <span
-                                    className={classes.statusAction}>{t`- Click to Publish`}</span></span>
-                                : <span>{t`Live`} <span
-                                    className={classes.statusAction}>{t`- Click to Unpublish`}</span></span>
+                            {event?.status === 'PENDING_MANUAL_REVIEW'
+                                ? <span>{t`Pending Review`}</span>
+                                : event?.status === 'DRAFT'
+                                    ? <span>{t`Draft`} <span
+                                        className={classes.statusAction}>{t`- Click to Publish`}</span></span>
+                                    : <span>{t`Live`} <span
+                                        className={classes.statusAction}>{t`- Click to Unpublish`}</span></span>
                             }
                         </TopBarButton>
                     )}
@@ -226,6 +264,18 @@ const EventLayout = () => {
                                 eventTitle={event.title}
                                 eventId={String(event.id)}
                             />
+
+                            {publishModalOpened && (
+                                <PublishEventModal
+                                    opened={publishModalOpened}
+                                    onClose={closePublishModal}
+                                    event={event}
+                                    onSuccess={() => {
+                                        closePublishModal();
+                                        openCelebration();
+                                    }}
+                                />
+                            )}
                         </>
                     )}
                 </div>

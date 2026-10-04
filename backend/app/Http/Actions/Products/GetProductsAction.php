@@ -17,9 +17,7 @@ class GetProductsAction extends BaseAction
 {
     public function __construct(
         private readonly GetProductsHandler $getProductsHandler,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(int $eventId, Request $request): JsonResponse
     {

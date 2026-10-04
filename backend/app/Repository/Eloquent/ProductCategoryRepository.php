@@ -30,16 +30,16 @@ class ProductCategoryRepository extends BaseRepository implements ProductCategor
             ->with(['products']);
 
         // Apply filters from QueryParamsDTO, if needed
-        if (!empty($queryParamsDTO->filter_fields)) {
+        if (! empty($queryParamsDTO->filter_fields)) {
             foreach ($queryParamsDTO->filter_fields as $filter) {
                 $query->where($filter->field, $filter->operator ?? '=', $filter->value);
             }
         }
 
-        // Apply sorting from QueryParamsDTO
-        if (!empty($queryParamsDTO->sort_by)) {
-            $query->orderBy($queryParamsDTO->sort_by, $queryParamsDTO->sort_direction ?? 'asc');
-        }
+        $query->orderBy(
+            $this->validateSortColumn($queryParamsDTO->sort_by, ProductCategoryDomainObject::class),
+            $this->validateSortDirection($queryParamsDTO->sort_direction, ProductCategoryDomainObject::class),
+        );
 
         return $query->get();
     }

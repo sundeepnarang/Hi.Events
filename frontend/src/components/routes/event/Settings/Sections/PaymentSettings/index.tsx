@@ -11,13 +11,11 @@ import {useUpdateEventSettings} from "../../../../../../mutations/useUpdateEvent
 import {useGetEventSettings} from "../../../../../../queries/useGetEventSettings.ts";
 import {HeadingWithDescription} from "../../../../../common/Card/CardHeading";
 import {Editor} from "../../../../../common/Editor";
+import {LiquidTokenControl} from "../../../../../common/Editor/Controls/LiquidTokenControl";
 import {InputLabelWithHelp} from "../../../../../common/InputLabelWithHelp";
 import {isEmptyHtml} from "../../../../../../utilites/helpers.ts";
 
-import {useIsReadOnly} from "../../../../../../hooks/useIsCurrentUserAdmin.ts";
-
 export const PaymentAndInvoicingSettings = () => {
-    const isReadOnly = useIsReadOnly();
     const {eventId} = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
     const updateMutation = useUpdateEventSettings();
@@ -102,7 +100,7 @@ export const PaymentAndInvoicingSettings = () => {
                 description={t`Manage payment and invoicing settings for this event.`}
             />
             <form onSubmit={form.onSubmit(handleSubmit as any)}>
-                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending || isReadOnly}>
+                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending}>
                     <Stack gap="xl">
                         <Paper withBorder p="md" radius="md">
                             <Text size="lg" fw={500} mb="md">{t`Payment Methods`}</Text>
@@ -155,6 +153,15 @@ export const PaymentAndInvoicingSettings = () => {
                                                                    helpText={t`This information will be shown on the payment page, order summary page, and order confirmation email.`}/>}
                                         description={t`Add instructions for offline payments (e.g., bank transfer details, where to send checks, payment deadlines)`}
                                         onChange={(value) => form.setFieldValue('offline_payment_instructions', value)}
+                                        additionalToolbarControls={
+                                            <LiquidTokenControl
+                                                templateType={'order_confirmation'}
+                                                excludeTokens={[
+                                                    '{{ settings.offline_payment_instructions }}',
+                                                    '{{ settings.post_checkout_message }}',
+                                                ]}
+                                            />
+                                        }
                                     />
                                     <Switch
                                         label={t`Allow attendees associated with unpaid orders to check in`}

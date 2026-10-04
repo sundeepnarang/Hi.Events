@@ -15,10 +15,7 @@ import {isEmptyHtml} from "../../../../../../utilites/helpers.ts";
 import {CustomSelect, ItemProps} from "../../../../../common/CustomSelect";
 import {IconUser, IconUsers} from "@tabler/icons-react";
 
-import {useIsReadOnly} from "../../../../../../hooks/useIsCurrentUserAdmin.ts";
-
 export const HomepageAndCheckoutSettings = () => {
-    const isReadOnly = useIsReadOnly();
     const {eventId} = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
     const updateMutation = useUpdateEventSettings();
@@ -30,6 +27,7 @@ export const HomepageAndCheckoutSettings = () => {
             attendee_details_collection_method: 'PER_TICKET' as 'PER_TICKET' | 'PER_ORDER',
             show_marketing_opt_in: true,
             show_data_collection_disclaimer: true,
+            allow_copy_details_to_all_attendees: true,
         },
         transformValues: (values) => ({
             ...values,
@@ -63,6 +61,7 @@ export const HomepageAndCheckoutSettings = () => {
                 attendee_details_collection_method: eventSettingsQuery.data.attendee_details_collection_method || 'PER_TICKET',
                 show_marketing_opt_in: eventSettingsQuery.data.show_marketing_opt_in ?? true,
                 show_data_collection_disclaimer: eventSettingsQuery.data.show_data_collection_disclaimer ?? true,
+                allow_copy_details_to_all_attendees: eventSettingsQuery.data.allow_copy_details_to_all_attendees ?? true,
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -88,7 +87,7 @@ export const HomepageAndCheckoutSettings = () => {
                 description={t`Customize the event homepage and checkout messaging`}
             />
             <form onSubmit={form.onSubmit(handleSubmit as any)}>
-                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending || isReadOnly}>
+                <fieldset disabled={eventSettingsQuery.isLoading || updateMutation.isPending}>
                     <Editor
                         label={t`Pre Checkout message`}
                         value={form.values.pre_checkout_message || ''}
@@ -138,6 +137,13 @@ export const HomepageAndCheckoutSettings = () => {
                         label={t`Show data collection disclaimer checkbox`}
                         description={t`Display a mandatory checkbox requiring customers to consent to data collection policies.`}
                         {...form.getInputProps('show_data_collection_disclaimer', {type: 'checkbox'})}
+                    />
+
+                    <Switch
+                        mt="md"
+                        label={t`Allow buyers to copy their details to all attendees`}
+                        description={t`When enabled, buyers can copy their own name and email onto all attendees at once. Turn this off to remove the "All attendees" option; buyers can still copy to the first attendee, and the rest must be entered individually.`}
+                        {...form.getInputProps('allow_copy_details_to_all_attendees', {type: 'checkbox'})}
                     />
 
                     <Button loading={updateMutation.isPending} type={'submit'}>

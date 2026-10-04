@@ -30,14 +30,14 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
     public function findByEventId(int $eventId, QueryParamsDTO $params): LengthAwarePaginator
     {
         $where = [
-            [MessageDomainObjectAbstract::EVENT_ID, '=', $eventId]
+            [MessageDomainObjectAbstract::EVENT_ID, '=', $eventId],
         ];
 
         if ($params->query) {
             $where[] = static function (Builder $builder) use ($params) {
                 $builder
-                    ->where(MessageDomainObjectAbstract::SUBJECT, 'ilike', '%' . $params->query . '%')
-                    ->orWhere(MessageDomainObjectAbstract::MESSAGE, 'ilike', '%' . $params->query . '%');
+                    ->where(MessageDomainObjectAbstract::SUBJECT, 'ilike', '%'.$params->query.'%')
+                    ->orWhere(MessageDomainObjectAbstract::MESSAGE, 'ilike', '%'.$params->query.'%');
             };
         }
 
@@ -46,8 +46,8 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
         }
 
         $this->model = $this->model->orderBy(
-            $params->sort_by ?? MessageDomainObject::getDefaultSort(),
-            $params->sort_direction ?? 'desc',
+            $this->validateSortColumn($params->sort_by, MessageDomainObject::class),
+            $this->validateSortDirection($params->sort_direction, MessageDomainObject::class),
         );
 
         return $this->paginateWhere(

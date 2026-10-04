@@ -15,9 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetAffiliateAction extends BaseAction
 {
-    public function __construct(private readonly AffiliateRepositoryInterface $affiliateRepository)
-    {
-    }
+    public function __construct(private readonly AffiliateRepositoryInterface $affiliateRepository) {}
 
     public function __invoke(Request $request, int $eventId, int $affiliateId): JsonResponse
     {
@@ -28,7 +26,7 @@ class GetAffiliateAction extends BaseAction
             'id' => $affiliateId,
         ]);
 
-        if (!$affiliate) {
+        if (! $affiliate) {
             throw new NotFoundHttpException(__('Affiliate not found'));
         }
 

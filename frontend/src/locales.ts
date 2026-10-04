@@ -4,7 +4,6 @@ export type SupportedLocales =
     "en"
     | "de"
     | "fr"
-    | "ja"
     | "it"
     | "nl"
     | "pt"
@@ -17,9 +16,12 @@ export type SupportedLocales =
     | "hu"
     | "pl"
     | "se"
-    | "el";
+    | "sk"
+    | "el"
+    | "ko"
+    | "fi";
 
-export const availableLocales = ["en", "de", "fr", "it", "ja", "nl", "pt", "es", "zh-cn", "zh-hk", "pt-br", "vi", "tr", "hu", "pl", "se", "el"];
+export const availableLocales = ["en", "de", "fr", "it", "nl", "pt", "es", "zh-cn", "zh-hk", "pt-br", "vi", "tr", "hu", "pl", "se", "sk", "el", "ko", "fi"];
 
 export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     en: '🇬🇧',
@@ -37,7 +39,10 @@ export const localeToFlagEmojiMap: Record<SupportedLocales, string> = {
     hu: '🇭🇺',
     pl: '🇵🇱',
     se: '🇸🇪',
+    sk: '🇸🇰',
     el: '🇬🇷',
+    ko: '🇰🇷',
+    fi: '🇫🇮',
 };
 
 export const localeToNameMap: Record<SupportedLocales, string> = {
@@ -46,7 +51,6 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     fr: `French`,
     it: `Italian`,
     nl: `Dutch`,
-    ja: `Japanese`,
     pt: `Portuguese`,
     es: `Spanish`,
     "zh-cn": `Chinese`,
@@ -57,7 +61,10 @@ export const localeToNameMap: Record<SupportedLocales, string> = {
     hu: `Hungarian`,
     pl: `Polish`,
     se: `Swedish`,
+    sk: `Slovak`,
     el: `Greek`,
+    ko: `Korean`,
+    fi: `Finnish`,
 };
 
 export const getLocaleName = (locale: SupportedLocales) => {
@@ -82,16 +89,38 @@ export const getClientLocale = () => {
     return "en";
 };
 
-export async function dynamicActivateLocale(locale: string) {
+const dayjsLocaleLoaders: Partial<Record<SupportedLocales, () => Promise<unknown>>> = {
+    de: () => import("dayjs/locale/de"),
+    fr: () => import("dayjs/locale/fr"),
+    it: () => import("dayjs/locale/it"),
+    nl: () => import("dayjs/locale/nl"),
+    pt: () => import("dayjs/locale/pt"),
+    es: () => import("dayjs/locale/es"),
+    "zh-cn": () => import("dayjs/locale/zh-cn"),
+    "pt-br": () => import("dayjs/locale/pt-br"),
+    vi: () => import("dayjs/locale/vi"),
+    "zh-hk": () => import("dayjs/locale/zh-hk"),
+    tr: () => import("dayjs/locale/tr"),
+    hu: () => import("dayjs/locale/hu"),
+    sk: () => import("dayjs/locale/sk"),
+    el: () => import("dayjs/locale/el"),
+    ko: () => import("dayjs/locale/ko"),
+    fi: () => import("dayjs/locale/fi"),
+};
+
+export async function dynamicActivateLocale(locale: string): Promise<string> {
+    locale = availableLocales.includes(locale) ? locale : "en";
     try {
-        locale = availableLocales.includes(locale) ? locale : "en";
-        const module = (await import(`./locales/${locale}.po`));
+        const [module] = await Promise.all([
+            import(`./locales/${locale}.po`),
+            dayjsLocaleLoaders[locale as SupportedLocales]?.().catch((error) => console.error("Error loading dayjs locale:", error)),
+        ]);
         i18n.load(locale, module.messages);
         i18n.activate(locale);
     } catch (error) {
         console.error("Error loading locale:", error);
-        // i18n.activate("en");
     }
+    return locale;
 }
 
 export const getSupportedLocale = (userLocale: string) => {

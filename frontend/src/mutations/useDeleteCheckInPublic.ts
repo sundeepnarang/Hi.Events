@@ -1,22 +1,25 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {publicCheckInClient} from "../api/check-in.client";
 import {GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListAttendeesPublic.ts";
+import {GET_CHECK_IN_LIST_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListPublic.ts";
+import {GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListStatsPublic.ts";
+import {GET_CHECK_IN_LIST_ATTENDEE_DETAIL_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListAttendeeDetailPublic.ts";
 import {IdParam, QueryFilters} from "../types.ts";
 
 export const useDeleteCheckInPublic = (pagination: QueryFilters) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({checkInListShortId, checkInShortId, password}: { checkInListShortId: IdParam, checkInShortId: IdParam, password?: string }) =>
-            publicCheckInClient.deleteCheckIn(checkInListShortId, checkInShortId, password),
+        mutationFn: ({checkInListShortId, checkInShortId}: { checkInListShortId: IdParam, checkInShortId: IdParam }) =>
+            publicCheckInClient.deleteCheckIn(checkInListShortId, checkInShortId),
 
-        onSettled: (_, error, {checkInListShortId, checkInShortId, password}) => {
-            if (error && error.response.status !== 409) {
+        onSettled: (_, error: any,  {checkInListShortId, checkInShortId}) => {
+            if (error && error?.response?.status !== 409) {
                 return;
             }
 
             // Find the attendee in the cache and remove the check-in status
-            queryClient.setQueryData([GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY, checkInListShortId, pagination, password], (oldData: any) => {
+            queryClient.setQueryData([GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY, checkInListShortId, pagination], (oldData: any) => {
                 const newAttendees = oldData?.data?.map((attendee: any) => {
                     if (attendee.check_in?.short_id === checkInShortId) {
                         return {
@@ -31,6 +34,16 @@ export const useDeleteCheckInPublic = (pagination: QueryFilters) => {
                     ...oldData,
                     data: newAttendees,
                 };
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_PUBLIC_QUERY_KEY, checkInListShortId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY, checkInListShortId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_ATTENDEE_DETAIL_PUBLIC_QUERY_KEY, checkInListShortId],
             });
         }
     });

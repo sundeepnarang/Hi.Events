@@ -13,33 +13,32 @@ use Throwable;
 class EditOrderService
 {
     public function __construct(
-        private readonly OrderRepositoryInterface     $orderRepository,
+        private readonly OrderRepositoryInterface $orderRepository,
         private readonly DomainEventDispatcherService $domainEventDispatcherService,
-        private readonly DatabaseManager              $databaseManager,
-    )
-    {
-    }
+        private readonly DatabaseManager $databaseManager,
+    ) {}
 
     /**
      * @throws Throwable
      */
     public function editOrder(
-        int     $id,
-        int     $eventId,
+        int $id,
+        int $eventId,
         ?string $firstName,
         ?string $lastName,
         ?string $email,
         ?string $notes
-    ): OrderDomainObject
-    {
+    ): OrderDomainObject {
         return $this->databaseManager->transaction(function () use ($id, $firstName, $lastName, $email, $notes, $eventId) {
             $this->orderRepository->updateWhere(
-                attributes: array_filter([
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
+                attributes: [
+                    ...array_filter([
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'notes' => $notes,
+                    ]),
                     'email' => $email,
-                    'notes' => $notes,
-                ]),
+                ],
                 where: [
                     'id' => $id,
                     'event_id' => $eventId,

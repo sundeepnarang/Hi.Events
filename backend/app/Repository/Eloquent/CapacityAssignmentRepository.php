@@ -28,19 +28,19 @@ class CapacityAssignmentRepository extends BaseRepository implements CapacityAss
     public function findByEventId(int $eventId, QueryParamsDTO $params): LengthAwarePaginator
     {
         $where = [
-            [CapacityAssignmentDomainObjectAbstract::EVENT_ID, '=', $eventId]
+            [CapacityAssignmentDomainObjectAbstract::EVENT_ID, '=', $eventId],
         ];
 
-        if (!empty($params->query)) {
+        if (! empty($params->query)) {
             $where[] = static function (Builder $builder) use ($params) {
                 $builder
-                    ->where(CapacityAssignmentDomainObjectAbstract::NAME, 'ilike', '%' . $params->query . '%');
+                    ->where(CapacityAssignmentDomainObjectAbstract::NAME, 'ilike', '%'.$params->query.'%');
             };
         }
 
         $this->model = $this->model->orderBy(
-            $params->sort_by ?? CapacityAssignmentDomainObject::getDefaultSort(),
-            $params->sort_direction ?? CapacityAssignmentDomainObject::getDefaultSortDirection(),
+            $this->validateSortColumn($params->sort_by, CapacityAssignmentDomainObject::class),
+            $this->validateSortDirection($params->sort_direction, CapacityAssignmentDomainObject::class),
         );
 
         return $this->paginateWhere(

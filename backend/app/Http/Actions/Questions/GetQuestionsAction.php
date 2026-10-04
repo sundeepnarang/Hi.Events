@@ -29,7 +29,7 @@ class GetQuestionsAction extends BaseAction
         $questions = $this->questionRepository
             ->loadRelation(
                 new Relationship(ProductDomainObject::class, [
-                    new Relationship(ProductPriceDomainObject::class)
+                    new Relationship(ProductPriceDomainObject::class),
                 ])
             )
             ->findByEventId($eventId);

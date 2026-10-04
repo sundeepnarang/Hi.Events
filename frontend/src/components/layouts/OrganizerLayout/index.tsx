@@ -5,11 +5,12 @@ import {
     IconCalendarPlus,
     IconChartPie,
     IconChevronRight,
-    IconCreditCard,
     IconDashboard,
     IconExternalLink,
     IconEye,
     IconEyeOff,
+    IconArmchair,
+    IconMapPin,
     IconPaint,
     IconSettings,
     IconShare,
@@ -22,6 +23,7 @@ import AppLayout from "../AppLayout";
 import { NavLink, useLocation, useParams } from "react-router";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useGetOrganizer } from "../../../queries/useGetOrganizer.ts";
+import { useGeoStatus } from "../../../queries/useGeoStatus.ts";
 import { useState } from "react";
 import { CreateEventModal } from "../../modals/CreateEventModal";
 import { TopBarButton } from "../../common/TopBarButton";
@@ -33,7 +35,8 @@ import { SwitchOrganizerModal } from "../../modals/SwitchOrganizerModal";
 import { CreateOrganizerModal } from "../../modals/CreateOrganizerModal";
 import { useGetOrganizers } from "../../../queries/useGetOrganizers.ts";
 import { useGetAccount } from "../../../queries/useGetAccount.ts";
-import { StripeConnectButton } from "../../common/StripeConnectButton";
+import { useLicensedFeature } from "../../../ee/licensing/hooks/useLicensedFeature.ts";
+import { FeatureFlag } from "../../../constants/featureFlags.ts";
 import { ShareModal } from "../../modals/ShareModal";
 import { organizerHomepageUrl } from "../../../utilites/urlHelper";
 import { useUpdateOrganizerStatus } from "../../../mutations/useUpdateOrganizerStatus.ts";
@@ -41,13 +44,12 @@ import { confirmationDialog } from "../../../utilites/confirmationDialog.tsx";
 import { showError, showSuccess } from "../../../utilites/notifications.tsx";
 import { useResendEmailConfirmation } from "../../../mutations/useResendEmailConfirmation.ts";
 import { useGetMe } from "../../../queries/useGetMe.ts";
-import { useIsReadOnly } from "../../../hooks/useIsCurrentUserAdmin.ts";
 
 const OrganizerLayout = () => {
-    const isReadOnly = useIsReadOnly();
     const { organizerId } = useParams();
     const location = useLocation();
     const { data: organizer } = useGetOrganizer(organizerId);
+    useGeoStatus();
     const [showCreateEventModal, setShowCreateEventModal] = useState(false);
     const [showCreateOrganizerModal, setShowCreateOrganizerModal] = useState(false);
     const [createModalOpen, { open: openCreateModal, close: closeCreateModal }] = useDisclosure(false);
@@ -60,6 +62,7 @@ const OrganizerLayout = () => {
     const { data: organizerResposne } = useGetOrganizers();
     const organizers = organizerResposne?.data;
     const { data: account } = useGetAccount();
+    const seating = useLicensedFeature(FeatureFlag.SEATING);
     const resendEmailConfirmationMutation = useResendEmailConfirmation();
     const [emailConfirmationResent, setEmailConfirmationResent] = useState(false);
     const { data: me } = useGetMe();
@@ -67,6 +70,9 @@ const OrganizerLayout = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
 
     const statusToggleMutation = useUpdateOrganizerStatus();
+
+    const isStripeConnected = !!organizer?.stripe_connect_setup_complete;
+    const showPayoutsSection = !!account?.is_saas_mode_enabled;
 
     const navItems: NavItem[] = [
         {
@@ -76,8 +82,22 @@ const OrganizerLayout = () => {
             isActive: () => false,
             showWhen: () => organizers && organizers.length > 1,
         },
+        ...(showPayoutsSection && !isStripeConnected ? [
+            { label: t`Get Paid` },
+            {
+                link: 'settings#payouts',
+                label: t`Set up payouts`,
+                icon: IconBrandStripe,
+                isActive: () => false,
+            },
+        ] as NavItem[] : []),
         { label: 'Overview' },
-        { link: 'dashboard', label: t`Organizer Dashboard`, icon: IconDashboard },
+        {
+            link: 'dashboard',
+            label: t`Organizer Dashboard`,
+            icon: IconDashboard,
+            isActive: (isActive) => isActive || /\/manage\/organizer(\/[^/]+)?\/?$/.test(location.pathname),
+        },
         {
             link: 'reports',
             label: t`Reports`,
@@ -87,13 +107,17 @@ const OrganizerLayout = () => {
 
         { label: t`Manage` },
         { link: 'events', label: t`Events`, icon: IconCalendar },
-        { link: 'settings', label: t`Settings`, icon: IconSettings, showWhen: () => !isReadOnly },
+        { link: 'settings', label: t`Settings`, icon: IconSettings },
 
-        { label: t`Tools`, showWhen: () => !isReadOnly },
-        { link: 'organizer-homepage-designer', label: t`Homepage Designer`, icon: IconPaint, showWhen: () => !isReadOnly },
+        { label: t`Tools` },
+        { link: 'organizer-homepage-designer', label: t`Homepage Designer`, icon: IconPaint },
+
+        { label: t`Library` },
+        { link: 'locations', label: t`Locations`, icon: IconMapPin },
+        { link: 'seat-maps', label: t`Seat Maps`, icon: IconArmchair, showWhen: () => seating.isVisible },
 
         { label: t`Integrations` },
-        { link: 'webhooks', label: t`Webhooks`, icon: IconWebhook, showWhen: () => !isReadOnly },
+        { link: 'webhooks', label: t`Webhooks`, icon: IconWebhook },
     ];
 
     const handleEmailConfirmationResend = () => {
@@ -121,7 +145,6 @@ const OrganizerLayout = () => {
     });
 
     const handleStatusToggle = () => {
-        // Check if user email is verified
         if (!isUserEmailVerfied) {
             openEmailVerificationModal();
             return;
@@ -151,7 +174,7 @@ const OrganizerLayout = () => {
             link: `/manage/organizer/${organizerId}`,
             content: organizer?.name,
         },
-        ...(!isReadOnly ? [{
+        {
             content: (
                 <span
                     className={classes.createEventBreadcrumb}
@@ -160,10 +183,10 @@ const OrganizerLayout = () => {
                     <IconCalendarPlus size={16} /> {t`Create Event`}
                 </span>
             ),
-        }] : [])
+        }
     ];
 
-    const callouts: CalloutConfig[] = !isReadOnly ? [
+    const callouts: CalloutConfig[] = [
         {
             icon: <IconUsersGroup size={20} />,
             heading: t`Invite Your Team`,
@@ -175,24 +198,8 @@ const OrganizerLayout = () => {
             },
             storageKey: `organizer-${organizerId}-team-callout-dismissed`
         },
-    ] : [];
+    ];
 
-    if (!isReadOnly && account && !account?.stripe_connect_setup_complete) {
-        callouts.unshift({
-            icon: <IconBrandStripe size={20} />,
-            heading: t`Connect Stripe`,
-            description: t`Connect your Stripe account to accept payments for tickets and products.`,
-            storageKey: `stripe-callout-dismissed`,
-            customButton:
-                <StripeConnectButton
-                    fullWidth
-                    variant="white"
-                    buttonIcon={<IconCreditCard size={16} />}
-                    buttonText={t`Connect Stripe`}
-                    className={classes.calloutButton}
-                />
-        });
-    }
 
     return (
         <>
@@ -202,7 +209,7 @@ const OrganizerLayout = () => {
                 entityType="organizer"
                 topBarContent={(
                     <div className={classes.statusToggleContainer}>
-                        {organizer && !isReadOnly && (
+                        {organizer && (
                             <TopBarButton
                                 onClick={handleStatusToggle}
                                 size="sm"

@@ -10,12 +10,13 @@ enum Locale: string
 
     case EN = 'en';
     case DE = 'de';
+    case FI = 'fi';
     case FR = 'fr';
     case IT = 'it';
     case NL = 'nl';
     case HU = 'hu';
     case ES = 'es';
-    case JA = 'ja';
+    case PT = 'pt';
     case PT_BR = 'pt-br';
     case ZH_CN = 'zh-cn';
     case SE = 'se';
@@ -25,7 +26,9 @@ enum Locale: string
 
     case TR = 'tr';
     case PL = 'pl';
+    case SK = 'sk';
     case EL = 'el';
+    case KO = 'ko';
 
     public static function getSupportedLocales(): array
     {

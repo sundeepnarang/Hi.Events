@@ -24,8 +24,11 @@ class OrderResource extends BaseResource
             'total_tax' => $this->getTotalTax(),
             'total_fee' => $this->getTotalFee(),
             'total_refunded' => $this->getTotalRefunded(),
+            /** @var 'RESERVED'|'CANCELLED'|'COMPLETED'|'AWAITING_OFFLINE_PAYMENT'|'ABANDONED' */
             'status' => $this->getStatus(),
+            /** @var 'REFUND_PENDING'|'REFUND_FAILED'|'REFUNDED'|'PARTIALLY_REFUNDED'|null */
             'refund_status' => $this->getRefundStatus(),
+            /** @var 'NO_PAYMENT_REQUIRED'|'AWAITING_PAYMENT'|'AWAITING_OFFLINE_PAYMENT'|'PAYMENT_FAILED'|'PAYMENT_RECEIVED'|null */
             'payment_status' => $this->getPaymentStatus(),
             'currency' => $this->getCurrency(),
             'first_name' => $this->getFirstName(),
@@ -37,6 +40,15 @@ class OrderResource extends BaseResource
             'is_fully_refunded' => $this->isFullyRefunded(),
             'is_free_order' => $this->isFreeOrder(),
             'is_manually_created' => $this->getIsManuallyCreated(),
+            'box_office_id' => $this->getBoxOfficeId(),
+            $this->mergeWhen($this->isBoxOfficeOrder(), fn () => [
+                'box_office_operator_name' => $this->getBoxOfficeOperatorName(),
+                /** @var 'CASH'|'CARD'|'COMP'|'OTHER'|'FREE'|null */
+                'box_office_tender' => $this->getBoxOfficeTender(),
+                'box_office_amount_tendered' => $this->getBoxOfficeAmountTendered(),
+                'box_office_change_due' => $this->getBoxOfficeChangeDue(),
+                'box_office_reference' => $this->getBoxOfficeReference(),
+            ]),
             'taxes_and_fees_rollup' => $this->getTaxesAndFeesRollup(),
             'address' => $this->getAddress(),
             'notes' => $this->getNotes(),
@@ -44,20 +56,20 @@ class OrderResource extends BaseResource
             'promo_code' => $this->getPromoCode(),
             'event_id' => $this->getEventId(),
             'order_items' => $this->when(
-                !is_null($this->getOrderItems()),
-                fn() => OrderItemResource::collection($this->getOrderItems())
+                ! is_null($this->getOrderItems()),
+                fn () => OrderItemResource::collection($this->getOrderItems())
             ),
             'attendees' => $this->when(
-                !is_null($this->getAttendees()),
-                fn() => AttendeeResource::collection($this->getAttendees())
+                ! is_null($this->getAttendees()),
+                fn () => AttendeeResource::collection($this->getAttendees())
             ),
             'question_answers' => $this->when(
-                !is_null($this->getQuestionAndAnswerViews()),
-                fn() => QuestionAnswerViewResource::collection($this->getQuestionAndAnswerViews()),
+                ! is_null($this->getQuestionAndAnswerViews()),
+                fn () => QuestionAnswerViewResource::collection($this->getQuestionAndAnswerViews()),
             ),
             'latest_invoice' => $this->when(
-                !is_null($this->getLatestInvoice()),
-                fn() => (new InvoiceResource($this->getLatestInvoice()))->toArray($request),
+                ! is_null($this->getLatestInvoice()),
+                fn () => (new InvoiceResource($this->getLatestInvoice()))->toArray($request),
             ),
         ];
     }

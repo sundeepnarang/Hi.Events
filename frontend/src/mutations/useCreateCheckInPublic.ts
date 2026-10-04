@@ -1,25 +1,27 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {publicCheckInClient} from "../api/check-in.client";
 import {GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListAttendeesPublic.ts";
+import {GET_CHECK_IN_LIST_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListPublic.ts";
+import {GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListStatsPublic.ts";
+import {GET_CHECK_IN_LIST_ATTENDEE_DETAIL_PUBLIC_QUERY_KEY} from "../queries/useGetCheckInListAttendeeDetailPublic.ts";
 import {IdParam, QueryFilters} from "../types.ts";
 
 export const useCreateCheckInPublic = (pagination: QueryFilters) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({checkInListShortId, attendeePublicId, action, password}: {
+        mutationFn: ({checkInListShortId, attendeePublicId, action}: {
             checkInListShortId: IdParam,
             attendeePublicId: IdParam,
-            action: 'check-in' | 'check-in-and-mark-order-as-paid',
-            password?: string,
+            action: 'check-in' | 'check-in-and-mark-order-as-paid'
         }) =>
-            publicCheckInClient.createCheckIn(checkInListShortId, attendeePublicId, action, password),
+            publicCheckInClient.createCheckIn(checkInListShortId, attendeePublicId, action),
 
-        onSuccess: (data, {checkInListShortId, action, password}) => {
+        onSuccess: (data, {checkInListShortId, action}) => {
             const markedAsPaid = action === 'check-in-and-mark-order-as-paid';
 
             queryClient.setQueryData(
-                [GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY, checkInListShortId, pagination, password],
+                [GET_CHECK_IN_LIST_ATTENDEES_PUBLIC_QUERY_KEY, checkInListShortId, pagination],
                 (oldData: any) => {
                     if (!oldData?.data) return oldData;
 
@@ -62,6 +64,16 @@ export const useCreateCheckInPublic = (pagination: QueryFilters) => {
                     };
                 }
             );
+
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_PUBLIC_QUERY_KEY, checkInListShortId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_STATS_PUBLIC_QUERY_KEY, checkInListShortId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [GET_CHECK_IN_LIST_ATTENDEE_DETAIL_PUBLIC_QUERY_KEY, checkInListShortId],
+            });
         }
     });
 };

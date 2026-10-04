@@ -4,16 +4,16 @@ import {useEffect, useState} from "react";
 import {showSuccess} from "../../../../../../utilites/notifications.tsx";
 import {useUpdateEventSettings} from "../../../../../../mutations/useUpdateEventSettings.ts";
 import {useGetEventSettings} from "../../../../../../queries/useGetEventSettings.ts";
-import {useGetAccount} from "../../../../../../queries/useGetAccount.ts";
+import {useGetEvent} from "../../../../../../queries/useGetEvent.ts";
+import {useGetOrganizer} from "../../../../../../queries/useGetOrganizer.ts";
 import {useGetPlatformFeePreview} from "../../../../../../queries/useGetPlatformFeePreview.ts";
 import {PlatformFeesSettings as PlatformFeesSettingsBase} from "../../../../../common/PlatformFeesSettings";
-import {useIsReadOnly} from "../../../../../../hooks/useIsCurrentUserAdmin.ts";
 
 export const PlatformFeesSettings = () => {
-    const isReadOnly = useIsReadOnly();
     const {eventId} = useParams();
     const eventSettingsQuery = useGetEventSettings(eventId);
-    const accountQuery = useGetAccount();
+    const eventQuery = useGetEvent(eventId);
+    const organizerQuery = useGetOrganizer(eventQuery.data?.organizer_id);
     const updateMutation = useUpdateEventSettings();
     const [currentValue, setCurrentValue] = useState(false);
     const [previewPrice, setPreviewPrice] = useState(50);
@@ -40,7 +40,7 @@ export const PlatformFeesSettings = () => {
 
     return (
         <PlatformFeesSettingsBase
-            configuration={accountQuery.data?.configuration}
+            configuration={organizerQuery.data?.configuration}
             currentValue={currentValue}
             onSave={handleSave}
             isLoading={eventSettingsQuery.isLoading}
@@ -51,7 +51,6 @@ export const PlatformFeesSettings = () => {
             feeHandlingDescription={t`Choose who pays the platform fee. This does not affect additional fees you've configured in your account settings.`}
             feePreview={feePreviewQuery.data}
             onPriceChange={setPreviewPrice}
-            disabled={isReadOnly}
         />
     );
 };

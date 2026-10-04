@@ -1,25 +1,31 @@
-import {Outlet, useBlocker, useLocation, useNavigate, useParams} from "react-router";
+import {Outlet, useBlocker, useLocation, useNavigate, useParams, useSearchParams} from "react-router";
 import classes from './Checkout.module.scss';
 import {useGetOrderPublic} from "../../../queries/useGetOrderPublic.ts";
 import {t} from "@lingui/macro";
 import {Countdown} from "../../common/Countdown";
 import {ActionIcon, Button, Group, Modal, Tooltip} from "@mantine/core";
-import {IconArrowLeft, IconX, IconPrinter, IconReceipt} from "@tabler/icons-react";
+import {IconArrowLeft, IconClock, IconPrinter, IconReceipt, IconX} from "@tabler/icons-react";
 import {eventHomepagePath, eventHomepageUrl} from "../../../utilites/urlHelper.ts";
 import {ShareComponent} from "../../common/ShareIcon";
 import {AddToEventCalendarButton} from "../../common/AddEventToCalendarButton";
-import {ProgressStepper} from "../../common/ProgressStepper";
-import {useMediaQuery} from "@mantine/hooks";
-import React, {useEffect, useState} from "react";
+import classNames from "classnames";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {getEmbedMode, getParentOrigin} from "../../../utilites/iframeResize.ts";
 import {Invoice} from "../../../types.ts";
 import {orderClientPublic} from "../../../api/order.client.ts";
 import {downloadBinary} from "../../../utilites/download.ts";
 import {withLoadingNotification} from "../../../utilites/withLoadingNotification.tsx";
 import {useAbandonOrderPublic} from "../../../mutations/useAbandonOrderPublic.ts";
 import {showError, showInfo} from "../../../utilites/notifications.tsx";
-import {isDateInFuture} from "../../../utilites/dates.ts";
+import {isDateInFuture, utcDateToEpochMs} from "../../../utilites/dates.ts";
+import {getCheckoutSessionIdentifier} from "../../../utilites/checkoutSession.ts";
+import {PoweredByFooter} from "../../common/PoweredByFooter";
 import {detectMode} from "../../../utilites/themeUtils.ts";
 import {CheckoutThemeProvider} from "./CheckoutThemeProvider.tsx";
+import {useOrganizerTrackingPixels} from "../../../hooks/useOrganizerTrackingPixels";
+import {trackPixelEvent, hasActivePixels} from "../../../utilites/trackingPixels";
+import {CookieSettingsLink} from "../../common/CookieSettingsLink";
+import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
 import {getConfig} from "../../../utilites/config.ts";
@@ -27,14 +33,24 @@ import {initMetaPixel} from "../../../utilites/metaPixel.ts";
 
 const Checkout = () => {
     const {eventId, orderShortId} = useParams();
-    const {data: order} = useGetOrderPublic(eventId, orderShortId, ['event']);
+    const {data: order, isError: isOrderError} = useGetOrderPublic(eventId, orderShortId, ['event']);
     const event = order?.event;
+    const orderOccurrenceIds = Array.from(new Set(
+        (order?.order_items ?? []).map(item => item.event_occurrence_id).filter((id): id is number => id != null)
+    ));
+    const orderOccurrenceId = orderOccurrenceIds.length === 1 ? orderOccurrenceIds[0] : null;
+    const {data: publicEvent} = useGetEventPublic(eventId, !!eventId, false, null, orderOccurrenceId);
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const isModal = useMemo(() => {
+        const fromUrl = searchParams.get('embed') === 'modal';
+        const cached = getEmbedMode() === 'modal';
+        return fromUrl || cached;
+    }, [searchParams]);
     const orderIsCompleted = order?.status === 'COMPLETED';
     const orderIsReserved = order?.status === 'RESERVED';
     const orderIsAwaitingOfflinePayment = order?.status === 'AWAITING_OFFLINE_PAYMENT';
-    const isMobile = useMediaQuery('(max-width: 768px)');
     const [isExpired, setIsExpired] = useState(false);
     const [inIframe, setInIframe] = useState(false);
 
@@ -52,7 +68,19 @@ const Checkout = () => {
     const [showAbandonDialog, setShowAbandonDialog] = useState(false);
     const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
     const [isAbandoning, setIsAbandoning] = useState(false);
+    const [pendingClose, setPendingClose] = useState(false);
     const abandonOrderMutation = useAbandonOrderPublic();
+
+    const postToParent = useCallback((type: string, data?: Record<string, unknown>) => {
+        if (typeof window === 'undefined') return;
+        try {
+            window.parent.postMessage({type, ...(data ?? {})}, getParentOrigin() || '*');
+        } catch (e) {
+            /* noop */
+        }
+    }, []);
+
+    const closeModal = useCallback(() => postToParent('hievents:close-checkout'), [postToParent]);
 
     const getCurrentStep = (): 'details' | 'payment' | 'summary' => {
         const pathname = location.pathname;
@@ -61,6 +89,15 @@ const Checkout = () => {
         return 'details';
     };
     const currentStep = getCurrentStep();
+
+    const progressPercent = order?.is_payment_required
+        ? {details: 33, payment: 66, summary: 100}[currentStep]
+        : {details: 50, payment: 100, summary: 100}[currentStep];
+
+    const stepCount = order?.is_payment_required ? 3 : 2;
+    const stepNumber = order?.is_payment_required
+        ? {details: 1, payment: 2, summary: 3}[currentStep]
+        : {details: 1, payment: 2, summary: 2}[currentStep];
 
     const isOrderReservedAndNotExpired = orderIsReserved && order?.reserved_until
         && isDateInFuture(order.reserved_until);
@@ -82,6 +119,10 @@ const Checkout = () => {
     };
 
     const handleReturn = () => {
+        if (isModal) {
+            closeModal();
+            return;
+        }
         navigate(`/event/${event?.id}/${event?.slug}`);
     };
 
@@ -91,7 +132,70 @@ const Checkout = () => {
         }
 
         window?.parent?.postMessage({ type: 'REGISTRATION_COMPLETE' }, '*');
-    }
+    };
+
+    const handleRequestClose = useCallback(() => {
+        postToParent('hievents:close-pending');
+        if (isOrderReservedAndNotExpired) {
+            setPendingClose(true);
+            setShowAbandonDialog(true);
+        } else {
+            closeModal();
+        }
+    }, [postToParent, closeModal, isOrderReservedAndNotExpired]);
+
+    useEffect(() => {
+        if (!isModal) return;
+        const parentOrigin = getParentOrigin();
+        const onMessage = (event: MessageEvent) => {
+            if (parentOrigin && event.origin !== parentOrigin) return;
+            if (event.data?.type === 'hievents:request-close') {
+                handleRequestClose();
+            }
+        };
+        window.addEventListener('message', onMessage);
+        return () => window.removeEventListener('message', onMessage);
+    }, [isModal, handleRequestClose]);
+
+    useEffect(() => {
+        if (isModal && isOrderError) {
+            postToParent('hievents:checkout-cleared');
+            closeModal();
+        }
+    }, [isModal, isOrderError, postToParent, closeModal]);
+
+    useEffect(() => {
+        if (!isModal) return;
+        if (isOrderReservedAndNotExpired) {
+            const parentOrigin = getParentOrigin();
+            postToParent('hievents:checkout-progress', {
+                eventId,
+                orderShortId,
+                ...(parentOrigin ? {sessionId: getCheckoutSessionIdentifier(String(orderShortId))} : {}),
+                step: currentStep,
+                reservedUntil: order?.reserved_until ? utcDateToEpochMs(order.reserved_until) : null,
+            });
+        } else if (orderIsCompleted || orderIsAwaitingOfflinePayment) {
+            postToParent('hievents:checkout-cleared');
+        }
+    }, [isModal, isOrderReservedAndNotExpired, orderIsCompleted, orderIsAwaitingOfflinePayment, order?.reserved_until, currentStep, eventId, orderShortId, postToParent]);
+
+    useEffect(() => {
+        if (!isModal) return;
+        const onKeydown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && !showAbandonDialog && !isExpired) {
+                handleRequestClose();
+            }
+        };
+        window.addEventListener('keydown', onKeydown);
+        return () => window.removeEventListener('keydown', onKeydown);
+    }, [isModal, showAbandonDialog, isExpired, handleRequestClose]);
+
+    useEffect(() => {
+        if (isModal && order?.is_expired) {
+            setIsExpired(true);
+        }
+    }, [isModal, order?.is_expired]);
 
     const handleInvoiceDownload = async (invoice: Invoice) => {
         await withLoadingNotification(
@@ -129,7 +233,10 @@ const Checkout = () => {
             setShowAbandonDialog(false);
             showInfo(t`Your order has been cancelled.`);
 
-            if (blocker.state === 'blocked') {
+            if (pendingClose) {
+                setPendingClose(false);
+                closeModal();
+            } else if (blocker.state === 'blocked') {
                 blocker.proceed();
             } else if (pendingNavigation) {
                 navigate(pendingNavigation);
@@ -146,6 +253,7 @@ const Checkout = () => {
         }
         setShowAbandonDialog(false);
         setPendingNavigation(null);
+        setPendingClose(false);
     };
 
     const handleEventHomepageClick = (e: React.MouseEvent) => {
@@ -164,10 +272,43 @@ const Checkout = () => {
         }
     }, [blocker.state]);
 
-    // Get accent color from event settings, derive mode from homepage background
+    const {pixelsReady} = useOrganizerTrackingPixels(
+        publicEvent?.organizer?.settings?.tracking_pixels
+    );
+
+    useEffect(() => {
+        if (event && orderIsReserved && pixelsReady && hasActivePixels()) {
+            trackPixelEvent({
+                eventName: 'InitiateCheckout',
+                contentName: event.title,
+                contentId: event.id,
+            });
+        }
+    }, [event?.id, orderIsReserved, pixelsReady]);
+
+    useEffect(() => {
+        if (!event || !order || !pixelsReady || !hasActivePixels()) return;
+        if (!orderIsCompleted && !orderIsAwaitingOfflinePayment) return;
+
+        const key = `purchase_tracked_${order.short_id}`;
+        if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(key)) return;
+
+        trackPixelEvent({
+            eventName: 'Purchase',
+            value: Number(order.total_gross) || 0,
+            currency: order.currency || 'USD',
+            contentName: event.title,
+            contentId: event.id,
+            transactionId: order.short_id,
+        });
+
+        if (typeof sessionStorage !== 'undefined') {
+            sessionStorage.setItem(key, '1');
+        }
+    }, [order?.status, order?.short_id, pixelsReady]);
+
     const homepageSettings = event?.settings?.homepage_theme_settings;
     const accentColor = homepageSettings?.accent || DEFAULT_ACCENT;
-    // Mode is derived from the homepage background color (light homepage = light checkout)
     const checkoutMode = homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
     return (
@@ -176,66 +317,84 @@ const Checkout = () => {
                 <div className={classes.mainContent}>
                     <header className={classes.header}>
                         {(event) && (
-                            <div className={classes.actionBar}>
-                                <Group justify="space-between" wrap="nowrap">
+                            <>
+                                <div
+                                    className={classNames(classes.headerRow, (orderIsCompleted || orderIsAwaitingOfflinePayment) && classes.headerRowComplete)}
+                                    style={isModal ? {paddingRight: '44px'} : undefined}
+                                >
                                     {inIframe && (
-                                        <Button
-                                            title={t`Close popup window and return to event page.`}
-                                            onClick={handlePopClose}
-                                            leftSection={<IconX size={20}/>}
-                                        >
-                                            {!isMobile && t`Close`}
-                                        </Button>
+                                        <>
+                                            <ActionIcon
+                                                className={classes.backButton}
+                                                variant="subtle"
+                                                title={t`Close popup window and return to event page.`}
+                                                aria-label={t`Close popup window and return to event page.`}
+                                                onClick={handlePopClose}
+                                            >
+                                                <IconX size={19}/>
+                                            </ActionIcon>
+                                            <span className={classes.headerDivider}/>
+                                        </>
                                     )}
-                                    {!inIframe && (
-                                        <Button
-                                            title={t`Back to event page`}
-                                            variant="subtle"
-                                            leftSection={<IconArrowLeft size={20}/>}
-                                            onClick={handleEventHomepageClick}
-                                        >
-                                            {!isMobile && t`Event Homepage`}
-                                        </Button>
-                                    )}
-
-                                    {orderIsReserved && (
-                                        <ProgressStepper
-                                            isPaymentRequired={!!order.is_payment_required}
-                                            currentStep={currentStep}
-                                        />
-                                    )}
-
-                                    {(orderIsCompleted || orderIsAwaitingOfflinePayment) && (
-                                        <span className={classes.title}>
-                                            {t`Your Order`}
-                                        </span>
+                                    {!inIframe && !isModal && (
+                                        <>
+                                            <ActionIcon
+                                                className={classes.backButton}
+                                                variant="subtle"
+                                                title={t`Back to event page`}
+                                                aria-label={t`Back to event page`}
+                                                onClick={handleEventHomepageClick}
+                                            >
+                                                <IconArrowLeft size={19}/>
+                                            </ActionIcon>
+                                            <span className={classes.headerDivider}/>
+                                        </>
                                     )}
 
-                                    {orderIsReserved && (
-                                        <Group gap="5px" className={classes.timerGroup}>
-                                            <span className={classes.timerLabel}>
-                                                {t`Time left:`}
+                                    <div className={classes.titleBlock}>
+                                        {(orderIsCompleted || orderIsAwaitingOfflinePayment) && (
+                                            <span
+                                                className={classNames(classes.eyebrow, orderIsAwaitingOfflinePayment ? classes.eyebrowAwaiting : classes.eyebrowComplete)}>
+                                                {orderIsAwaitingOfflinePayment ? t`Awaiting payment` : t`Order complete`}
                                             </span>
-                                            <Countdown
-                                                displayType={'short'}
-                                                className={classes.countdown}
-                                                closeToExpiryClassName={classes.countdownCloseToExpiry}
-                                                targetDate={order.reserved_until}
-                                                onExpiry={handleExpiry}
-                                            />
-                                        </Group>
+                                        )}
+
+                                        {orderIsReserved && (
+                                            <span className={classes.eyebrow}>
+                                                {t`Checkout · step ${stepNumber} of ${stepCount}`}
+                                            </span>
+                                        )}
+                                        <span className={classes.eventName}>{event.title}</span>
+                                    </div>
+
+                                    <div className={classes.headerSpacer}/>
+
+                                    {orderIsReserved && (
+                                        <>
+                                            <span className={classes.timerCaption}>{t`Time left`}</span>
+                                            <div className={classes.timerChip} data-testid="checkout-timer">
+                                                <IconClock size={14}/>
+                                                <Countdown
+                                                    displayType={'short'}
+                                                    className={classes.countdown}
+                                                    closeToExpiryClassName={classes.countdownCloseToExpiry}
+                                                    targetDate={order.reserved_until}
+                                                    onExpiry={handleExpiry}
+                                                />
+                                            </div>
+                                        </>
                                     )}
 
                                     {(orderIsCompleted || orderIsAwaitingOfflinePayment) && (
-                                        <Group gap="2px">
+                                        <div className={classes.headerActions}>
                                             <ShareComponent
                                                 title={event.title}
                                                 text={t`Check out this event!`}
                                                 url={eventHomepageUrl(event)}
-                                                hideShareButtonText={isMobile}
+                                                hideShareButtonText
                                             />
 
-                                            <AddToEventCalendarButton event={event}/>
+                                            <AddToEventCalendarButton event={event} occurrence={order?.order_items?.[0]?.event_occurrence}/>
 
                                             {orderHasAttendees && (
                                                 <Tooltip label={t`Print Tickets`}>
@@ -253,19 +412,32 @@ const Checkout = () => {
                                                     label={t`Download Invoice`}>
                                                     <ActionIcon
                                                         variant="subtle"
+                                                        data-testid="download-invoice-button"
                                                         onClick={() => handleInvoiceDownload(order.latest_invoice as Invoice)}
                                                     >
                                                         <IconReceipt size={20}/>
                                                     </ActionIcon>
                                                 </Tooltip>
                                             )}
-                                        </Group>
+                                        </div>
                                     )}
-                                </Group>
-                            </div>
+                                </div>
+
+                                {orderIsReserved && (
+                                    <div className={classes.progressTrack}>
+                                        <div className={classes.progressFill} style={{width: `${progressPercent}%`}}/>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </header>
                     <Outlet/>
+                    {isModal && currentStep !== 'summary' && (
+                        <>
+                            <PoweredByFooter style={{marginTop: '12px', paddingBottom: '16px'}}/>
+                            <CookieSettingsLink/>
+                        </>
+                    )}
                 </div>
             </div>
 

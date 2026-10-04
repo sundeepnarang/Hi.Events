@@ -1,10 +1,9 @@
-import { Button, ButtonProps } from '@mantine/core';
+import { Button, ButtonProps, ElementProps } from '@mantine/core';
 import React, { forwardRef } from 'react';
 import classes from './TopBarButton.module.scss';
 
-interface TopBarButtonProps extends ButtonProps {
+interface TopBarButtonProps extends ButtonProps, ElementProps<'button', keyof ButtonProps> {
     children: React.ReactNode;
-    onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const TopBarButton = forwardRef<HTMLButtonElement, TopBarButtonProps>(

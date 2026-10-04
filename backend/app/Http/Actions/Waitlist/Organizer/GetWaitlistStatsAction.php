@@ -2,9 +2,9 @@
 
 namespace HiEvents\Http\Actions\Waitlist\Organizer;
 
-use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Http\Actions\BaseAction;
+use HiEvents\Http\Request\Waitlist\GetWaitlistStatsRequest;
 use HiEvents\Services\Application\Handlers\Waitlist\GetWaitlistStatsHandler;
 use Illuminate\Http\JsonResponse;
 
@@ -12,15 +12,17 @@ class GetWaitlistStatsAction extends BaseAction
 {
     public function __construct(
         private readonly GetWaitlistStatsHandler $handler,
-    )
-    {
-    }
+    ) {}
 
-    public function __invoke(int $eventId): JsonResponse
+    public function __invoke(GetWaitlistStatsRequest $request, int $eventId): JsonResponse
     {
-        $this->isActionAuthorized($eventId, EventDomainObject::class, Role::READONLY);
+        $this->isActionAuthorized($eventId, EventDomainObject::class);
+        $validated = $request->validated();
 
-        $stats = $this->handler->handle($eventId);
+        $stats = $this->handler->handle(
+            $eventId,
+            isset($validated['event_occurrence_id']) ? (int) $validated['event_occurrence_id'] : null,
+        );
 
         return $this->jsonResponse([
             'total' => $stats->total,
@@ -29,7 +31,7 @@ class GetWaitlistStatsAction extends BaseAction
             'purchased' => $stats->purchased,
             'cancelled' => $stats->cancelled,
             'expired' => $stats->expired,
-            'products' => array_map(fn($p) => [
+            'products' => array_map(fn ($p) => [
                 'product_price_id' => $p->product_price_id,
                 'product_title' => $p->product_title,
                 'waiting' => $p->waiting,

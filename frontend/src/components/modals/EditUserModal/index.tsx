@@ -1,11 +1,12 @@
 import {useForm} from "@mantine/form";
 import {GenericModalProps, User,} from "../../../types.ts";
 import {Modal} from "../../common/Modal";
-import {Alert, Button, Select, TextInput} from "@mantine/core";
+import {Button, Select, TextInput} from "@mantine/core";
+import {Callout} from "../../common/Callout";
 import {useFormErrorResponseHandler} from "../../../hooks/useFormErrorResponseHandler.tsx";
 import {t, Trans} from "@lingui/macro";
 import {CustomSelect, ItemProps} from "../../common/CustomSelect";
-import {IconEye, IconUser, IconUserShield} from "@tabler/icons-react";
+import {IconUser, IconUserShield} from "@tabler/icons-react";
 import {showSuccess} from "../../../utilites/notifications.tsx";
 import {UpdateUserRequest} from "../../../api/user.client.ts";
 import {useEditUser} from "../../../mutations/useEditUser.ts";
@@ -56,20 +57,14 @@ export const EditUserModal = ({onClose, user}: EditUserModalProps) => {
             value: 'ORGANIZER',
             description: t`Organizers can only manage events and products. They cannot manage users, account settings or billing information.`,
         },
-        {
-            icon: <IconEye/>,
-            label: t`Read-only`,
-            value: 'READONLY',
-            description: t`Read-only users can view events, orders and settings, but cannot make any changes.`,
-        },
     ];
 
     return (
         <Modal heading={t`Edit User`} onClose={onClose} opened>
             {user.status === 'INVITED' && (
-                <Alert mb={20}>
+                <Callout variant="info">
                     <Trans>This user is not active, as they have not accepted their invitation.</Trans>
-                </Alert>
+                </Callout>
             )}
             <form onSubmit={form.onSubmit(values => handleCreate(values))}>
                 <fieldset disabled={ediMutation.isPending}>
@@ -90,9 +85,9 @@ export const EditUserModal = ({onClose, user}: EditUserModalProps) => {
                     />
 
                     {user.is_account_owner && (
-                        <Alert mb={20}>
+                        <Callout variant="info">
                             {t`You cannot edit the role or status of the account owner.`}
-                        </Alert>
+                        </Callout>
                     )}
 
                     <CustomSelect

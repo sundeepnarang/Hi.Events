@@ -12,16 +12,14 @@ use Illuminate\Http\Response;
 
 class GetEventSettingsAction extends BaseAction
 {
-    public function __construct(private readonly EventSettingsRepositoryInterface $eventSettingsRepository)
-    {
-    }
+    public function __construct(private readonly EventSettingsRepositoryInterface $eventSettingsRepository) {}
 
     public function __invoke(int $eventId): Response|JsonResponse
     {
         $this->isActionAuthorized($eventId, EventDomainObject::class, Role::READONLY);
 
         $settings = $this->eventSettingsRepository->findFirstWhere([
-            'event_id' => $eventId
+            'event_id' => $eventId,
         ]);
 
         if ($settings === null) {

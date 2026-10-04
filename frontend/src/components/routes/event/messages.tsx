@@ -17,11 +17,9 @@ import {dateToBrowserTz, relativeDate} from "../../../utilites/dates.ts";
 import {getInitials} from "../../../utilites/helpers.ts";
 import {useCancelMessage} from "../../../mutations/useCancelMessage.ts";
 import {showError, showSuccess} from "../../../utilites/notifications.tsx";
-import {useIsReadOnly} from "../../../hooks/useIsCurrentUserAdmin.ts";
 import classes from "./messages.module.scss";
 
 const MessagePreview = ({message, eventId, onBack, eventTimezone}: { message: Message; eventId: string; onBack: () => void; eventTimezone: string }) => {
-    const isReadOnly = useIsReadOnly();
     const [recipientsOpen, {open: openRecipients, close: closeRecipients}] = useDisclosure(false);
     const cancelMutation = useCancelMessage();
     const senderName = message.sent_by_user
@@ -71,7 +69,7 @@ const MessagePreview = ({message, eventId, onBack, eventTimezone}: { message: Me
                         <Badge size="sm" color={statusBadgeColor(message.status)} variant="outline">
                             {message.status}
                         </Badge>
-                        {message.status === 'SCHEDULED' && !isReadOnly && (
+                        {message.status === 'SCHEDULED' && (
                             <Button
                                 variant="light"
                                 color="red"
@@ -123,7 +121,6 @@ const MessagePreview = ({message, eventId, onBack, eventTimezone}: { message: Me
 };
 
 export const Messages = () => {
-    const isReadOnly = useIsReadOnly();
     const {eventId} = useParams();
     const {data: event} = useGetEvent(eventId);
     const [searchParams, setSearchParam] = useFilterQueryParamSync();
@@ -230,16 +227,15 @@ export const Messages = () => {
                                 <span className={classes.messageCount}>{totalMessages}</span>
                             )}
                         </div>
-                        {!isReadOnly && (
-                            <Button
-                                variant="filled"
-                                size="compact-sm"
-                                onClick={openSendModal}
-                                leftSection={<IconSend size={14}/>}
-                            >
-                                {t`Compose`}
-                            </Button>
-                        )}
+                        <Button
+                            variant="filled"
+                            size="compact-sm"
+                            onClick={openSendModal}
+                            leftSection={<IconSend size={14}/>}
+                            data-testid="message-compose-button"
+                        >
+                            {t`Compose`}
+                        </Button>
                     </div>
 
                     <div className={classes.searchBar}>
@@ -277,16 +273,14 @@ export const Messages = () => {
                                 ))}
                                 <div className={classes.ghostCta}>
                                     <p>{t`Your messages will appear here`}</p>
-                                    {!isReadOnly && (
-                                        <Button
-                                            variant="light"
-                                            size="compact-sm"
-                                            onClick={openSendModal}
-                                            leftSection={<IconSend size={14}/>}
-                                        >
-                                            {t`Compose`}
-                                        </Button>
-                                    )}
+                                    <Button
+                                        variant="light"
+                                        size="compact-sm"
+                                        onClick={openSendModal}
+                                        leftSection={<IconSend size={14}/>}
+                                    >
+                                        {t`Compose`}
+                                    </Button>
                                 </div>
                             </div>
                         )}
@@ -331,17 +325,15 @@ export const Messages = () => {
                                         <p>{t`Send emails to attendees, ticket holders, or order owners. Messages can be sent immediately or scheduled for later.`}</p>
                                     }
                                 >
-                                    {!isReadOnly && (
-                                        <Button
-                                            variant="filled"
-                                            size="sm"
-                                            onClick={openSendModal}
-                                            leftSection={<IconSend size={16}/>}
-                                            mt={8}
-                                        >
-                                            {t`Send your first message`}
-                                        </Button>
-                                    )}
+                                    <Button
+                                        variant="filled"
+                                        size="sm"
+                                        onClick={openSendModal}
+                                        leftSection={<IconSend size={16}/>}
+                                        mt={8}
+                                    >
+                                        {t`Send your first message`}
+                                    </Button>
                                 </NoResultsSplash>
                             ) : (
                                 <>
