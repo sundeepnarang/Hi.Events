@@ -872,5 +872,4 @@ abstract class EventSettingDomainObjectAbstract extends \HiEvents\DomainObjects\
     {
         return $this->get_tickets_button_text;
     }
-    }
 }

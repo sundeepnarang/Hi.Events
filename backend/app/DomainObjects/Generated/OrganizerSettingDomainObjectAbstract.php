@@ -326,5 +326,4 @@ abstract class OrganizerSettingDomainObjectAbstract extends \HiEvents\DomainObje
     {
         return $this->tracking_consent_acknowledged;
     }
-    }
 }
