@@ -16,8 +16,10 @@ interface NumberSelectorProps extends TextInputProps {
     onLimitReached?: () => void;
 }
 
-const getFormValue = (values: Record<string, any>, fieldName: string) =>
-    Number(fieldName.split('.').reduce<any>((acc, key) => acc?.[key], values) ?? 0);
+const getFormValue = (values: Record<string, any>, fieldName: string): number | undefined => {
+    const raw = fieldName.split('.').reduce<any>((acc, key) => acc?.[key], values);
+    return raw !== undefined && raw !== null ? Number(raw) : undefined;
+};
 
 export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues, selectorSize = 'default', onLimitReached}: NumberSelectorProps) => {
     const handlers = useRef<NumberInputHandlers>(null);
@@ -27,7 +29,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues,
     const initialQuantity = min !== undefined ? min : 1;
     const [value, setValue] = useState<number>(() => {
         const existing = getFormValue(formInstance.values, fieldName);
-        return existing > 0 ? existing : initialQuantity;
+        return existing !== undefined ? existing : initialQuantity;
     });
 
     const [sharedVals] = useState<SharedValues>(() => {
@@ -42,7 +44,7 @@ export const NumberSelector = ({formInstance, fieldName, min, max, sharedValues,
 
     useEffect(() => {
         const formValue = getFormValue(formInstance.values, fieldName);
-        if (formValue !== value) {
+        if (formValue !== undefined && formValue !== value) {
             const adjustedDifference = sharedVals.changeValue(formValue - value);
             setValue(value + adjustedDifference);
         }

@@ -699,11 +699,24 @@ const SelectProducts = (props: SelectProductsProps) => {
 
             const existingProduct = form.values.products?.find(p => p.product_id === product.id);
 
-            product.prices?.forEach(priceQuantity => {
-                const existingQuantity = existingProduct?.quantities?.find(q => q.price_id === priceQuantity.id)?.quantity || 0;
+            product.prices?.forEach((priceQuantity, priceIndex) => {
+                const existingPriceQuantity = existingProduct?.quantities?.find(q => q.price_id === priceQuantity.id);
+                const hasExisting = existingPriceQuantity !== undefined && existingPriceQuantity.quantity !== undefined;
+
+                const isAvailable = (product.is_available ?? true)
+                    && (priceQuantity.is_available ?? true)
+                    && (priceQuantity.quantity_remaining === null || priceQuantity.quantity_remaining === undefined || priceQuantity.quantity_remaining > 0);
+                const isSeated = seatedIds.has(Number(product.id));
+
+                const defaultQuantity = (!product.is_addon_only && isAvailable && !isSeated)
+                    ? (product.min_per_order !== undefined ? product.min_per_order : 1)
+                    : 0;
+
+                const initialQuantity = priceIndex === 0 ? defaultQuantity : 0;
+                const quantity = hasExisting ? existingPriceQuantity.quantity : initialQuantity;
 
                 quantitiesValues.push({
-                    quantity: existingQuantity,
+                    quantity: quantity,
                     price_id: Number(priceQuantity.id),
                     price: product.type === 'DONATION' ? Number(priceQuantity.price) : undefined,
                 });
