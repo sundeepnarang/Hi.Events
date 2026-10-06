@@ -217,3 +217,21 @@ Gotchas:
 ### Before Finalizing Changes
 1. Frontend: `cd frontend && npx tsc --noEmit`
 2. Backend: `docker compose -f docker-compose.dev.yml exec backend php artisan test --testsuite=Unit`
+
+## SoS Customizations (Preserve on Merge)
+
+The `SoSChangesV2` branch maintains specific custom behaviors that must be preserved during upstream merges or refactors:
+
+1. **Ticket Quantity Defaults:**
+   - On the product selection / checkout page (`SelectProducts`), ticket quantities must default to `product.min_per_order ?? 1` (defaulting to 1 for active non-addon tickets), unless `min_per_order` is explicitly set to 0.
+   - Users must always be able to decrement quantities down to 0 via the minus button.
+   - Addon-only products, unavailable tickets, and seated tickets must remain at 0 by default.
+
+2. **Terms & Conditions:**
+   - Mandatory T&C acceptance checkbox must be retained on the checkout / order summary page.
+
+3. **Custom Admin Routes:**
+   - Routes mounted under `/sos-admin` must remain accessible to administrators.
+
+4. **Discarded Features:**
+   - Read-Only User Role and Check-In List Password Protection have been intentionally discarded and should not be reintroduced.
