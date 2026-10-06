@@ -28,7 +28,8 @@ export type ConfigKeys =
     | 'VITE_COOKIE_CONSENT_TEXT'
     | 'VITE_COOKIE_CONSENT_DOMAIN'
     | 'VITE_GOOGLE_ADS_CONVERSION_ID'
-    | 'VITE_GOOGLE_ADS_CONVERSION_LABELS';
+    | 'VITE_GOOGLE_ADS_CONVERSION_LABELS'
+    | 'VITE_GOOGLE_ANALYTICS_ID';
 
 export enum StripePlatform {
     Canada = 'ca',
@@ -316,6 +317,7 @@ export interface EventSettings {
 
     show_available_occurrence_capacity?: boolean;
     hide_sold_out_occurrences?: boolean;
+    tracking_pixels?: TrackingPixelConfig[];
 }
 
 export interface VenueAddress {

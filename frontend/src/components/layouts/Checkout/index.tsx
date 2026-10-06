@@ -273,7 +273,11 @@ const Checkout = () => {
     }, [blocker.state]);
 
     const {pixelsReady} = useOrganizerTrackingPixels(
-        publicEvent?.organizer?.settings?.tracking_pixels
+        {
+            eventPixels: publicEvent?.settings?.tracking_pixels,
+            organizerPixels: publicEvent?.organizer?.settings?.tracking_pixels,
+        },
+        publicEvent ? {eventId: publicEvent.id, eventTitle: publicEvent.title} : undefined
     );
 
     useEffect(() => {

@@ -8,9 +8,11 @@ use HiEvents\DomainObjects\Enums\HomepageFontFamily;
 use HiEvents\DomainObjects\Enums\PaymentProviders;
 use HiEvents\DomainObjects\Enums\PriceDisplayMode;
 use HiEvents\DomainObjects\Enums\TicketDateDisplayMode;
+use HiEvents\DomainObjects\Enums\TrackingPixelProvider;
 use HiEvents\Http\Request\BaseRequest;
 use HiEvents\Validators\Rules\RulesHelper;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class UpdateEventSettingsRequest extends BaseRequest
 {
@@ -104,7 +106,49 @@ class UpdateEventSettingsRequest extends BaseRequest
             // Waitlist settings
             'waitlist_auto_process' => ['boolean'],
             'waitlist_offer_timeout_minutes' => ['nullable', 'integer', 'min:1', 'max:10080'],
+
+            // Tracking pixels
+            'tracking_pixels' => ['nullable', 'array'],
+            'tracking_pixels.*.provider' => ['required', 'string', Rule::in(TrackingPixelProvider::valuesArray())],
+            'tracking_pixels.*.pixel_id' => ['required', 'string', 'max:100'],
+            'tracking_pixels.*.enabled' => ['required', 'boolean'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $pixels = $this->input('tracking_pixels', []);
+            if (! is_array($pixels)) {
+                return;
+            }
+
+            $isSaasMode = config('app.saas_mode_enabled');
+
+            foreach ($pixels as $index => $pixel) {
+                $providerValue = $pixel['provider'] ?? null;
+                $pixelId = $pixel['pixel_id'] ?? '';
+                $provider = TrackingPixelProvider::tryFrom($providerValue);
+
+                if ($isSaasMode && $provider === TrackingPixelProvider::GOOGLE_TAG_MANAGER) {
+                    $validator->errors()->add(
+                        "tracking_pixels.{$index}.provider",
+                        __('Google Tag Manager is not available on hosted plans for security reasons.')
+                    );
+
+                    continue;
+                }
+
+                if ($provider && $pixelId !== '') {
+                    if (! preg_match($provider->pixelIdPattern(), $pixelId)) {
+                        $validator->errors()->add(
+                            "tracking_pixels.{$index}.pixel_id",
+                            $provider->pixelIdFormatDescription()
+                        );
+                    }
+                }
+            }
+        });
     }
 
     public function messages(): array

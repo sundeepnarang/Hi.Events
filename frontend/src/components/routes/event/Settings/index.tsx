@@ -20,6 +20,7 @@ import {
     IconMapPin,
     IconPercentage,
     IconRepeat,
+    IconSearch,
 } from "@tabler/icons-react";
 import {useMediaQuery} from "@mantine/hooks";
 import {useEffect, useMemo, useState} from "react";
@@ -28,6 +29,7 @@ import {PaymentAndInvoicingSettings} from "./Sections/PaymentSettings";
 import {PlatformFeesSettings} from "./Sections/PlatformFeesSettings";
 import {WaitlistSettings} from "./Sections/WaitlistSettings";
 import {RecurringEventSettings} from "./Sections/RecurringEventSettings";
+import {EventTrackingPixelSettings} from "./Sections/TrackingPixelSettings";
 import {DangerZoneSettings} from "./Sections/DangerZoneSettings";
 import {useGetAccount} from "../../../../queries/useGetAccount.ts";
 import {useGetEvent} from "../../../../queries/useGetEvent.ts";
@@ -70,8 +72,14 @@ export const Settings = () => {
             {
                 id: 'seo-settings',
                 label: t`SEO`,
-                icon: IconBrandGoogleAnalytics,
+                icon: IconSearch,
                 component: SeoSettings
+            },
+            {
+                id: 'tracking-pixel-settings',
+                label: t`Tracking & Analytics`,
+                icon: IconBrandGoogleAnalytics,
+                component: EventTrackingPixelSettings
             },
             {
                 id: 'email-settings',

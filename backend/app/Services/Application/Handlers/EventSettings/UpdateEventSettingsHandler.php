@@ -106,6 +106,9 @@ class UpdateEventSettingsHandler
                     // Waitlist settings
                     'waitlist_auto_process' => $settings->waitlist_auto_process,
                     'waitlist_offer_timeout_minutes' => $settings->waitlist_offer_timeout_minutes,
+
+                    // Tracking pixels
+                    'tracking_pixels' => $settings->tracking_pixels,
                 ],
                 where: [
                     'event_id' => $settings->event_id,

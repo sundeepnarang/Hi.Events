@@ -87,6 +87,9 @@ class EventSettingsResource extends JsonResource
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),
             'waitlist_offer_timeout_minutes' => $this->getWaitlistOfferTimeoutMinutes(),
+
+            // Tracking pixels
+            'tracking_pixels' => $this->getTrackingPixels(),
         ];
     }
 }

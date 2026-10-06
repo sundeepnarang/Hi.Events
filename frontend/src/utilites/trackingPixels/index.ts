@@ -4,6 +4,55 @@ import {googleTagManagerPlugin} from './plugins/googleTagManager';
 import {tiktokPixelPlugin} from './plugins/tiktokPixel';
 import {TrackingPixelPlugin, TrackingPixelConfig, PageViewData, TrackingEventData} from './types';
 import {ConsentCategory} from '../cookieConsent';
+import {getConfig} from '../config.ts';
+
+export interface ResolveTrackingPixelsOptions {
+    eventPixels?: TrackingPixelConfig[];
+    organizerPixels?: TrackingPixelConfig[];
+}
+
+export function resolveEffectiveTrackingPixels(
+    input?: TrackingPixelConfig[] | ResolveTrackingPixelsOptions
+): TrackingPixelConfig[] {
+    let eventPixels: TrackingPixelConfig[] | undefined;
+    let organizerPixels: TrackingPixelConfig[] | undefined;
+
+    if (Array.isArray(input)) {
+        organizerPixels = input;
+    } else if (input) {
+        eventPixels = input.eventPixels;
+        organizerPixels = input.organizerPixels;
+    }
+
+    const envGaId = getConfig('VITE_GOOGLE_ANALYTICS_ID')?.trim();
+    const pixelMap = new Map<string, TrackingPixelConfig>();
+
+    if (envGaId) {
+        pixelMap.set('google_analytics_4', {
+            provider: 'google_analytics_4',
+            pixel_id: envGaId,
+            enabled: true,
+        });
+    }
+
+    if (organizerPixels) {
+        for (const pixel of organizerPixels) {
+            if (pixel.pixel_id?.trim()) {
+                pixelMap.set(pixel.provider, pixel);
+            }
+        }
+    }
+
+    if (eventPixels) {
+        for (const pixel of eventPixels) {
+            if (pixel.pixel_id?.trim()) {
+                pixelMap.set(pixel.provider, pixel);
+            }
+        }
+    }
+
+    return Array.from(pixelMap.values());
+}
 
 const pluginRegistry: Record<string, TrackingPixelPlugin> = {
     facebook_pixel: facebookPixelPlugin,

@@ -73,4 +73,45 @@ class UpdateEventSettingsRequestTest extends TestCase
 
         $this->assertFalse($validator->errors()->has('allow_copy_details_to_all_attendees'));
     }
+
+    public function test_valid_tracking_pixels_pass_validation(): void
+    {
+        $request = new UpdateEventSettingsRequest;
+        $validator = Validator::make(
+            [
+                'tracking_pixels' => [
+                    [
+                        'provider' => 'google_analytics_4',
+                        'pixel_id' => 'G-ABC1234567',
+                        'enabled' => true,
+                    ],
+                ],
+            ],
+            $request->rules()
+        );
+        $request->withValidator($validator);
+
+        $this->assertFalse($validator->fails());
+    }
+
+    public function test_invalid_tracking_pixel_id_fails_validation(): void
+    {
+        $request = new UpdateEventSettingsRequest;
+        $validator = Validator::make(
+            [
+                'tracking_pixels' => [
+                    [
+                        'provider' => 'google_analytics_4',
+                        'pixel_id' => 'INVALID-ID',
+                        'enabled' => true,
+                    ],
+                ],
+            ],
+            $request->rules()
+        );
+        $request->withValidator($validator);
+
+        $this->assertTrue($validator->fails());
+        $this->assertTrue($validator->errors()->has('tracking_pixels.0.pixel_id'));
+    }
 }

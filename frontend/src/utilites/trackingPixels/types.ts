@@ -4,6 +4,8 @@ export interface PageViewData {
     url: string;
     title: string;
     referrer?: string;
+    eventId?: string | number;
+    eventTitle?: string;
 }
 
 export interface TrackingEventData {
@@ -12,6 +14,7 @@ export interface TrackingEventData {
     currency?: string;
     contentName?: string;
     contentId?: string | number;
+    transactionId?: string | number;
     [key: string]: unknown;
 }
 

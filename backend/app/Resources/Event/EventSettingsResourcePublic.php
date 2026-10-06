@@ -2,6 +2,7 @@
 
 namespace HiEvents\Resources\Event;
 
+use HiEvents\DomainObjects\Enums\TrackingPixelProvider;
 use HiEvents\DomainObjects\EventSettingDomainObject;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -93,6 +94,14 @@ class EventSettingsResourcePublic extends JsonResource
             // Waitlist settings
             'waitlist_auto_process' => $this->getWaitlistAutoProcess(),
             'waitlist_offer_timeout_minutes' => $this->getWaitlistOfferTimeoutMinutes(),
+
+            // Tracking pixels
+            'tracking_pixels' => config('app.saas_mode_enabled') && ! empty($this->getTrackingPixels())
+                ? array_values(array_filter(
+                    $this->getTrackingPixels(),
+                    fn ($pixel) => ($pixel['provider'] ?? null) !== TrackingPixelProvider::GOOGLE_TAG_MANAGER->value,
+                ))
+                : $this->getTrackingPixels(),
         ];
     }
 }

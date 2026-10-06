@@ -80,7 +80,11 @@ const EventHomepage = ({...loaderData}: EventHomepageProps) => {
     }, [continueButtonNode]);
 
     const {pixelsReady} = useOrganizerTrackingPixels(
-        event?.organizer?.settings?.tracking_pixels
+        {
+            eventPixels: event?.settings?.tracking_pixels,
+            organizerPixels: event?.organizer?.settings?.tracking_pixels,
+        },
+        event ? {eventId: event.id, eventTitle: event.title} : undefined
     );
 
     useEffect(() => {

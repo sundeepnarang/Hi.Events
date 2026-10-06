@@ -37,6 +37,8 @@ export const googleAnalytics4Plugin: TrackingPixelPlugin = {
             page_location: data.url,
             page_title: data.title,
             page_referrer: data.referrer,
+            event_id: data.eventId !== undefined && data.eventId !== null ? String(data.eventId) : undefined,
+            event_title: data.eventTitle,
         });
     },
 
@@ -47,11 +49,21 @@ export const googleAnalytics4Plugin: TrackingPixelPlugin = {
             'Purchase': 'purchase',
         };
         const gaEvent = eventMap[data.eventName] || data.eventName;
+        const eventId = data.contentId !== undefined && data.contentId !== null ? String(data.contentId) : undefined;
+        const eventTitle = data.contentName;
+
         window.gtag?.('event', gaEvent, {
             value: data.value,
             currency: data.currency,
             transaction_id: data.transactionId ? String(data.transactionId) : undefined,
-            items: data.contentId ? [{item_id: String(data.contentId), item_name: data.contentName}] : undefined,
+            event_id: eventId,
+            event_title: eventTitle,
+            items: eventId ? [{
+                item_id: eventId,
+                item_name: eventTitle,
+                price: data.value,
+                quantity: 1,
+            }] : undefined,
         });
     },
 

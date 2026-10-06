@@ -136,6 +136,11 @@ class PartialUpdateEventSettingsHandler
                 // Waitlist settings
                 'waitlist_auto_process' => $eventSettingsDTO->settings['waitlist_auto_process'] ?? $existingSettings->getWaitlistAutoProcess(),
                 'waitlist_offer_timeout_minutes' => $eventSettingsDTO->settings['waitlist_offer_timeout_minutes'] ?? $existingSettings->getWaitlistOfferTimeoutMinutes(),
+
+                // Tracking pixels
+                'tracking_pixels' => array_key_exists('tracking_pixels', $eventSettingsDTO->settings)
+                    ? $eventSettingsDTO->settings['tracking_pixels']
+                    : $existingSettings->getTrackingPixels(),
             ]),
         );
     }

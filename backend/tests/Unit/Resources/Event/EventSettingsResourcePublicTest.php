@@ -31,4 +31,23 @@ class EventSettingsResourcePublicTest extends TestCase
 
         $this->assertFalse($resource['allow_copy_details_to_all_attendees']);
     }
+
+    public function test_public_resource_exposes_tracking_pixels(): void
+    {
+        $pixels = [
+            [
+                'provider' => 'google_analytics_4',
+                'pixel_id' => 'G-ABC1234567',
+                'enabled' => true,
+            ],
+        ];
+
+        $settings = (new EventSettingDomainObject)
+            ->setTrackingPixels($pixels);
+
+        $resource = (new EventSettingsResourcePublic($settings))->toArray(Request::create('/'));
+
+        $this->assertArrayHasKey('tracking_pixels', $resource);
+        $this->assertSame($pixels, $resource['tracking_pixels']);
+    }
 }
