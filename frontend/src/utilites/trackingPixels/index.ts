@@ -25,12 +25,21 @@ export function resolveEffectiveTrackingPixels(
     }
 
     const envGaId = getConfig('VITE_GOOGLE_ANALYTICS_ID')?.trim();
+    const envMetaPixelId = getConfig('VITE_META_PIXEL_ID')?.trim();
     const pixelMap = new Map<string, TrackingPixelConfig>();
 
     if (envGaId) {
         pixelMap.set('google_analytics_4', {
             provider: 'google_analytics_4',
             pixel_id: envGaId,
+            enabled: true,
+        });
+    }
+
+    if (envMetaPixelId) {
+        pixelMap.set('facebook_pixel', {
+            provider: 'facebook_pixel',
+            pixel_id: envMetaPixelId,
             enabled: true,
         });
     }

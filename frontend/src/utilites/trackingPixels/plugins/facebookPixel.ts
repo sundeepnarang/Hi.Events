@@ -54,12 +54,35 @@ export const facebookPixelPlugin: TrackingPixelPlugin = {
             'Purchase': 'Purchase',
         };
         const fbEvent = eventMap[data.eventName] || data.eventName;
-        fbq('track', fbEvent, {
+        const params: Record<string, unknown> = {
             value: data.value || 0,
             currency: data.currency || 'USD',
             content_name: data.contentName,
             content_ids: data.contentId ? [String(data.contentId)] : undefined,
-        });
+            content_type: 'product',
+        };
+
+        if (data.transactionId) {
+            fbq('track', fbEvent, params, {eventID: String(data.transactionId)});
+        } else {
+            fbq('track', fbEvent, params);
+        }
+
+        if (fbEvent === 'Purchase') {
+            const regParams = {
+                content_name: data.contentName,
+                status: true,
+                content_ids: data.contentId ? [String(data.contentId)] : undefined,
+            };
+
+            if (data.transactionId) {
+                fbq('track', 'CompleteRegistration', regParams, {eventID: String(data.transactionId)});
+                fbq('trackCustom', 'complete_registration', regParams, {eventID: String(data.transactionId)});
+            } else {
+                fbq('track', 'CompleteRegistration', regParams);
+                fbq('trackCustom', 'complete_registration', regParams);
+            }
+        }
     },
 
     cleanup() {

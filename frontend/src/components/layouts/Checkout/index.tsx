@@ -28,8 +28,6 @@ import {CookieSettingsLink} from "../../common/CookieSettingsLink";
 import {useGetEventPublic} from "../../../queries/useGetEventPublic.ts";
 
 const DEFAULT_ACCENT = '#8b5cf6';
-import {getConfig} from "../../../utilites/config.ts";
-import {initMetaPixel} from "../../../utilites/metaPixel.ts";
 
 const Checkout = () => {
     const {eventId, orderShortId} = useParams();
@@ -60,8 +58,6 @@ const Checkout = () => {
         } catch {
             setInIframe(true);
         }
-        const pixelId = getConfig('VITE_META_PIXEL_ID');
-        initMetaPixel(pixelId);
     }, []);
 
     const orderHasAttendees = order?.attendees && order.attendees.length > 0;

@@ -35,7 +35,6 @@ import {getEmbedMode} from "../../../../utilites/iframeResize.ts";
 import countries from "../../../../../data/countries.json";
 import classes from "./CollectInformation.module.scss";
 import {trackEvent, AnalyticsEvents} from "../../../../utilites/analytics.ts";
-import {trackMetaPixel} from "../../../../utilites/metaPixel.ts";
 import {clearWaitlistJoinedForEvent} from "../../../../hooks/useWaitlistJoined.ts";
 import {useCheckoutPrefill, CheckoutPrefill} from "../../../../hooks/useCheckoutPrefill.ts";
 import {UserGeneratedContent} from "../../../common/UserGeneratedContent";
@@ -381,7 +380,6 @@ export const CollectInformation = () => {
     }
 
     if (order?.status === 'COMPLETED') {
-        trackMetaPixel("complete_registration", {id: order?.id});
         return <HomepageInfoMessage
             message={t`This order is complete`}
             link={eventCheckoutPath(eventId, orderShortId, 'summary')}
