@@ -24,22 +24,23 @@ class SendAttendeeTicketService
         EventSettingDomainObject $eventSettings,
         OrganizerDomainObject $organizer,
     ): void {
-        if ($attendee->getEmail() === null) {
-            return;
-        }
+        info('Not Sending attendee ticket for attendee: ' . $attendee->getEmail());
+        // if ($attendee->getEmail() === null) {
+        return;
+        // }
 
-        $mail = $this->mailBuilderService->buildAttendeeTicketMail(
-            $attendee,
-            $order,
-            $event,
-            $eventSettings,
-            $organizer,
-            $attendee->getEventOccurrence(),
-        );
+        // $mail = $this->mailBuilderService->buildAttendeeTicketMail(
+        //     $attendee,
+        //     $order,
+        //     $event,
+        //     $eventSettings,
+        //     $organizer,
+        //     $attendee->getEventOccurrence(),
+        // );
 
-        $this->mailer
-            ->to($attendee->getEmail())
-            ->locale($attendee->getLocale())
-            ->send($mail);
+        // $this->mailer
+        //     ->to($attendee->getEmail())
+        //     ->locale($attendee->getLocale())
+        //     ->send($mail);
     }
 }
