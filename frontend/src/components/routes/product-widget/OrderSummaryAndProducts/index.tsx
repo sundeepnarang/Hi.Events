@@ -178,7 +178,7 @@ const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Eve
     const isCancelled = order.status === 'CANCELLED';
 
     const message = {
-        'COMPLETED': t`You're going to ${event.title}!`,
+        'COMPLETED': t`You are registered for ${event.title}!`,
         'CANCELLED': t`Your order has been cancelled`,
         'RESERVED': null,
         'AWAITING_OFFLINE_PAYMENT': t`Your order is awaiting payment`,
@@ -211,7 +211,10 @@ const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Eve
             {isCompleted && (
                 <div className={classes.confirmationText}>
                     {event?.settings?.is_invite_only ? (
-                        t`Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card.`
+                        <>
+                            <strong>{t`Please note:`}</strong>&nbsp;
+                            {t`Event entry by invitation card. A team member will contact you shortly with your invitation card.`}
+                        </>
                     ) : (
                         order.email ? <>{t`Confirmation sent to`} <strong>{order.email}</strong></> : null
                     )}
