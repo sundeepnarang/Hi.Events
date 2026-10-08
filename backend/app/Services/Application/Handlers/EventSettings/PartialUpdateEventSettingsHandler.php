@@ -141,6 +141,8 @@ class PartialUpdateEventSettingsHandler
                 'tracking_pixels' => array_key_exists('tracking_pixels', $eventSettingsDTO->settings)
                     ? $eventSettingsDTO->settings['tracking_pixels']
                     : $existingSettings->getTrackingPixels(),
+
+                'is_invite_only' => $eventSettingsDTO->settings['is_invite_only'] ?? $existingSettings->getIsInviteOnly(),
             ]),
         );
     }

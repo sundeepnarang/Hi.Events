@@ -278,6 +278,7 @@ class CreateEventService
 
             'waitlist_auto_process' => true,
             'waitlist_offer_timeout_minutes' => 120,
+            'is_invite_only' => false,
         ]);
     }
 }

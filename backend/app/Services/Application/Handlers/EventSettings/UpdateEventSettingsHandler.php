@@ -109,6 +109,8 @@ class UpdateEventSettingsHandler
 
                     // Tracking pixels
                     'tracking_pixels' => $settings->tracking_pixels,
+
+                    'is_invite_only' => $settings->is_invite_only,
                 ],
                 where: [
                     'event_id' => $settings->event_id,

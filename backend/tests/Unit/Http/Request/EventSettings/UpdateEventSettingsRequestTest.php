@@ -77,16 +77,18 @@ class UpdateEventSettingsRequestTest extends TestCase
     public function test_valid_tracking_pixels_pass_validation(): void
     {
         $request = new UpdateEventSettingsRequest;
-        $validator = Validator::make(
-            [
-                'tracking_pixels' => [
-                    [
-                        'provider' => 'google_analytics_4',
-                        'pixel_id' => 'G-ABC1234567',
-                        'enabled' => true,
-                    ],
+        $data = [
+            'tracking_pixels' => [
+                [
+                    'provider' => 'google_analytics_4',
+                    'pixel_id' => 'G-ABC1234567',
+                    'enabled' => true,
                 ],
             ],
+        ];
+        $request->merge($data);
+        $validator = Validator::make(
+            $data,
             $request->rules()
         );
         $request->withValidator($validator);
@@ -97,21 +99,53 @@ class UpdateEventSettingsRequestTest extends TestCase
     public function test_invalid_tracking_pixel_id_fails_validation(): void
     {
         $request = new UpdateEventSettingsRequest;
-        $validator = Validator::make(
-            [
-                'tracking_pixels' => [
-                    [
-                        'provider' => 'google_analytics_4',
-                        'pixel_id' => 'INVALID-ID',
-                        'enabled' => true,
-                    ],
+        $data = [
+            'tracking_pixels' => [
+                [
+                    'provider' => 'google_analytics_4',
+                    'pixel_id' => 'INVALID-ID',
+                    'enabled' => true,
                 ],
             ],
+        ];
+        $request->merge($data);
+        $validator = Validator::make(
+            $data,
             $request->rules()
         );
         $request->withValidator($validator);
 
         $this->assertTrue($validator->fails());
         $this->assertTrue($validator->errors()->has('tracking_pixels.0.pixel_id'));
+    }
+
+    public function test_is_invite_only_accepts_boolean(): void
+    {
+        $validator = Validator::make(
+            ['is_invite_only' => true],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertFalse($validator->errors()->has('is_invite_only'));
+    }
+
+    public function test_is_invite_only_rejects_non_boolean(): void
+    {
+        $validator = Validator::make(
+            ['is_invite_only' => 'not-a-boolean'],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertTrue($validator->errors()->has('is_invite_only'));
+    }
+
+    public function test_is_invite_only_is_optional(): void
+    {
+        $validator = Validator::make(
+            ['ticket_design_settings' => ['accent_color' => '#333333']],
+            (new UpdateEventSettingsRequest)->rules()
+        );
+
+        $this->assertFalse($validator->errors()->has('is_invite_only'));
     }
 }

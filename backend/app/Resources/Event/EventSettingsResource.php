@@ -90,6 +90,8 @@ class EventSettingsResource extends JsonResource
 
             // Tracking pixels
             'tracking_pixels' => $this->getTrackingPixels(),
+
+            'is_invite_only' => $this->getIsInviteOnly(),
         ];
     }
 }

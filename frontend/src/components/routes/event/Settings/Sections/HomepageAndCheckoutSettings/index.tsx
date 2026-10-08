@@ -28,6 +28,7 @@ export const HomepageAndCheckoutSettings = () => {
             show_marketing_opt_in: true,
             show_data_collection_disclaimer: true,
             allow_copy_details_to_all_attendees: true,
+            is_invite_only: false,
         },
         transformValues: (values) => ({
             ...values,
@@ -62,6 +63,7 @@ export const HomepageAndCheckoutSettings = () => {
                 show_marketing_opt_in: eventSettingsQuery.data.show_marketing_opt_in ?? true,
                 show_data_collection_disclaimer: eventSettingsQuery.data.show_data_collection_disclaimer ?? true,
                 allow_copy_details_to_all_attendees: eventSettingsQuery.data.allow_copy_details_to_all_attendees ?? true,
+                is_invite_only: eventSettingsQuery.data.is_invite_only ?? false,
             });
         }
     }, [eventSettingsQuery.isFetched]);
@@ -144,6 +146,13 @@ export const HomepageAndCheckoutSettings = () => {
                         label={t`Allow buyers to copy their details to all attendees`}
                         description={t`When enabled, buyers can copy their own name and email onto all attendees at once. Turn this off to remove the "All attendees" option; buyers can still copy to the first attendee, and the rest must be entered individually.`}
                         {...form.getInputProps('allow_copy_details_to_all_attendees', {type: 'checkbox'})}
+                    />
+
+                    <Switch
+                        mt="md"
+                        label={t`Invite only event`}
+                        description={t`Hide tickets and print options on the order completion page and display invitation card instructions instead.`}
+                        {...form.getInputProps('is_invite_only', {type: 'checkbox'})}
                     />
 
                     <Button loading={updateMutation.isPending} type={'submit'}>

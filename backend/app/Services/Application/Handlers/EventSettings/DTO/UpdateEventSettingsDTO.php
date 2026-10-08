@@ -92,6 +92,7 @@ class UpdateEventSettingsDTO extends BaseDTO
 
         public readonly ?string $get_tickets_button_text = null,
         public readonly ?array $tracking_pixels = null,
+        public readonly bool $is_invite_only = false,
     ) {}
 
     public static function createWithDefaults(
@@ -172,6 +173,8 @@ class UpdateEventSettingsDTO extends BaseDTO
 
             // Self-service defaults
             allow_attendee_self_edit: false,
+
+            is_invite_only: false,
         );
     }
 }

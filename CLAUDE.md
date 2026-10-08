@@ -238,3 +238,8 @@ The `SoSChangesV2` branch maintains specific custom behaviors that must be prese
 
 5. **Disabled Attendee Ticket Emails on Registration:**
    - Order registration sends only the order confirmation email (`OrderSummary`). Attendee ticket emails (`AttendeeTicketMail`) are disabled on registration / checkout completion.
+
+6. **Invite Only Events (`is_invite_only`):**
+   - Configurable per-event setting in homepage and checkout settings (`is_invite_only`).
+   - When enabled, the final order completion page (`OrderSummaryAndProducts`) hides the tickets list, ticket view/print buttons, and "Print All Tickets" button.
+   - Replaces the "Confirmation sent to {email}" notice with: `Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card.`

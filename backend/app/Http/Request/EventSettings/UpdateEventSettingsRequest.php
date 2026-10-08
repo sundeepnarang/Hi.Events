@@ -112,6 +112,8 @@ class UpdateEventSettingsRequest extends BaseRequest
             'tracking_pixels.*.provider' => ['required', 'string', Rule::in(TrackingPixelProvider::valuesArray())],
             'tracking_pixels.*.pixel_id' => ['required', 'string', 'max:100'],
             'tracking_pixels.*.enabled' => ['required', 'boolean'],
+
+            'is_invite_only' => ['boolean'],
         ];
     }
 

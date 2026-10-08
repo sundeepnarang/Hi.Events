@@ -208,9 +208,13 @@ const WelcomeHeader = ({order, event, allowSelfEdit}: { order: Order; event: Eve
                 </div>
             )}
             <div className={classes.welcomeMessage}>{message}</div>
-            {isCompleted && order.email && (
+            {isCompleted && (
                 <div className={classes.confirmationText}>
-                    {t`Confirmation sent to`} <strong>{order.email}</strong>
+                    {event?.settings?.is_invite_only ? (
+                        t`Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card.`
+                    ) : (
+                        order.email ? <>{t`Confirmation sent to`} <strong>{order.email}</strong></> : null
+                    )}
                 </div>
             )}
             {isCompleted && allowSelfEdit && (
@@ -642,7 +646,7 @@ export const OrderSummaryAndProducts = () => {
 
                 {order.status === 'COMPLETED' && <AddToCalendarCTA event={event} occurrence={order.order_items?.[0]?.event_occurrence}/>}
 
-                {(order?.attendees && order.attendees.length > 0) && (
+                {!event?.settings?.is_invite_only && (order?.attendees && order.attendees.length > 0) && (
                     <>
                         <Group justify="space-between" align="center">
                             <h1 className={classes.heading}>

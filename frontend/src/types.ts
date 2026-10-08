@@ -318,6 +318,7 @@ export interface EventSettings {
     show_available_occurrence_capacity?: boolean;
     hide_sold_out_occurrences?: boolean;
     tracking_pixels?: TrackingPixelConfig[];
+    is_invite_only?: boolean;
 }
 
 export interface VenueAddress {

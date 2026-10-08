@@ -102,6 +102,8 @@ class EventSettingsResourcePublic extends JsonResource
                     fn ($pixel) => ($pixel['provider'] ?? null) !== TrackingPixelProvider::GOOGLE_TAG_MANAGER->value,
                 ))
                 : $this->getTrackingPixels(),
+
+            'is_invite_only' => $this->getIsInviteOnly(),
         ];
     }
 }

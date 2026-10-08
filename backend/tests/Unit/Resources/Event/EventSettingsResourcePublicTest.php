@@ -50,4 +50,26 @@ class EventSettingsResourcePublicTest extends TestCase
         $this->assertArrayHasKey('tracking_pixels', $resource);
         $this->assertSame($pixels, $resource['tracking_pixels']);
     }
+
+    public function test_public_resource_exposes_is_invite_only_when_enabled(): void
+    {
+        $settings = (new EventSettingDomainObject)
+            ->setIsInviteOnly(true);
+
+        $resource = (new EventSettingsResourcePublic($settings))->toArray(Request::create('/'));
+
+        $this->assertArrayHasKey('is_invite_only', $resource);
+        $this->assertTrue($resource['is_invite_only']);
+    }
+
+    public function test_public_resource_exposes_is_invite_only_when_disabled(): void
+    {
+        $settings = (new EventSettingDomainObject)
+            ->setIsInviteOnly(false);
+
+        $resource = (new EventSettingsResourcePublic($settings))->toArray(Request::create('/'));
+
+        $this->assertArrayHasKey('is_invite_only', $resource);
+        $this->assertFalse($resource['is_invite_only']);
+    }
 }

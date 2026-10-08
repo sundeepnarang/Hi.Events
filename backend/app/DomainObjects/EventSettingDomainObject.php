@@ -4,6 +4,8 @@ namespace HiEvents\DomainObjects;
 
 class EventSettingDomainObject extends Generated\EventSettingDomainObjectAbstract
 {
+    protected array|string|null $tracking_pixels = null;
+
     /**
      * @todo This should not be here.
      */
