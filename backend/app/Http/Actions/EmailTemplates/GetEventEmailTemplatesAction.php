@@ -3,6 +3,7 @@
 namespace HiEvents\Http\Actions\EmailTemplates;
 
 use HiEvents\DomainObjects\Enums\EmailTemplateType;
+use HiEvents\DomainObjects\Enums\Role;
 use HiEvents\DomainObjects\EventDomainObject;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Http\Resources\EmailTemplateResource;

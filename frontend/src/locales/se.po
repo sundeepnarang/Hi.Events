@@ -568,7 +568,7 @@ msgstr "En biljettkassa låter personalen sälja biljetter vid dörren med konta
 msgid "A button label is required when a URL is set"
 msgstr "En knappetikett krävs när en URL är angiven"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:227
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:230
 msgid "A cancellation notice has been sent to"
 msgstr "Ett avbokningsmeddelande har skickats till"
 
@@ -1117,7 +1117,7 @@ msgstr "Läggs till i kassan"
 msgid "Additional Fees"
 msgstr "Ytterligare avgifter"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:421
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:424
 msgid "Additional Information"
 msgstr "Ytterligare information"
 
@@ -1820,7 +1820,7 @@ msgstr "Är du säker på att du vill ta bort denna mall? Denna åtgärd kan int
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Är du säker på att du vill ta bort denna webhook?"
 
-#: src/components/layouts/Checkout/index.tsx:477
+#: src/components/layouts/Checkout/index.tsx:478
 msgid "Are you sure you want to leave?"
 msgstr "Är du säker på att du vill lämna?"
 
@@ -1856,11 +1856,11 @@ msgstr "Är du säker på att du vill publicera denna arrangörsprofil? När den
 msgid "Are you sure you want to remove this entry from the waitlist?"
 msgstr "Är du säker på att du vill ta bort denna post från väntelistan?"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:551
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:554
 msgid "Are you sure you want to resend the order confirmation to {0}?"
 msgstr "Vill du verkligen skicka om orderbekräftelsen till {0}?"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:526
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:529
 msgid "Are you sure you want to resend the ticket to {0}?"
 msgstr "Vill du verkligen skicka om biljetten till {0}?"
 
@@ -2064,7 +2064,7 @@ msgstr "Deltagarbiljett"
 msgid "Attendee Updated"
 msgstr "Deltagare uppdaterad"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:474
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:477
 msgid "Attendee updated successfully"
 msgstr "Deltagare uppdaterades framgångsrikt"
 
@@ -2209,7 +2209,7 @@ msgstr "Väntar på betalning"
 
 #: src/components/layouts/CheckIn/AttendeeDetailSheet.tsx:117
 #: src/components/layouts/CheckIn/tabs/SearchTab.tsx:225
-#: src/components/layouts/Checkout/index.tsx:358
+#: src/components/layouts/Checkout/index.tsx:359
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:434
 msgid "Awaiting payment"
 msgstr "Väntar på betalning"
@@ -2249,8 +2249,8 @@ msgstr "Tillbaka till konton"
 msgid "Back to Event"
 msgstr "Tillbaka till evenemanget"
 
-#: src/components/layouts/Checkout/index.tsx:344
 #: src/components/layouts/Checkout/index.tsx:345
+#: src/components/layouts/Checkout/index.tsx:346
 msgid "Back to event page"
 msgstr "Tillbaka till evenemangssidan"
 
@@ -2394,7 +2394,7 @@ msgid "Bigger map"
 msgstr "Större karta"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:560
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:310
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:313
 msgid "Billing Address"
 msgstr "Faktureringsadress"
 
@@ -2415,7 +2415,7 @@ msgstr "Bokade"
 msgid "Booking limit for this date"
 msgstr "Bokningsgräns för detta datum"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:222
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:225
 msgid "Bookmark this page to manage your order anytime."
 msgstr "Bokmärk denna sida för att hantera din order när som helst."
 
@@ -2981,7 +2981,7 @@ msgstr "Checka ut"
 msgid "Check out this event: {0}"
 msgstr "Kolla in det här evenemanget: {0}"
 
-#: src/components/layouts/Checkout/index.tsx:392
+#: src/components/layouts/Checkout/index.tsx:393
 msgid "Check out this event!"
 msgstr "Kolla in detta evenemang!"
 
@@ -3138,7 +3138,7 @@ msgstr "Incheckade ({checkedInCount}/{attendeeCount})"
 msgid "Checkout"
 msgstr "Kassa"
 
-#: src/components/layouts/Checkout/index.tsx:364
+#: src/components/layouts/Checkout/index.tsx:365
 msgid "Checkout · step {stepNumber} of {stepCount}"
 msgstr "Kassa · steg {stepNumber} av {stepCount}"
 
@@ -3381,8 +3381,8 @@ msgstr "Stäng"
 msgid "Close modal"
 msgstr "Stäng dialogruta"
 
-#: src/components/layouts/Checkout/index.tsx:330
 #: src/components/layouts/Checkout/index.tsx:331
+#: src/components/layouts/Checkout/index.tsx:332
 msgid "Close popup window and return to event page."
 msgstr ""
 
@@ -3696,7 +3696,7 @@ msgstr "Bekräfta din e-postadress för att få tillgång till alla funktioner."
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Bekräftelsemail skickat. Kontrollera din inkorg."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:216
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:219
 msgid "Confirmation sent to"
 msgstr "Bekräftelse skickad till"
 
@@ -5031,7 +5031,7 @@ msgstr "Ladda ner CSV"
 msgid "Download invoice"
 msgstr "Ladda ner faktura"
 
-#: src/components/layouts/Checkout/index.tsx:412
+#: src/components/layouts/Checkout/index.tsx:413
 msgid "Download Invoice"
 msgstr "Ladda ner faktura"
 
@@ -5204,7 +5204,7 @@ msgstr "Early bird"
 #: src/components/common/TaxAndFeeList/index.tsx:73
 #: src/components/routes/admin/Announcements/index.tsx:211
 #: src/components/routes/event/OccurrencesTab/OccurrenceMenu.tsx:54
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:256
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:259
 #: src/ee/box-office/components/layouts/BoxOffice/CartPanel.tsx:147
 #: src/ee/seating/components/routes/organizer/SeatMaps/index.tsx:191
 #: src/hooks/useAttendeeActions.tsx:91
@@ -5400,7 +5400,7 @@ msgstr "Giltiga incheckningslistor"
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:70
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:70
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:273
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:276
 #: src/components/routes/profile/ManageProfile/index.tsx:157
 #: src/ee/box-office/components/layouts/BoxOffice/BuyerSheet.tsx:74
 msgid "Email"
@@ -5818,7 +5818,7 @@ msgstr "Anpassad evenemangsmall"
 
 #: src/components/routes/my-tickets/index.tsx:79
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:29
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:340
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:343
 msgid "Event Date"
 msgstr "Evenemangsdatum"
 
@@ -5842,13 +5842,17 @@ msgstr "Evenemangsbeskrivning"
 
 #: src/components/routes/event/Settings/index.tsx:50
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:71
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:644
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:647
 msgid "Event Details"
 msgstr "Evenemangsdetaljer"
 
 #: src/components/modals/DuplicateEventModal/index.tsx:90
 msgid "Event duplicated successfully"
 msgstr "Evenemang duplicerades"
+
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:216
+msgid "Event entry by invitation card. A team member will contact you shortly with your invitation card."
+msgstr ""
 
 #: src/components/common/PeriodSelector/index.tsx:124
 msgid "Event lifetime"
@@ -6311,11 +6315,11 @@ msgstr "Datumet kunde inte öppnas igen"
 msgid "Failed to reorder questions"
 msgstr "Misslyckades med att ändra ordning på frågorna"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:567
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:570
 msgid "Failed to resend order confirmation"
 msgstr "Misslyckades med att skicka orderbekräftelsen igen"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:543
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:546
 msgid "Failed to resend ticket"
 msgstr "Misslyckades med att skicka biljetten igen"
 
@@ -6392,7 +6396,7 @@ msgstr "Misslyckades med att uppdatera partner"
 msgid "Failed to update answer."
 msgstr "Misslyckades med att uppdatera svar."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:483
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:486
 msgid "Failed to update attendee"
 msgstr "Misslyckades med att uppdatera deltagare"
 
@@ -6416,7 +6420,7 @@ msgstr "Kunde inte uppdatera funktionsflagga"
 msgid "Failed to update messaging tier"
 msgstr "Misslyckades med att uppdatera meddelandenivå"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:518
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:521
 msgid "Failed to update order"
 msgstr "Misslyckades med att uppdatera order"
 
@@ -7015,7 +7019,7 @@ msgstr "Gäst"
 msgid "Guest Management"
 msgstr "Gästhantering"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:655
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:658
 msgid "Guests"
 msgstr "Gäster"
 
@@ -8134,7 +8138,7 @@ msgstr "Laddar..."
 #: src/components/routes/event/Settings/index.tsx:56
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:150
 #: src/components/routes/my-tickets/index.tsx:90
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:353
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:356
 msgid "Location"
 msgstr "Plats"
 
@@ -8654,7 +8658,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:63
 #: src/components/routes/admin/Configurations/index.tsx:224
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:80
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:251
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:254
 #: src/ee/box-office/components/forms/BoxOfficeForm/index.tsx:90
 #: src/ee/seating/components/routes/organizer/SeatMaps/index.tsx:64
 #: src/ee/seating/components/SeatMapDesigner/Inspector.tsx:72
@@ -9256,7 +9260,7 @@ msgstr "Inga webhook-händelser har registrerats för denna endpoint ännu. Hän
 msgid "No Webhooks"
 msgstr "Inga webhooks"
 
-#: src/components/layouts/Checkout/index.tsx:487
+#: src/components/layouts/Checkout/index.tsx:488
 msgid "No, keep me here"
 msgstr "Nej, stanna kvar här"
 
@@ -9816,7 +9820,7 @@ msgid "Order answers"
 msgstr "Beställningssvar"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:393
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:394
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:397
 msgid "Order cancelled"
 msgstr "Order avbruten"
 
@@ -9824,8 +9828,8 @@ msgstr "Order avbruten"
 msgid "Order Cancelled"
 msgstr "Order avbruten"
 
-#: src/components/layouts/Checkout/index.tsx:358
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:404
+#: src/components/layouts/Checkout/index.tsx:359
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:407
 msgid "Order complete"
 msgstr "Order slutförd"
 
@@ -9834,7 +9838,7 @@ msgstr "Order slutförd"
 msgid "Order Confirmation"
 msgstr "Orderbekräftelse"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:561
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:564
 msgid "Order confirmation resent successfully"
 msgstr "Orderbekräftelsen skickades igen"
 
@@ -9842,7 +9846,7 @@ msgstr "Orderbekräftelsen skickades igen"
 msgid "Order Created"
 msgstr "Order skapad"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:290
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:293
 msgid "Order Date"
 msgstr "Orderdatum"
 
@@ -9851,7 +9855,7 @@ msgid "Order details"
 msgstr "Orderdetaljer"
 
 #: src/components/common/OrdersTable/index.tsx:186
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:630
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:633
 msgid "Order Details"
 msgstr "Orderdetaljer"
 
@@ -9888,7 +9892,7 @@ msgstr "Order markerad som betald"
 msgid "Order not found"
 msgstr "Order hittades inte"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:578
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:581
 msgid "Order Not Found"
 msgstr "Order hittades inte"
 
@@ -9912,7 +9916,7 @@ msgstr "Orderägare med produkter"
 msgid "Order Ref"
 msgstr "Beställningsreferens"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:267
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:270
 msgid "Order Reference"
 msgstr "Orderreferens"
 
@@ -9949,7 +9953,7 @@ msgstr "Ordersumma"
 msgid "Order Updated"
 msgstr "Order uppdaterad"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:500
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:503
 msgid "Order updated successfully"
 msgstr "Order uppdaterades"
 
@@ -10026,7 +10030,7 @@ msgstr "Organisationsnamn"
 #: src/components/routes/admin/SpamEvents/index.tsx:129
 #: src/components/routes/admin/SpamEvents/index.tsx:245
 #: src/components/routes/events/Dashboard/index.tsx:194
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:372
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:375
 msgid "Organizer"
 msgstr "Arrangör"
 
@@ -10313,7 +10317,7 @@ msgstr "Betalningsfrist"
 msgid "Payment Failed"
 msgstr "Betalning misslyckades"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:430
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:433
 #: src/components/routes/product-widget/Payment/PaymentMethods/Offline/index.tsx:14
 msgid "Payment Instructions"
 msgstr "Betalningsinstruktioner"
@@ -10344,7 +10348,7 @@ msgstr "Betalning mottagen"
 msgid "Payment Received"
 msgstr "Betalning mottagen"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:303
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:306
 msgid "Payment Status"
 msgstr "Betalningsstatus"
 
@@ -10635,9 +10639,13 @@ msgstr "Ange ditt momsregistreringsnummer"
 msgid "Please Note"
 msgstr "Observera"
 
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:215
+msgid "Please note:"
+msgstr ""
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:214
-msgid "Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card."
-msgstr "Observera: Inträde till evenemanget sker med inbjudningskort. En teammedlem kommer att kontakta dig inom kort med ditt inbjudningskort."
+#~ msgid "Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card."
+#~ msgstr "Observera: Inträde till evenemanget sker med inbjudningskort. En teammedlem kommer att kontakta dig inom kort med ditt inbjudningskort."
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:36
 msgid "Please provide an image."
@@ -10647,7 +10655,7 @@ msgstr "Vänligen tillhandahåll en bild."
 msgid "Please restart the checkout process."
 msgstr "Starta om kassaprocessen."
 
-#: src/components/layouts/Checkout/index.tsx:456
+#: src/components/layouts/Checkout/index.tsx:457
 msgid "Please return to the event page to start over."
 msgstr "Gå tillbaka till evenemangssidan för att börja om."
 
@@ -10828,7 +10836,7 @@ msgstr "Primär textfärg"
 msgid "Print"
 msgstr "Skriv ut"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:664
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:667
 msgid "Print All Tickets"
 msgstr "Skriv ut alla biljetter"
 
@@ -10844,7 +10852,7 @@ msgstr "Utskriftsförhandsgranskning"
 msgid "Print Ticket"
 msgstr "Skriv ut biljett"
 
-#: src/components/layouts/Checkout/index.tsx:400
+#: src/components/layouts/Checkout/index.tsx:401
 #: src/components/routes/my-tickets/index.tsx:136
 msgid "Print Tickets"
 msgstr "Skriv ut biljetter"
@@ -10867,7 +10875,7 @@ msgstr "Integritetspolicy"
 msgid "Process Refund"
 msgstr "Genomför återbetalning"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:413
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:416
 msgid "Processing order"
 msgstr "Behandlar order"
 
@@ -11173,10 +11181,10 @@ msgstr "Radiovalsalternativ"
 msgid "Rate"
 msgstr "Sats"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:481
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:516
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:541
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:565
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:484
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:519
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:544
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:568
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Hastighetsgränsen har överskridits. Försök igen senare."
 
@@ -11394,7 +11402,7 @@ msgid "Refund recorded successfully."
 msgstr "Återbetalningen har registrerats."
 
 #: src/components/routes/event/orders.tsx:66
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:296
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:299
 msgid "Refund Status"
 msgstr "Återbetalningsstatus"
 
@@ -11599,7 +11607,7 @@ msgstr "Skicka igen"
 msgid "Resend code"
 msgstr "Skicka koden igen"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:278
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:281
 msgid "Resend Confirmation"
 msgstr "Skicka bekräftelse igen"
 
@@ -11758,7 +11766,7 @@ msgstr "Försök jobb igen"
 msgid "Return to Event"
 msgstr "Tillbaka till evenemanget"
 
-#: src/components/layouts/Checkout/index.tsx:463
+#: src/components/layouts/Checkout/index.tsx:464
 msgid "Return to Event Page"
 msgstr "Tillbaka till evenemangssidan"
 
@@ -13853,7 +13861,7 @@ msgstr "Webhooken uppdaterades"
 
 #: src/components/common/ProgressStepper/index.tsx:20
 #: src/components/common/ProgressStepper/index.tsx:24
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:600
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:603
 msgid "Summary"
 msgstr "Sammanfattning"
 
@@ -14673,7 +14681,7 @@ msgstr "Den här ordern är redan betald."
 msgid "This order has already been refunded."
 msgstr "Den här ordern har redan återbetalats."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:395
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:398
 msgid "This order has been cancelled."
 msgstr "Den här ordern har avbrutits."
 
@@ -14681,7 +14689,7 @@ msgstr "Den här ordern har avbrutits."
 msgid "This order has expired. Please start again."
 msgstr "Den här ordern har löpt ut. Börja om."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:414
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:417
 msgid "This order is being processed."
 msgstr "Den här ordern behandlas."
 
@@ -14689,7 +14697,7 @@ msgstr "Den här ordern behandlas."
 msgid "This order is complete"
 msgstr ""
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:405
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:408
 msgid "This order is complete."
 msgstr "Den här ordern är slutförd."
 
@@ -14915,7 +14923,7 @@ msgstr "Biljettförhandsvisning för"
 msgid "Ticket price"
 msgstr "Biljettpris"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:537
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:540
 msgid "Ticket resent successfully"
 msgstr "Biljetten skickades igen"
 
@@ -15001,7 +15009,7 @@ msgstr "TikTok"
 msgid "Time"
 msgstr "Tid"
 
-#: src/components/layouts/Checkout/index.tsx:374
+#: src/components/layouts/Checkout/index.tsx:375
 msgid "Time left"
 msgstr "Återstående tid"
 
@@ -15027,7 +15035,7 @@ msgstr "Antal gånger använd"
 #: src/components/routes/auth/AcceptInvitation/index.tsx:119
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:145
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:125
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:367
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:370
 #: src/components/routes/profile/ManageProfile/index.tsx:188
 msgid "Timezone"
 msgstr "Tidszon"
@@ -16125,7 +16133,7 @@ msgstr "Vi kunde inte hitta platser just nu. Försök igen."
 msgid "We couldn't find that many seats together. Try fewer seats or pick them on the map."
 msgstr "Vi kunde inte hitta så många platser tillsammans. Försök med färre platser eller välj dem på kartan."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:579
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:582
 msgid "We couldn't find the order you're looking for. The link may have expired or the order details may have changed."
 msgstr "Vi kunde inte hitta ordern du letar efter. Länken kan ha löpt ut eller så kan orderuppgifterna ha ändrats."
 
@@ -16622,7 +16630,7 @@ msgstr "Ja"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "Ja – jag har ett giltigt EU-momsregistreringsnummer"
 
-#: src/components/layouts/Checkout/index.tsx:495
+#: src/components/layouts/Checkout/index.tsx:496
 msgid "Yes, cancel my order"
 msgstr "Ja, avbryt min order"
 
@@ -16654,6 +16662,10 @@ msgstr ""
 #: src/hooks/useCheckInController.tsx:238
 msgid "You are offline"
 msgstr "Du är offline"
+
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:181
+msgid "You are registered for {0}!"
+msgstr ""
 
 #: src/ee/seating/components/SeatPicker/SeatSheet.tsx:76
 msgid "You can add up to {maxQuantity}"
@@ -16740,7 +16752,7 @@ msgstr "Du har betalbiljetter, men Stripe är inte anslutet ännu, så du kan in
 msgid "You have reached your messaging limit."
 msgstr "Du har nått din meddelandegräns."
 
-#: src/components/layouts/Checkout/index.tsx:453
+#: src/components/layouts/Checkout/index.tsx:454
 msgid "You have run out of time to complete your order."
 msgstr "Tiden för att slutföra din order har gått ut."
 
@@ -16829,10 +16841,6 @@ msgstr "Du behöver minst en produkt för att komma igång. Gratis, betald eller
 msgid "You're changing session times"
 msgstr "Du ändrar tider för tillfällen"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:181
-msgid "You're going to {0}!"
-msgstr "Du ska till {0}!"
-
 #: src/components/modals/JoinWaitlistModal/index.tsx:173
 msgid "You're joining the waitlist for {occurrenceDate}."
 msgstr "Du går med i väntelistan för {occurrenceDate}."
@@ -16885,7 +16893,7 @@ msgstr "Din grymma webbplats 🎉"
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "Din incheckningslista har skapats. Dela länken nedan med din incheckningspersonal."
 
-#: src/components/layouts/Checkout/index.tsx:480
+#: src/components/layouts/Checkout/index.tsx:481
 msgid "Your current order will be lost."
 msgstr "Din nuvarande order kommer att försvinna."
 
@@ -16938,7 +16946,7 @@ msgstr "Ditt namn"
 msgid "Your new password must be at least 8 characters long."
 msgstr "Ditt nya lösenord måste vara minst 8 tecken långt."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:616
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:619
 msgid "Your order details have been updated. A confirmation email has been sent to the new email address."
 msgstr "Dina orderuppgifter har uppdaterats. Ett bekräftelsemejl har skickats till den nya e-postadressen."
 

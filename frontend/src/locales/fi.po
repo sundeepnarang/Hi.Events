@@ -568,7 +568,7 @@ msgstr "Lippukassan avulla henkilökunta voi myydä lippuja ovella käteisellä,
 msgid "A button label is required when a URL is set"
 msgstr "Painikkeen teksti vaaditaan, kun URL on asetettu"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:227
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:230
 msgid "A cancellation notice has been sent to"
 msgstr "Peruutusilmoitus on lähetetty osoitteeseen"
 
@@ -1117,7 +1117,7 @@ msgstr "Lisätään kassalla"
 msgid "Additional Fees"
 msgstr "Lisämaksut"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:421
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:424
 msgid "Additional Information"
 msgstr "Lisätiedot"
 
@@ -1820,7 +1820,7 @@ msgstr "Haluatko varmasti poistaa tämän mallineen? Tätä toimintoa ei voi per
 msgid "Are you sure you want to delete this webhook?"
 msgstr "Haluatko varmasti poistaa tämän webhookin?"
 
-#: src/components/layouts/Checkout/index.tsx:477
+#: src/components/layouts/Checkout/index.tsx:478
 msgid "Are you sure you want to leave?"
 msgstr "Haluatko varmasti poistua?"
 
@@ -1856,11 +1856,11 @@ msgstr "Haluatko varmasti julkaista tämän järjestäjäprofiilin? Julkaisun j�
 msgid "Are you sure you want to remove this entry from the waitlist?"
 msgstr "Haluatko varmasti poistaa tämän merkinnän jonotuslistalta?"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:551
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:554
 msgid "Are you sure you want to resend the order confirmation to {0}?"
 msgstr "Haluatko varmasti lähettää tilausvahvistuksen uudelleen osoitteeseen {0}?"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:526
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:529
 msgid "Are you sure you want to resend the ticket to {0}?"
 msgstr "Haluatko varmasti lähettää lipun uudelleen osoitteeseen {0}?"
 
@@ -2064,7 +2064,7 @@ msgstr "Osallistujan lippu"
 msgid "Attendee Updated"
 msgstr "Osallistuja päivitetty"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:474
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:477
 msgid "Attendee updated successfully"
 msgstr "Osallistuja päivitetty onnistuneesti"
 
@@ -2209,7 +2209,7 @@ msgstr "Odottaa maksua"
 
 #: src/components/layouts/CheckIn/AttendeeDetailSheet.tsx:117
 #: src/components/layouts/CheckIn/tabs/SearchTab.tsx:225
-#: src/components/layouts/Checkout/index.tsx:358
+#: src/components/layouts/Checkout/index.tsx:359
 #: src/components/routes/organizer/OrganizerDashboard/index.tsx:434
 msgid "Awaiting payment"
 msgstr "Odottaa maksua"
@@ -2249,8 +2249,8 @@ msgstr "Takaisin tileihin"
 msgid "Back to Event"
 msgstr "Takaisin tapahtumaan"
 
-#: src/components/layouts/Checkout/index.tsx:344
 #: src/components/layouts/Checkout/index.tsx:345
+#: src/components/layouts/Checkout/index.tsx:346
 msgid "Back to event page"
 msgstr "Takaisin tapahtumasivulle"
 
@@ -2394,7 +2394,7 @@ msgid "Bigger map"
 msgstr "Suurempi kartta"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:560
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:310
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:313
 msgid "Billing Address"
 msgstr "Laskutusosoite"
 
@@ -2415,7 +2415,7 @@ msgstr "Varattu"
 msgid "Booking limit for this date"
 msgstr "Varausraja tälle päivämäärälle"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:222
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:225
 msgid "Bookmark this page to manage your order anytime."
 msgstr "Lisää sivu kirjanmerkkeihin hallitaksesi tilaustasi milloin tahansa."
 
@@ -2981,7 +2981,7 @@ msgstr "Kirjaa ulos"
 msgid "Check out this event: {0}"
 msgstr "Tutustu tähän tapahtumaan: {0}"
 
-#: src/components/layouts/Checkout/index.tsx:392
+#: src/components/layouts/Checkout/index.tsx:393
 msgid "Check out this event!"
 msgstr "Tutustu tähän tapahtumaan!"
 
@@ -3138,7 +3138,7 @@ msgstr "Kirjattu sisään ({checkedInCount}/{attendeeCount})"
 msgid "Checkout"
 msgstr "Kassa"
 
-#: src/components/layouts/Checkout/index.tsx:364
+#: src/components/layouts/Checkout/index.tsx:365
 msgid "Checkout · step {stepNumber} of {stepCount}"
 msgstr "Kassa · vaihe {stepNumber}/{stepCount}"
 
@@ -3381,8 +3381,8 @@ msgstr "Sulje"
 msgid "Close modal"
 msgstr "Sulje valintaikkuna"
 
-#: src/components/layouts/Checkout/index.tsx:330
 #: src/components/layouts/Checkout/index.tsx:331
+#: src/components/layouts/Checkout/index.tsx:332
 msgid "Close popup window and return to event page."
 msgstr ""
 
@@ -3696,7 +3696,7 @@ msgstr "Vahvista sähköpostiosoitteesi päästäksesi kaikkiin ominaisuuksiin."
 msgid "Confirmation email sent! Please check your inbox."
 msgstr "Vahvistussähköposti lähetetty! Tarkista postilaatikkosi."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:216
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:219
 msgid "Confirmation sent to"
 msgstr "Vahvistus lähetetty osoitteeseen"
 
@@ -5031,7 +5031,7 @@ msgstr "Lataa CSV"
 msgid "Download invoice"
 msgstr "Lataa lasku"
 
-#: src/components/layouts/Checkout/index.tsx:412
+#: src/components/layouts/Checkout/index.tsx:413
 msgid "Download Invoice"
 msgstr "Lataa lasku"
 
@@ -5204,7 +5204,7 @@ msgstr "Varhaisen oston etu"
 #: src/components/common/TaxAndFeeList/index.tsx:73
 #: src/components/routes/admin/Announcements/index.tsx:211
 #: src/components/routes/event/OccurrencesTab/OccurrenceMenu.tsx:54
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:256
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:259
 #: src/ee/box-office/components/layouts/BoxOffice/CartPanel.tsx:147
 #: src/ee/seating/components/routes/organizer/SeatMaps/index.tsx:191
 #: src/hooks/useAttendeeActions.tsx:91
@@ -5400,7 +5400,7 @@ msgstr "Kelpoiset sisäänkirjautumislistat"
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:78
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditAttendeeModal/index.tsx:70
 #: src/components/routes/product-widget/OrderSummaryAndProducts/EditOrderModal/index.tsx:70
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:273
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:276
 #: src/components/routes/profile/ManageProfile/index.tsx:157
 #: src/ee/box-office/components/layouts/BoxOffice/BuyerSheet.tsx:74
 msgid "Email"
@@ -5818,7 +5818,7 @@ msgstr "Tapahtuman mukautettu malli"
 
 #: src/components/routes/my-tickets/index.tsx:79
 #: src/components/routes/organizer/Reports/CheckInSummaryReport/index.tsx:29
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:340
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:343
 msgid "Event Date"
 msgstr "Tapahtumapäivä"
 
@@ -5842,13 +5842,17 @@ msgstr "Tapahtuman kuvaus"
 
 #: src/components/routes/event/Settings/index.tsx:50
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:71
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:644
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:647
 msgid "Event Details"
 msgstr "Tapahtumatiedot"
 
 #: src/components/modals/DuplicateEventModal/index.tsx:90
 msgid "Event duplicated successfully"
 msgstr "Tapahtuma monistettu onnistuneesti"
+
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:216
+msgid "Event entry by invitation card. A team member will contact you shortly with your invitation card."
+msgstr ""
 
 #: src/components/common/PeriodSelector/index.tsx:124
 msgid "Event lifetime"
@@ -6311,11 +6315,11 @@ msgstr "Päivän avaaminen uudelleen epäonnistui"
 msgid "Failed to reorder questions"
 msgstr "Kysymysten uudelleenjärjestely epäonnistui"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:567
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:570
 msgid "Failed to resend order confirmation"
 msgstr "Tilausvahvistuksen uudelleenlähetys epäonnistui"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:543
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:546
 msgid "Failed to resend ticket"
 msgstr "Liput uudelleenlähetys epäonnistui"
 
@@ -6392,7 +6396,7 @@ msgstr "Kumppanin päivitys epäonnistui"
 msgid "Failed to update answer."
 msgstr "Vastauksen päivitys epäonnistui."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:483
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:486
 msgid "Failed to update attendee"
 msgstr "Osallistujan päivitys epäonnistui"
 
@@ -6416,7 +6420,7 @@ msgstr "Ominaisuuslipun päivitys epäonnistui"
 msgid "Failed to update messaging tier"
 msgstr "Viestitasojen päivitys epäonnistui"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:518
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:521
 msgid "Failed to update order"
 msgstr "Tilauksen päivitys epäonnistui"
 
@@ -7015,7 +7019,7 @@ msgstr "Vieras"
 msgid "Guest Management"
 msgstr "Vierashallinta"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:655
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:658
 msgid "Guests"
 msgstr "Vieraat"
 
@@ -8134,7 +8138,7 @@ msgstr "Ladataan..."
 #: src/components/routes/event/Settings/index.tsx:56
 #: src/components/routes/event/Settings/Sections/LocationSettings/index.tsx:150
 #: src/components/routes/my-tickets/index.tsx:90
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:353
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:356
 msgid "Location"
 msgstr "Sijainti"
 
@@ -8654,7 +8658,7 @@ msgstr "Nam placerat elementum..."
 #: src/components/routes/account/ManageAccount/sections/AccountSettings/index.tsx:63
 #: src/components/routes/admin/Configurations/index.tsx:224
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:80
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:251
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:254
 #: src/ee/box-office/components/forms/BoxOfficeForm/index.tsx:90
 #: src/ee/seating/components/routes/organizer/SeatMaps/index.tsx:64
 #: src/ee/seating/components/SeatMapDesigner/Inspector.tsx:72
@@ -9256,7 +9260,7 @@ msgstr "Tälle päätepisteelle ei ole vielä kirjattu webhook-tapahtumia. Tapah
 msgid "No Webhooks"
 msgstr "Ei webhookeja"
 
-#: src/components/layouts/Checkout/index.tsx:487
+#: src/components/layouts/Checkout/index.tsx:488
 msgid "No, keep me here"
 msgstr "Ei, pidä minut täällä"
 
@@ -9816,7 +9820,7 @@ msgid "Order answers"
 msgstr "Tilauksen vastaukset"
 
 #: src/components/routes/product-widget/CollectInformation/index.tsx:393
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:394
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:397
 msgid "Order cancelled"
 msgstr "Tilaus peruutettu"
 
@@ -9824,8 +9828,8 @@ msgstr "Tilaus peruutettu"
 msgid "Order Cancelled"
 msgstr "Tilaus peruutettu"
 
-#: src/components/layouts/Checkout/index.tsx:358
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:404
+#: src/components/layouts/Checkout/index.tsx:359
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:407
 msgid "Order complete"
 msgstr "Tila valmis"
 
@@ -9834,7 +9838,7 @@ msgstr "Tila valmis"
 msgid "Order Confirmation"
 msgstr "Tilauksen vahvistus"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:561
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:564
 msgid "Order confirmation resent successfully"
 msgstr "Tilauksen vahvistus lähetettiin uudelleen onnistuneesti."
 
@@ -9842,7 +9846,7 @@ msgstr "Tilauksen vahvistus lähetettiin uudelleen onnistuneesti."
 msgid "Order Created"
 msgstr "Tilaus luotu"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:290
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:293
 msgid "Order Date"
 msgstr "Tilauksen päivämäärä"
 
@@ -9851,7 +9855,7 @@ msgid "Order details"
 msgstr "Tilauksen tiedot"
 
 #: src/components/common/OrdersTable/index.tsx:186
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:630
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:633
 msgid "Order Details"
 msgstr "Tilauksen tiedot"
 
@@ -9888,7 +9892,7 @@ msgstr "Tilaus merkitty maksetuksi"
 msgid "Order not found"
 msgstr "Tilausta ei löytynyt"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:578
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:581
 msgid "Order Not Found"
 msgstr "Tilausta ei löytynyt"
 
@@ -9912,7 +9916,7 @@ msgstr "Tilauksen omistajat tuotteilla"
 msgid "Order Ref"
 msgstr "Tilausviite"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:267
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:270
 msgid "Order Reference"
 msgstr "Tilausviite"
 
@@ -9949,7 +9953,7 @@ msgstr "Tilaussumma"
 msgid "Order Updated"
 msgstr "Tilaus päivitetty"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:500
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:503
 msgid "Order updated successfully"
 msgstr "Tilaus päivitettiin onnistuneesti."
 
@@ -10026,7 +10030,7 @@ msgstr "Organisaation nimi"
 #: src/components/routes/admin/SpamEvents/index.tsx:129
 #: src/components/routes/admin/SpamEvents/index.tsx:245
 #: src/components/routes/events/Dashboard/index.tsx:194
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:372
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:375
 msgid "Organizer"
 msgstr "Järjestäjä"
 
@@ -10313,7 +10317,7 @@ msgstr "Maksuaika"
 msgid "Payment Failed"
 msgstr "Maksu epäonnistui"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:430
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:433
 #: src/components/routes/product-widget/Payment/PaymentMethods/Offline/index.tsx:14
 msgid "Payment Instructions"
 msgstr "Maksuohjeet"
@@ -10344,7 +10348,7 @@ msgstr "Maksu vastaanotettu"
 msgid "Payment Received"
 msgstr "Maksu vastaanotettu"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:303
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:306
 msgid "Payment Status"
 msgstr "Maksun tila"
 
@@ -10635,9 +10639,13 @@ msgstr "Anna ALV-tunnuksesi"
 msgid "Please Note"
 msgstr "Huomaa"
 
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:215
+msgid "Please note:"
+msgstr ""
+
 #: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:214
-msgid "Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card."
-msgstr "Huomaa: Tapahtumaan pääsy kutsukortilla. Tiimin jäsen ottaa sinuun pian yhteyttä kutsukorttisi tiimoilta."
+#~ msgid "Please note: Event entry by invitation card. A team member will contact you shortly with your invitation card."
+#~ msgstr "Huomaa: Tapahtumaan pääsy kutsukortilla. Tiimin jäsen ottaa sinuun pian yhteyttä kutsukorttisi tiimoilta."
 
 #: src/components/common/Editor/Controls/InsertImageControl/index.tsx:36
 msgid "Please provide an image."
@@ -10647,7 +10655,7 @@ msgstr "Anna kuva."
 msgid "Please restart the checkout process."
 msgstr "Käynnistä kassaprosessi uudelleen."
 
-#: src/components/layouts/Checkout/index.tsx:456
+#: src/components/layouts/Checkout/index.tsx:457
 msgid "Please return to the event page to start over."
 msgstr "Palaa tapahtumasivulle aloittaaksesi alusta."
 
@@ -10828,7 +10836,7 @@ msgstr "Ensisijainen tekstiväri"
 msgid "Print"
 msgstr "Tulosta"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:664
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:667
 msgid "Print All Tickets"
 msgstr "Tulosta kaikki liput"
 
@@ -10844,7 +10852,7 @@ msgstr "Tulostuksen esikatselu"
 msgid "Print Ticket"
 msgstr "Tulosta lippu"
 
-#: src/components/layouts/Checkout/index.tsx:400
+#: src/components/layouts/Checkout/index.tsx:401
 #: src/components/routes/my-tickets/index.tsx:136
 msgid "Print Tickets"
 msgstr "Tulosta liput"
@@ -10867,7 +10875,7 @@ msgstr "Tietosuojaseloste"
 msgid "Process Refund"
 msgstr "Käsittele hyvitys"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:413
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:416
 msgid "Processing order"
 msgstr "Tilauksen käsittely"
 
@@ -11173,10 +11181,10 @@ msgstr "Valintanappivaihtoehto"
 msgid "Rate"
 msgstr "Kanta"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:481
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:516
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:541
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:565
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:484
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:519
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:544
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:568
 msgid "Rate limit exceeded. Please try again later."
 msgstr "Liian monta pyyntöä. Yritä myöhemmin uudelleen."
 
@@ -11394,7 +11402,7 @@ msgid "Refund recorded successfully."
 msgstr "Hyvitys tallennettu onnistuneesti"
 
 #: src/components/routes/event/orders.tsx:66
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:296
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:299
 msgid "Refund Status"
 msgstr "Hyvityksen tila"
 
@@ -11599,7 +11607,7 @@ msgstr "Lähetä uudelleen"
 msgid "Resend code"
 msgstr "Lähetä koodi uudelleen"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:278
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:281
 msgid "Resend Confirmation"
 msgstr "Lähetä vahvistus uudelleen"
 
@@ -11758,7 +11766,7 @@ msgstr "Yritä tehtävää uudelleen"
 msgid "Return to Event"
 msgstr "Palaa tapahtumaan"
 
-#: src/components/layouts/Checkout/index.tsx:463
+#: src/components/layouts/Checkout/index.tsx:464
 msgid "Return to Event Page"
 msgstr "Palaa tapahtumasivulle"
 
@@ -13853,7 +13861,7 @@ msgstr "Webhook päivitetty onnistuneesti"
 
 #: src/components/common/ProgressStepper/index.tsx:20
 #: src/components/common/ProgressStepper/index.tsx:24
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:600
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:603
 msgid "Summary"
 msgstr "Yhteenveto"
 
@@ -14673,7 +14681,7 @@ msgstr "Tilaus on jo maksettu."
 msgid "This order has already been refunded."
 msgstr "Tilauksesta on jo tehty hyvitys."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:395
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:398
 msgid "This order has been cancelled."
 msgstr "Tilaus on peruttu."
 
@@ -14681,7 +14689,7 @@ msgstr "Tilaus on peruttu."
 msgid "This order has expired. Please start again."
 msgstr "Tilaus on vanhentunut. Aloita uudelleen."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:414
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:417
 msgid "This order is being processed."
 msgstr "Tilausta käsitellään."
 
@@ -14689,7 +14697,7 @@ msgstr "Tilausta käsitellään."
 msgid "This order is complete"
 msgstr ""
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:405
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:408
 msgid "This order is complete."
 msgstr "Tilaus on valmis."
 
@@ -14915,7 +14923,7 @@ msgstr "Lipun esikatselu tapahtumalle"
 msgid "Ticket price"
 msgstr "Lipun hinta"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:537
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:540
 msgid "Ticket resent successfully"
 msgstr "Lippu lähetettiin uudelleen onnistuneesti"
 
@@ -15001,7 +15009,7 @@ msgstr "TikTok"
 msgid "Time"
 msgstr "Aika"
 
-#: src/components/layouts/Checkout/index.tsx:374
+#: src/components/layouts/Checkout/index.tsx:375
 msgid "Time left"
 msgstr "Aikaa jäljellä"
 
@@ -15027,7 +15035,7 @@ msgstr "Käyttökerrat"
 #: src/components/routes/auth/AcceptInvitation/index.tsx:119
 #: src/components/routes/event/Settings/Sections/EventDetailsForm/index.tsx:145
 #: src/components/routes/organizer/Settings/Sections/BasicSettings/index.tsx:125
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:367
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:370
 #: src/components/routes/profile/ManageProfile/index.tsx:188
 msgid "Timezone"
 msgstr "Aikavyöhyke"
@@ -16125,7 +16133,7 @@ msgstr "Emme löytäneet paikkoja juuri nyt. Yritä uudelleen."
 msgid "We couldn't find that many seats together. Try fewer seats or pick them on the map."
 msgstr "Emme löytäneet noin montaa paikkaa vierekkäin. Kokeile pienempää määrää tai valitse paikat kartalta."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:579
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:582
 msgid "We couldn't find the order you're looking for. The link may have expired or the order details may have changed."
 msgstr "Etsimääsi tilausta ei löytynyt. Linkki on ehkä vanhentunut tai tilauksen tiedot ovat saattaneet muuttua."
 
@@ -16622,7 +16630,7 @@ msgstr "Kyllä"
 msgid "Yes - I have a valid EU VAT registration number"
 msgstr "Kyllä – minulla on voimassa oleva EU:n ALV-rekisteritunniste"
 
-#: src/components/layouts/Checkout/index.tsx:495
+#: src/components/layouts/Checkout/index.tsx:496
 msgid "Yes, cancel my order"
 msgstr "Kyllä, peru tilaukseni"
 
@@ -16654,6 +16662,10 @@ msgstr ""
 #: src/hooks/useCheckInController.tsx:238
 msgid "You are offline"
 msgstr "Olet offline-tilassa"
+
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:181
+msgid "You are registered for {0}!"
+msgstr ""
 
 #: src/ee/seating/components/SeatPicker/SeatSheet.tsx:76
 msgid "You can add up to {maxQuantity}"
@@ -16740,7 +16752,7 @@ msgstr "Tapahtumallasi on maksullisia lippuja, mutta Stripea ei ole vielä yhdis
 msgid "You have reached your messaging limit."
 msgstr "Olet saavuttanut viestintärajasi."
 
-#: src/components/layouts/Checkout/index.tsx:453
+#: src/components/layouts/Checkout/index.tsx:454
 msgid "You have run out of time to complete your order."
 msgstr "Tilauksesi viimeistelyyn varattu aika on päättynyt."
 
@@ -16829,10 +16841,6 @@ msgstr "Aloittamiseen tarvitaan vähintään yksi tuote. Tuote voi olla maksuton
 msgid "You're changing session times"
 msgstr "Olet muuttamassa istuntojen aikoja"
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:181
-msgid "You're going to {0}!"
-msgstr "Olet menossa tapahtumaan {0}!"
-
 #: src/components/modals/JoinWaitlistModal/index.tsx:173
 msgid "You're joining the waitlist for {occurrenceDate}."
 msgstr "Liityt päivämäärän {occurrenceDate} jonotuslistalle."
@@ -16885,7 +16893,7 @@ msgstr "Hieno verkkosivustosi 🎉"
 msgid "Your check-in list has been created successfully. Share the link below with your check-in staff."
 msgstr "Sisäänkirjautumislista luotiin onnistuneesti. Jaa alla oleva linkki sisäänkirjautumishenkilökunnallesi."
 
-#: src/components/layouts/Checkout/index.tsx:480
+#: src/components/layouts/Checkout/index.tsx:481
 msgid "Your current order will be lost."
 msgstr "Nykyinen tilauksesi menetetään."
 
@@ -16938,7 +16946,7 @@ msgstr "Nimesi"
 msgid "Your new password must be at least 8 characters long."
 msgstr "Uuden salasanasi on oltava vähintään 8 merkkiä pitkä."
 
-#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:616
+#: src/components/routes/product-widget/OrderSummaryAndProducts/index.tsx:619
 msgid "Your order details have been updated. A confirmation email has been sent to the new email address."
 msgstr "Tilauksesi tiedot on päivitetty. Vahvistussähköposti on lähetetty uuteen sähköpostiosoitteeseen."
 

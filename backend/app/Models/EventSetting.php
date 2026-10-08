@@ -15,6 +15,7 @@ class EventSetting extends BaseModel
             'ticket_design_settings' => 'array',
             'homepage_theme_settings' => 'array',
             'tracking_pixels' => 'array',
+            'is_invite_only' => 'boolean',
         ];
     }
 }
