@@ -308,6 +308,7 @@ const Checkout = () => {
     }, [order?.status, order?.short_id, pixelsReady]);
 
     const homepageSettings = event?.settings?.homepage_theme_settings;
+    const isInviteOnly = event?.settings?.is_invite_only;
     const accentColor = homepageSettings?.accent || DEFAULT_ACCENT;
     const checkoutMode = homepageSettings?.mode || detectMode(homepageSettings?.background || '#ffffff');
 
@@ -385,7 +386,7 @@ const Checkout = () => {
                                         </>
                                     )}
 
-                                    {(orderIsCompleted || orderIsAwaitingOfflinePayment) && (
+                                    {(orderIsCompleted || orderIsAwaitingOfflinePayment) && !isInviteOnly && (
                                         <div className={classes.headerActions}>
                                             <ShareComponent
                                                 title={event.title}
