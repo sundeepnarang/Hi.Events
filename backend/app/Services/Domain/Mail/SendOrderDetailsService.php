@@ -18,7 +18,6 @@ use HiEvents\Mail\Organizer\OrderSummaryForOrganizer;
 use HiEvents\Repository\Eloquent\Value\Relationship;
 use HiEvents\Repository\Interfaces\EventRepositoryInterface;
 use HiEvents\Repository\Interfaces\OrderRepositoryInterface;
-use HiEvents\Services\Domain\Attendee\SendAttendeeTicketService;
 use HiEvents\Services\Domain\Email\MailBuilderService;
 use Illuminate\Mail\Mailer;
 
@@ -28,7 +27,6 @@ class SendOrderDetailsService
         private readonly EventRepositoryInterface $eventRepository,
         private readonly OrderRepositoryInterface $orderRepository,
         private readonly Mailer $mailer,
-        private readonly SendAttendeeTicketService $sendAttendeeTicketService,
         private readonly MailBuilderService $mailBuilderService,
     ) {}
 
@@ -85,7 +83,6 @@ class SendOrderDetailsService
 
         if ($order->isOrderCompleted() || $order->isOrderAwaitingOfflinePayment()) {
             $this->sendOrderSummaryEmails($order, $event);
-            $this->sendAttendeeTicketEmails($order, $event);
         }
 
         if ($order->isOrderFailed() && $order->getEmail() !== null && ! $order->isBoxOfficeOrder()) {
@@ -141,26 +138,6 @@ class SendOrderDetailsService
             ->unique(fn (EventOccurrenceDomainObject $occ) => $occ->getId());
 
         return $distinct->count() === 1 ? $distinct->first() : null;
-    }
-
-    private function sendAttendeeTicketEmails(OrderDomainObject $order, EventDomainObject $event): void
-    {
-        $sentEmails = [];
-        foreach ($order->getAttendees() as $attendee) {
-            if ($attendee->getEmail() === null || in_array($attendee->getEmail(), $sentEmails, true)) {
-                continue;
-            }
-
-            $this->sendAttendeeTicketService->send(
-                order: $order,
-                attendee: $attendee,
-                event: $event,
-                eventSettings: $event->getEventSettings(),
-                organizer: $event->getOrganizer(),
-            );
-
-            $sentEmails[] = $attendee->getEmail();
-        }
     }
 
     private function sendOrderSummaryEmails(OrderDomainObject $order, EventDomainObject $event): void
