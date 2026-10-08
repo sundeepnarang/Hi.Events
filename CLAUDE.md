@@ -235,3 +235,6 @@ The `SoSChangesV2` branch maintains specific custom behaviors that must be prese
 
 4. **Discarded Features:**
    - Read-Only User Role and Check-In List Password Protection have been intentionally discarded and should not be reintroduced.
+
+5. **Disabled Attendee Ticket Emails on Registration:**
+   - Order registration sends only the order confirmation email (`OrderSummary`). Attendee ticket emails (`AttendeeTicketMail`) are disabled on registration / checkout completion.
